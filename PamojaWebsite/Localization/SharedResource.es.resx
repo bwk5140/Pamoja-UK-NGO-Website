@@ -1,0 +1,428 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutUs" xml:space="preserve">
+    <value>Sobre Nosotros</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Acceso denegado</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Cuenta</value>
+  </data>
+  <data name="AccountLockedOut" xml:space="preserve">
+    <value>Esta cuenta ha sido bloqueada, inténtelo de nuevo más tarde</value>
+  </data>
+  <data name="Blog" xml:space="preserve">
+    <value>Blog</value>
+  </data>
+  <data name="CaseStudies" xml:space="preserve">
+    <value>Estudios de caso</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Cambiar</value>
+  </data>
+  <data name="CheckEmailPasswordReset" xml:space="preserve">
+    <value>Por favor revise su correo electrónico para restablecer su contraseña</value>
+  </data>
+  <data name="ChildProtectionResources" xml:space="preserve">
+    <value>Recursos de protección infantil</value>
+  </data>
+  <data name="ConfirmEmailChange" xml:space="preserve">
+    <value>Confirmar cambio de correo electrónico</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Por favor confirme la contraseña</value>
+  </data>
+  <data name="Consortiums" xml:space="preserve">
+    <value>Consorcio</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Contacta con nosotras</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="Donate" xml:space="preserve">
+    <value>Donar</value>
+  </data>
+  <data name="DontHaveAccess" xml:space="preserve">
+    <value>No tienes acceso a este recurso</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="EmailOrUsername" xml:space="preserve">
+    <value>Ingrese su correo electrónico o nombre de usuario para continuar</value>
+  </data>
+  <data name="EnterEmail" xml:space="preserve">
+    <value>Su dirección de correo electrónico, por favor</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Olvidaste tu contraseña?</value>
+  </data>
+  <data name="ForgotPasswordConfirmation" xml:space="preserve">
+    <value>Olvidé la confirmación de contraseña</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Nombre completo (nombre y apellido)</value>
+  </data>
+  <data name="Governance" xml:space="preserve">
+    <value>Gobernancia</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Hola</value>
+  </data>
+  <data name="ImpactReports" xml:space="preserve">
+    <value>Informes de impacto</value>
+  </data>
+  <data name="InvalidPassReset" xml:space="preserve">
+    <value>Restablecimiento de contraseña no válido</value>
+  </data>
+  <data name="InvalidPasswordResetLink" xml:space="preserve">
+    <value>El enlace de restablecimiento de contraseña no es válido</value>
+  </data>
+  <data name="LinkYourAccount" xml:space="preserve">
+    <value>Vincula tu cuenta con</value>
+  </data>
+  <data name="LockedOut" xml:space="preserve">
+    <value>Bloqueado</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="LoginUsing" xml:space="preserve">
+    <value>Inicia sesión con tu cuenta de </value>
+  </data>
+  <data name="LoginWith" xml:space="preserve">
+    <value>Iniciar sesión con</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="Membership" xml:space="preserve">
+    <value>Afiliación</value>
+  </data>
+  <data name="Mission" xml:space="preserve">
+    <value>Misión</value>
+  </data>
+  <data name="NoAccount" xml:space="preserve">
+    <value>Sin cuenta</value>
+  </data>
+  <data name="Partners" xml:space="preserve">
+    <value>Socios</value>
+  </data>
+  <data name="Partners&amp;Clients" xml:space="preserve">
+    <value>Socias y Clientes</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="PleaseEnterEmailToCompleteSignIn" xml:space="preserve">
+    <value>Ingrese una dirección de correo electrónico para este sitio a continuación y haga clic en el botón Registrarse para finalizar el inicio de sesión</value>
+  </data>
+  <data name="Policy" xml:space="preserve">
+    <value>Política</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Regístrate</value>
+  </data>
+  <data name="RegisterConfirmation" xml:space="preserve">
+    <value>Confirmación de registro</value>
+  </data>
+  <data name="RegisterUsing" xml:space="preserve">
+    <value>Regístrese usando</value>
+  </data>
+  <data name="RegisterWith" xml:space="preserve">
+    <value>Regístrese con</value>
+  </data>
+  <data name="Registration" xml:space="preserve">
+    <value>Crea una cuenta nueva</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Recuérdame</value>
+  </data>
+  <data name="ReportingAConcern" xml:space="preserve">
+    <value>Informar de una inquietud</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Crear una contraseña nueva</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>Recursos</value>
+  </data>
+  <data name="Safeguarding" xml:space="preserve">
+    <value>Salvaguardia</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Servicios</value>
+  </data>
+  <data name="Sponsorship" xml:space="preserve">
+    <value>Patrocinio</value>
+  </data>
+  <data name="SuccessfulAuthentication" xml:space="preserve">
+    <value>Se ha autenticado correctamente con</value>
+  </data>
+  <data name="Supervision" xml:space="preserve">
+    <value>Supervisión</value>
+  </data>
+  <data name="SupportUs" xml:space="preserve">
+    <value>Apóyanos</value>
+  </data>
+  <data name="Team" xml:space="preserve">
+    <value>Equipo</value>
+  </data>
+  <data name="Testimonials" xml:space="preserve">
+    <value>Testimonios</value>
+  </data>
+  <data name="Toolkits" xml:space="preserve">
+    <value>Cajas de herramientas</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Formación</value>
+  </data>
+  <data name="UserRegistration" xml:space="preserve">
+    <value>Inscribirse</value>
+  </data>
+  <data name="Vision" xml:space="preserve">
+    <value>Visión</value>
+  </data>
+  <data name="WellbeingPrograms" xml:space="preserve">
+    <value>Programas de Bienestar</value>
+  </data>
+  <data name="Workshops" xml:space="preserve">
+    <value>Talleres</value>
+  </data>
+  <data name="YourAccount" xml:space="preserve">
+    <value>Tu cuenta</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Usuario inválida</value>
+  </data>
+  <data name="ProtectedWith2FA" xml:space="preserve">
+    <value>Tu inicio de sesión está protegido con una aplicación de autenticación. Introduce tu código de autenticación a continuación</value>
+  </data>
+  <data name="AuthCode" xml:space="preserve">
+    <value>Código de autenticación</value>
+  </data>
+  <data name="RememberThisMachine" xml:space="preserve">
+    <value>Recuerda esta maquina</value>
+  </data>
+  <data name="DontHaveAccessToAuthDevice" xml:space="preserve">
+    <value>The password reset link is invalid
+
+¿No tienes acceso a tu dispositivo autenticador? Puedes</value>
+  </data>
+  <data name="LoginWithRecoveryCode" xml:space="preserve">
+    <value>iniciar sesión con un código de recuperación</value>
+  </data>
+  <data name="RecoveryCodeVerification" xml:space="preserve">
+    <value>Verificación del código de recuperación</value>
+  </data>
+  <data name="YouHaveRequestedToLogInWith2FA" xml:space="preserve">
+    <value>Has solicitado iniciar sesión con un código de recuperación. Este inicio de sesión no se recordará hasta que lo proporciones</value>
+  </data>
+  <data name="RecoveryCode" xml:space="preserve">
+    <value>Código de recuperación</value>
+  </data>
+  <data name="EmailConfirmation" xml:space="preserve">
+    <value>Haga clic aquí para confirmar su cuenta</value>
+  </data>
+  <data name="CheckEmailToConfirmAccount" xml:space="preserve">
+    <value>Por favor revise su correo electrónico para confirmar su cuenta</value>
+  </data>
+  <data name="ResendEmailConfirmation" xml:space="preserve">
+    <value>Reenviar confirmación por correo electrónico</value>
+  </data>
+  <data name="Resend" xml:space="preserve">
+    <value>Reenviar</value>
+  </data>
+  <data name="ResetYourPassword" xml:space="preserve">
+    <value>Restablece tu contraseña</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reiniciar</value>
+  </data>
+  <data name="ResetPasswordConfirmation" xml:space="preserve">
+    <value>Restablecer confirmación de contraseña</value>
+  </data>
+  <data name="YourPassHasBeenReset" xml:space="preserve">
+    <value>Tu contraseña ha sido restablecida. Por favor</value>
+  </data>
+  <data name="ClickHereToLogin" xml:space="preserve">
+    <value> haga clic aquí para iniciar sesión</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Teléfono móvil</value>
+  </data>
+  <data name="EnterPhoneNumber" xml:space="preserve">
+    <value>Introduce tu número de teléfono</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Ahorrar</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Introduce tu nombre</value>
+  </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Autenticación de dos factores</value>
+  </data>
+  <data name="ChangeName" xml:space="preserve">
+    <value>Cambiar nombre</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar la contraseña</value>
+  </data>
+  <data name="EnterOldPassword" xml:space="preserve">
+    <value>Ingrese la contraseña anterior</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Contraseña anterior</value>
+  </data>
+  <data name="EnterNewPassword" xml:space="preserve">
+    <value>Ingrese la nueva contraseña</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="UpdatePassword" xml:space="preserve">
+    <value>Actualizar contraseña</value>
+  </data>
+  <data name="ChooseUsername" xml:space="preserve">
+    <value>Elija su nombre de usuario</value>
+  </data>
+  <data name="CurrentUsername" xml:space="preserve">
+    <value>Nombre de usuario actual</value>
+  </data>
+  <data name="ChangeUsername" xml:space="preserve">
+    <value>Cambiar nombre de usuario</value>
+  </data>
+  <data name="NewUsername" xml:space="preserve">
+    <value>Nuevo nombre de usuario</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nombre de usuario</value>
+  </data>
+  <data name="AboutUsTag" xml:space="preserve">
+    <value>Pamoja Mental Health and Safeguarding Network es una organización keniana que busca contribuir a la reducción de la brecha en los servicios de salud mental en Kenia. Facilitamos capacitación en salud mental y salvaguardia para desarrollar la resiliencia mental a nivel individual y fortalecer los servicios de salud mental a nivel comunitario.</value>
+  </data>
+</root>

@@ -1,0 +1,19 @@
+﻿@page "/Account/InvalidUser"
+
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>Invalid user</PageTitle>
+
+<div class="container-sm mt-5" style="text-align: center; color: #2f4f4f;">
+    <a href="/" style="text-decoration: none;"><img class="mb-2" src="Images/PamojaLogo.png" width="80" height="60" /></a>
+    <div class="center-container">
+        <div class="card" style="border-radius: 15px; width: 400px;">
+            <div class="card-header">
+                <h4>@Loc["InvalidUser"]</h4>
+            </div>
+            <div class="card-body">
+                <StatusMessage />
+            </div>
+        </div>
+    </div>
+</div>

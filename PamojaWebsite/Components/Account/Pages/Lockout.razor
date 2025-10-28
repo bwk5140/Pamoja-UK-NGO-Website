@@ -1,0 +1,21 @@
+﻿@page "/Account/Lockout"
+
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>Locked out</PageTitle>
+
+<div class="container-sm mt-5" style="text-align: center; color: #2f4f4f;">
+    <a href="/" style="text-decoration: none;"><img class="mb-2" src="CompanyLogoEmail.png" width="80" height="60" /></a>
+    <div class="center-container">
+        <div class="card" style="border-radius: 15px; width: 400px;">
+            <div class="card-header">
+                <h5>@Loc["LockedOut"]</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-danger" role="alert">
+                    @Loc["AccountLockedOut"]
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
