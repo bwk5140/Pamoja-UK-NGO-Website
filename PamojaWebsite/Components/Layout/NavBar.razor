@@ -166,15 +166,15 @@
                     <AuthorizeView>
                         <NotAuthorized>
                             <div class="dropdown">
-                                <button class="btn btn-sm ms-2 me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                <button class="btn btn-sm ms-2 me-3" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                         style="background-color:transparent; font-size: large; color: black; border: none;" @onmouseover="e => this.showAccountOptions = true"
                                         @onclick="e => this.showAccountOptions = !this.showAccountOptions" @onmouseout="e => this.showAccountOptions = false">
                                     <img src="Icons/person.svg" />
                                     @Loc["Hello"],
                                     @Loc["Login"]
                                 </button>
-                                <div class="dropdown-menu @(showAccountOptions ? "show" : "")" @onmouseleave="e => this.showAccountOptions = false"
-                                     style="left: -50%; top: 100%;">
+                                <div class="dropdown-menu @(showAccountOptions ? "show" : "")" @onmouseleave="e => this.showAccountOptions = false" @onmouseover="e => this.showAccountOptions = true"
+                                     style="left: -30%; top: 100%;">
                                     <div class="list-group-item dropdown-item ms-3 me-3 mb-2 row" style="background-color: transparent; width: max-content;
                                             max-width: 400px;">
                                         <div style="display: flex; justify-content: center; padding: 5px;">
@@ -191,12 +191,12 @@
                                                           border-right-color: transparent; width: fit-content;">
                                             <thead>
                                                 <tr>
-                                                    <th class="ms-4" style="padding-left: 40px;" scope="col">@Loc["YourAccount"]</th>
+                                                    <th class="ms-4" style="justify-content: center;" scope="col">@Loc["YourAccount"]</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style="padding-left: 45px;">
+                                                    <td style="justify-content: center;">
                                                         <div>
                                                             <a style="text-decoration: none; font-size: small; color: black;" href="/AccountSettings">@Loc["Account"]</a>
                                                         </div>
@@ -210,7 +210,7 @@
                         </NotAuthorized>
                         <Authorized>
                             <div class="dropdown">
-                                <button class="btn btn-sm ms-2 me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                <button class="btn btn-sm ms-2 me-3" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                         style="background-color:transparent; font-size: large; color: black; border: none;" @onmouseover="e => this.showAccountOptions = true"
                                         @onclick="e => this.showAccountOptions = !this.showAccountOptions" @onmouseout="e => this.showAccountOptions = false">
                                     <img src="Icons/person.svg" />
@@ -220,20 +220,20 @@
                                         @Username
                                     }
                                 </button>
-                                <div class="dropdown-menu @(showAccountOptions ? "show" : "")" @onmouseleave="e => this.showAccountOptions = false"
-                                     style="left: -50%; top: 100%;">
+                                <div class="dropdown-menu @(showAccountOptions ? "show" : "")" @onmouseleave="e => this.showAccountOptions = false" @onmouseover="e => this.showAccountOptions = true"
+                                     style="left: -30%; top: 100%;">
                                     <div class="list-group-item dropdown-item ms-3 me-3 mb-2 row" style="background-color: transparent; width: max-content;
                                         max-width: 400px;">
                                         <table class="table table-bordered ms-4 me-4" style="border-top-color: transparent; border-bottom-color: transparent; border-left-color: transparent;
                                                       border-right-color: transparent; width: fit-content;">
                                             <thead>
                                                 <tr>
-                                                    <th class="ms-4" style="padding-left: 40x;" scope="col">@Loc["YourAccount"]</th>
+                                                    <th class="ms-4" style="justify-content: center;" scope="col">@Loc["YourAccount"]</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style="padding-left: 45px;">
+                                                    <td style="justify-content: center;">
                                                         <form action="Account/Logout" method="post">
                                                             <AntiforgeryToken />
                                                             <input type="hidden" name="ReturnUrl" value="@currentUrl" />
