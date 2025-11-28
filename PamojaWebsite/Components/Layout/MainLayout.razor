@@ -1,20 +1,15 @@
 ﻿@inherits LayoutComponentBase
 
-<NavBar />
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12 col-md-12">
-            <div class="page" style="padding-top: 5%;">
-                <main>
-                    <article class="mt-5" style="width: 100%; position: absolute; left: 0px;">
-                        @Body
-                    </article>
-                </main>
-            </div>
-        </div>
-    </div>
-
+<div class="w-full min-h-screen flex flex-col">
+    <NavBar />
+    <main class="flex-grow pt-[5%] w-full">
+        <article class="mt-5 w-full">
+            @Body
+        </article>
+    </main>
+    <Footer />
 </div>
+
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

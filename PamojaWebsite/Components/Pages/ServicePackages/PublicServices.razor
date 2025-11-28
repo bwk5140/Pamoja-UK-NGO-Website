@@ -1,0 +1,296 @@
+﻿@page "/services/public-services-package"
+
+<PageTitle>Public Services Package</PageTitle>
+
+@inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<div class="container-xxxl">
+    <!-- Banner Section -->
+    <section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Large blurred gradient blob -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Smaller accent circle -->
+            <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
+
+            <!-- Triangle using clip-path -->
+            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Public Services Package</h1>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section-->
+    <section class="py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <!-- About Us -->
+                    <li class="inline-flex items-center">
+                        <a href="/services"
+                           class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                            Services
+                        </a>
+                    </li>
+
+                    <!-- Separator -->
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                      clip-rule="evenodd" />
+                            </svg>
+                            <a href="/services/public-services-package"
+                               class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
+                                Public Services Package
+                            </a>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <!-- About Section -->
+    <section class="py-10 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
+                        Strengthening Kenya's healthcare professionals through clinical training and confidential safeguarding support.
+                        By aligning with the Mental Health Act 2022 and national priorities, we ensure healthcare professionals are equipped, protected,
+                        and empowered because caring for carers means building a stronger, healthier, and more resilient Kenya.
+                    </p>
+                    <button type="button" class="mt-3 btn bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                            @onclick="ScrollToTarget">
+                        Get Started
+                        <i data-feather="arrow-right" class="ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Art Section-->
+    <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Gradient blob -->
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Accent circle -->
+            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
+            <!-- Image overlay -->
+            <div class="relative">
+                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1755863017190-U4ON4758HAMDZIQOTUJY/unsplash-image-8wOToN7KeQ4.jpg"
+                     alt="Emergency phone"
+                     class="relative z-10 rounded-lg shadow-lg">
+            </div>
+            <div class="relative">
+                <img src="Images/Art/mental-health-care-sketch-diagram.jpg"
+                     alt="Happy black female doctor"
+                     class="relative z-10 rounded-lg shadow-lg">
+            </div>
+            <div class="relative">
+                <img src="Images/Art/black-man-holding-emergency-kit.jpg" alt="Black man holding emergency kit"
+                     class="relative z-10 rounded-lg shadow-lg" />
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section -->
+    @* <section class="relative bg-primary-600 text-gray-700 py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Pamoja for Kenya's Public Service</h1>
+                    <p class="text-xl mb-8">Strengthening mental health resilience and safeguarding in Kenya's public institutions</p>
+                    <button type="button" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                            @onclick="ScrollToTarget">
+                        Get Started
+                        <i data-feather="arrow-right" class="ml-2"></i>
+                    </button>
+                </div>
+                <div class="mt-10 md:mt-0">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1755863017190-U4ON4758HAMDZIQOTUJY/unsplash-image-8wOToN7KeQ4.jpg" alt="Mental Health Support"
+                         class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- Mission Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-lg text-gray-700 mb-6">
+                        Pamoja is uniquely positioned to support <span class="font-semibold text-green-700">Kenya's public services</span> by advancing the goals of the <span class="font-semibold text-green-700">Mental Health (Amendment) Act 2022</span> and the <span class="font-semibold text-green-700">National Mental Health Policy (2020–2030)</span>.
+                    </p>
+                    <p class="text-lg text-gray-700">
+                        We aim to train the <span class="font-semibold">army, police</span> and <span class="font-semibold">other first responders</span> with <span class="font-semibold text-green-700">mental health expertise</span> to respond confidently to <span class="font-semibold">mental health crises in the community</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="mb-20">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Contributions</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Capacity Building -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i data-feather="users" class="text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Capacity Building</h3>
+                        </div>
+                        <p class="text-gray-700">
+                            We equip frontline public service workers with evidence-based skills in mental health awareness, trauma-informed practice, and safeguarding.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Wellbeing & Resilience -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i data-feather="heart" class="text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Wellbeing & Resilience</h3>
+                        </div>
+                        <p class="text-gray-700">
+                            Through targeted workshops and peer-support frameworks, we strengthen resilience within public institutions.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Safeguarding -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i data-feather="shield" class="text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Safeguarding in Institutions</h3>
+                        </div>
+                        <p class="text-gray-700">
+                            We help public bodies implement inclusive safeguarding policies, ensuring protection for vulnerable groups.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Cultural Sensitivity -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i data-feather="globe" class="text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Culturally Sensitive Interventions</h3>
+                        </div>
+                        <p class="text-gray-700">
+                            Our approach honours Kenya's diversity, ensuring interventions are relevant to the social and cultural realities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Positioning Statement -->
+    <section class="bg-green-50 rounded-2xl p-8 mb-16">
+        <div class="max-w-4xl mx-auto">
+            <blockquote class="text-center">
+                <p class="text-xl italic text-gray-800 mb-6">
+                    "Pamoja partners with Kenya's public service to strengthen mental health resilience, protect staff wellbeing, and embed safeguarding as a cornerstone of effective governance."
+                </p>
+                <p class="text-gray-700">
+                    By aligning with national policies and the Mental Health Act 2022, Pamoja provides tailored training and support that empowers public servants to deliver with compassion, resilience, and accountability — ensuring a healthier workforce, stronger institutions, and a safer Kenya for all.
+                </p>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to strengthen your institution's mental health resilience?</h3>
+            <p class="text-xl mb-6 max-w-3xl mx-auto">
+                Contact us today to learn more about our programs and services:
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                        </div>
+                        <div>
+                            <label for="school" class="block text-sm font-medium text-gray-700 mb-1">Organization</label>
+                            <input type="text" id="school" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                        <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-md transition duration-300">
+                            Request Information
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("featherInit");
+        }
+    }
+    private async Task ScrollToTarget()
+    {
+        await JS.InvokeVoidAsync("scrollToSection", "contact");
+    }
+}

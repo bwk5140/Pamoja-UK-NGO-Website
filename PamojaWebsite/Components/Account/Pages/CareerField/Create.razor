@@ -1,0 +1,93 @@
+﻿@page "/Career-Fields/create"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@using System.ComponentModel.DataAnnotations.Schema
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Create</PageTitle>
+
+<div class="container mx-auto px-4 py-12">
+    <section class="text-green-900 rounded-xl p-2">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-2xl md:text-5xl font-bold mb-4">Create</h1>
+        </div>
+    </section>
+    <div class="space-y-8">
+        <div class="p-8 text-end">
+            <a href="/Career-Fields" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                Back to List
+            </a>
+        </div>
+    </div>
+    <div class="row mx-auto px-20">
+        <div class="col-md-4">
+            <EditForm method="post" Model="careerFieldDTO" OnValidSubmit="AddCareerField" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Field:</label>
+                    <InputText id="name" @bind-Value="careerFieldDTO.Name" class="form-control" />
+                    <ValidationMessage For="() => careerFieldDTO.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputTextArea rows="6" id="description" @bind-Value="careerFieldDTO.Description" class="form-control" />
+                    <ValidationMessage For="() => careerFieldDTO.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="imageUpload" class="form-label">Upload Image:</label>
+                    <InputFile id="imageUpload" OnChange="HandleImageUpload" class="form-control" />
+                    <ValidationMessage For="() => careerFieldDTO.ImageFile" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromForm]
+    private CareerFieldDTO careerFieldDTO { get; set; } = new();
+
+    private CareerField CareerField { get; set; } = new();
+
+    public byte[]? ImageFile { get; set; }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var stream = file.OpenReadStream(maxAllowedSize: 10_000_000);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        careerFieldDTO.ImageFile = ms.ToArray();
+        careerFieldDTO.ImagePreviewUrl = file.ContentType;
+    }
+
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddCareerField()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        CareerField.Name = careerFieldDTO.Name;
+        CareerField.Description = careerFieldDTO.Description;
+        CareerField.ImageFile = careerFieldDTO.ImageFile;
+        CareerField.ImagePreviewUrl = careerFieldDTO.ImagePreviewUrl;
+
+        context.CareerField.Add(CareerField);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/Career-Fields");
+    }
+
+    public class CareerFieldDTO
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public byte[]? ImageFile { get; set; }
+        public string? ImagePreviewUrl { get; set; }
+    }
+}

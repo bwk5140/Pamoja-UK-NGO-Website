@@ -9,29 +9,27 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<div class="container-lg" style="max-width: 700px;">
-    <h3>@Loc["Name"]</h3>
-    <StatusMessage />
-    <div class="row">
-        <div class="col-xl-6">
-            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <input type="text" value="@name" id="name" class="form-control" placeholder=@Loc["EnterName"] disabled />
-                    <label for="name" class="form-label">@Loc["EnterName"]</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" placeholder=@Loc["ChangeName"] />
-                    <label for="Input.Name" class="form-label">@Loc["ChangeName"]</label>
-                    <ValidationMessage For="() => Input.Name" class="text-danger" />
-                </div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+<h3 class="font-bold text-gray-500 mb-2">@Loc["Name"]</h3>
+<StatusMessage />
+<div class="row">
+    <div class="col-xl-6">
+        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <input type="text" value="@name" id="name" class="form-control" placeholder=@Loc["EnterName"] disabled />
+                <label for="name" class="form-label">@Loc["EnterName"]</label>
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" placeholder=@Loc["ChangeName"] />
+                <label for="Input.Name" class="form-label">@Loc["ChangeName"]</label>
+                <ValidationMessage For="() => Input.Name" class="text-danger" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                    @Loc["Save"]
-                </button>
-            </EditForm>
-        </div>
+                @Loc["Save"]
+            </button>
+        </EditForm>
     </div>
 </div>
 

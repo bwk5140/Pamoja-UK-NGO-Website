@@ -1,0 +1,184 @@
+﻿@page "/careers/psychologist"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Psychologist Job</PageTitle>
+
+<div class="container mx-auto px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center mb-16 gap-16 py-20">
+        <div class="md:w-3/4">
+            <div class="container">
+                <h1 class="text-3xl">Psychologist</h1>
+                <div class="meta">
+                    Location: Nairobi, Kenya | Contractual
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Introduction</h2>
+                    <p>
+                        Are you an experienced Psychologist looking for a rewarding career where you can
+                        make a difference and change lives for the better? You will be working with an
+                        innovative, multinational and multidisciplinary team that upskills communities and
+                        organisations with mental health and safeguarding expertise.
+                    </p>
+                    <p>
+                        You will be leading the psychology department and working alongside members of the
+                        Multi-disciplinary Team (MDT), to offer patient-centred care and plan and facilitate 
+                        mental health and safeguarding training to local organisations and institutions.
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Role Profile</h2>
+                    <p>
+                        Organisation: Pamoja Mental Health &amp; Safeguarding Network
+                    </p>
+                    <p>
+                        Position Title: Psychologist
+                    </p>
+                    <p>
+                        Reports To: Founder and CEO
+                    </p>
+                    <p>
+                        Location: Nairobi, Kenya (with possible field assignments)
+                    </p>
+                    <p>
+                        Job Type: Contractual
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Organisational Overview</h2>
+                    <p>
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services is a multidisciplinary organisation
+                        working to promote mental wellbeing, prevent harm, and strengthen safeguarding
+                        practices across communities, schools, workplaces, and health systems. Guided by
+                        compassion, integrity, and collaboration, Pamoja empowers individuals and
+                        institutions to create safe, supportive environments where people can flourish.
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Job Purpose</h2>
+                    <p>
+                        The Psychologist will provide psychological assessments, therapy, and psychosocial
+                        support to individuals and groups affected by trauma, abuse, loss, or mental health
+
+                        challenges. The role ensures that care is person-centred, trauma-informed, and
+                        culturally responsive while promoting community resilience and wellbeing. The
+                        psychologist will also provide planning and facilitation of mental health training and
+                        advocacy.
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Key Responsibilities</h2>
+                    <ul>
+                        <li>Conduct psychological assessments, diagnostics, and therapy sessions.</li>
+                        <li>Provide trauma-informed counselling and crisis interventions.</li>
+                        <li>Support programme design and implementation on mental wellbeing.</li>
+                        <li>Facilitate training and workshops on psychological health.</li>
+                        <li>Collaborate with safeguarding teams to deliver integrated care.</li>
+                        <li>Maintain accurate client records, gain consent and ensure confidentiality in client interactions.</li>
+                        <li>Contribute to research, reporting, and advocacy initiatives.</li>
+                        <li>Conduct training activities within departments that contribute towards meeting organizational goals.</li>
+                        <li>Adhere to professional ethics and participate in supervision.</li>
+                        <li>Work therapeutically with service users with complex presentations, undertake the assessments using a broad range of structured psychometric and semistructured clinical methods.</li>
+                        <li>Formulate and implement plans of specialist psychological treatment or management of patients’ mental health needs based on a multi-factorial psychological understanding and current evidence based best practice.</li>
+                        <li>Be professionally and legally responsible and accountable for all aspects of clinical work and care.</li>
+                    </ul>
+
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Educational Qualifications</h2>
+                    <ul>
+                        <li>Master’s Degree in Psychology, Counselling Psychology, or Clinical Psychology <em>(required)</em>.</li>
+                        <li>Doctorate Degree in Clinical or Counselling Psychology <em>(preferred)</em>.</li>
+                        <li>Registration or eligibility for registration with the The Counsellors and Psychologists Board.</li>
+                        <li>Additional training in trauma counselling, safeguarding, or psychosocial first aid <em>(desirable)</em>.</li>
+                    </ul>
+
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Experience</h2>
+                    <ul>
+                        <li>Experience of work in psychological interventions with adults, children, young people and their families in a range of service settings or agencies.</li>
+                        <li>Minimum 5 years of professional experience in clinical or counselling settings.</li>
+                        <li>Proven expertise in trauma therapy, grief counselling, or crisis intervention.</li>
+                        <li>Experience in NGO, educational, or community health contexts preferred.</li>
+                        <li>Experience of work in psychological interventions with children, young people and their families in a range of service settings or agencies.</li>
+                        <li>Experience in undertaking leadership roles within clinical psychology services.</li>
+                        <li>Experience in teaching and education roles.</li>
+                        <li>Experience of delivering clinical supervision.</li>
+                    </ul>
+
+                </div>
+
+                <div class="section">
+                    <h2 class="text-2xl">Knowledge, Skills &amp; Abilities</h2>
+                    <ul>
+                        <li>Deep understanding of trauma-informed care and safeguarding principles.</li>
+                        <li>Strong counselling and therapeutic skills.</li>
+                        <li>Excellent interpersonal and communication skills.</li>
+                        <li>Ability to maintain confidentiality and ethical standards.</li>
+                        <li>Skilled in report writing, facilitation, and client engagement.</li>
+                        <li>Critical thinking skills and awareness of cross-cultural approaches to mental health care.</li>
+                        <li>Specialist knowledge of child development and the impact of adverse childhood experiences.</li>
+                        <li>Ability to effectively teach and deliver training on mental health and safeguarding.</li>
+                        <li>Ability to lead on psychological initiatives and training within the organization.</li>
+                        <li>Ability to apply psychological practice in different cultural contexts.</li>
+                        <li>Ability to time manage effectively and to work under pressure whilst prioritizing a clinical workload.</li>
+                        <li>Ability to recognise and report behaviour that undermines equality and diversity.</li>
+                    </ul>
+                </div>
+                <div class="Personal Attributes">
+                    <h2 class="text-2xl">Personal Attributes</h2>
+                    <ul>
+                        <li>Compassionate, patient, and empathetic.</li>
+                        <li>Emotionally resilient and culturally sensitive.</li>
+                        <li>High integrity and professional accountability.</li>
+                        <li>Strong organisational and time management abilities.</li>
+                        <li>Strong team player, ability to work effectively as part of a multidisciplinary team.</li>
+                        <li>Ability to be adaptable and creative to contribute to team innovation and progress.</li>
+                    </ul>
+                </div>
+
+                <div class="Personal Attributes">
+                    <h2 class="text-2xl"> Performance Indicators</h2>
+                    <ul>
+                        <li>Quality and impact of psychological services provided.</li>
+                        <li>Adherence to safeguarding and ethical guidelines.</li>
+                        <li>Timeliness and accuracy in documentation and reporting.</li>
+                        <li>Contribution to capacity building and advocacy activities.</li>
+                    </ul>
+
+                </div>
+
+                <div class="cta">
+                    <p class="mb-4">
+                        Submit your application to Head of HR and Operations,
+                        jobs@pamojasafeguarding.com before 16 November 2025.
+                    </p>
+                    <a href="mailto:jobs@pamojasafeguarding.com">Apply now</a>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/4 items-center">
+            <div style="border: 1px solid #ccc; border-radius: 8px; background-color: #fff; padding: 24px; max-width: 320px; font-family: Arial, sans-serif;">
+                <p class="mb-2"><strong>Job Title:</strong> Psychologist</p>
+                <p class="mb-2"><strong>City:</strong> Nairobi, Kenya</p>
+                <p class="mb-2"><strong>Country:</strong> Kenya</p>
+                <p class="mb-2"><strong>Area of Work:</strong> Psychology</p>
+                <p class="mb-2"><strong>Employment Type:</strong> Contractual</p>
+                <p class="mb-2"><strong>Travel:</strong> Possible field assignments</p>
+                <p class="mb-2"><strong>Company:</strong> Pamoja Counselling, Mental Wellbeing and Safeguarding Services</p>
+                <a href="mailto:jobs@pamojasafeguarding.com" style="display: inline-block; margin-top: 16px; padding: 10px 20px; background-color: #1f4e79; color: #fff; text-decoration: none; border-radius: 4px;">Apply now</a>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+﻿::deep .nav-link.active {
+    background-color: #0d542b;
+    color: white;
+}
+::deep .nav-link {
+    color: #0d542b;
+}

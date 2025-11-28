@@ -1,17 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using PamojaWebsite.Data
 
+@inject IStringLocalizer<SharedResource> Loc
+
 @inject SignInManager<ApplicationUser> SignInManager
 
 <ul class="nav nav-pills flex-column">
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">Profile</NavLink>
+        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">@Loc["Username"]</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Email">Email</NavLink>
+        <NavLink class="nav-link" href="Account/Manage/Name">@Loc["Name"]</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/ChangePassword">Password</NavLink>
+        <NavLink class="nav-link" href="Account/Manage/Email">@Loc["Email"]</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="Account/Manage/Mobile">@Loc["Mobile"]</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="Account/Manage/ChangePassword">@Loc["Password"]</NavLink>
     </li>
     @if (hasExternalLogins)
     {

@@ -1,0 +1,252 @@
+﻿@page "/careers"
+
+<PageTitle>Careers</PageTitle>
+
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavManager
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+<!-- Hero Section -->
+<section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <!-- Decorative background shapes -->
+    <div class="absolute inset-0">
+        <!-- Large blurred gradient blob -->
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+        <!-- Smaller accent circle -->
+        <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
+
+        <!-- Diagonal rectangle -->
+        <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
+
+        <!-- Triangle using clip-path -->
+        <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+             style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative max-w-7xl mx-auto">
+        <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+            <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Careers</h1>
+        </div>
+    </div>
+</section>
+
+<!-- Art Section-->
+    <section class="relative bg-primary-100 text-gray-900 py-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-5xl font-bold text-gray-600 mt-20 mb-6">
+                Start your career path with us
+            </h1>
+        </div>
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Gradient blob -->
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Accent circle -->
+            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto grid md:grid-cols-1 gap-12 items-center">
+            <!-- Image overlay -->
+            <div class="relative">
+                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1763107789876-5AR6U5I8KRW97FZDAPLT/unsplash-image-FQe4hjBlcPE.jpg"
+                     alt="Psychology professionals"
+                     class="w-full h-64 object-cover relative z-10 rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-15">
+    <section class="bg-secondary-50 rounded-xl mt-5 mb-1">
+        <div class="flex flex-col md:flex-row items-center mb-16 gap-16">
+            <div class="md:w-1/2">
+                <h2 class="text-5xl font-bold text-gray-600 mb-6">Find your next job</h2>
+            </div>
+            <div class="md:w-1/2">
+                <p class="text-xl text-gray-700 max-w-4xl mx-auto mb-8">We value empathy and care in everything that we do. We reward and encourage positive outcomes. Join us in shaping the future of mental health.</p>
+                <a href="/careers/search"
+                   class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-secondary hover:bg-secondary-700 transition-colors">
+                    View all jobs
+                    <i data-feather="briefcase" class="ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    <section class="bg-secondary-50 rounded-xl mt-1 mb-20">
+        <!-- Role Navigation -->
+        <div class="relative w-full">
+            <!-- Scrollable track -->
+            <div id="roleScrollTrack" class="flex overflow-x-hidden scroll-smooth gap-4 w-full px-4">
+                @foreach (var field in CareerFields)
+                {
+                    <button class="px-4 py-2 rounded-md text-sm font-medium transition
+                               @(SelectedField == field.Name
+                                                           ? "bg-green-600 text-white"
+                                                           : "bg-gray-100 text-gray-700 hover:bg-gray-200")"
+                            @onclick="() => SelectRole(field.Name)">
+                        @field.Name
+                    </button>
+                }
+            </div>
+
+            <!-- Minimal navigation buttons -->
+            <button type="button"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+               p-1 transition"
+                    @onclick="() => ScrollRoles(-1)">
+                <img width="24" height="24" src="Icons/back.png" alt="back"/>
+            </button>
+
+            <button type="button"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+               p-1 transition"
+                    @onclick="() => ScrollRoles(1)">
+                <img width="24" height="24" src="Icons/forward.png" alt="back" />
+            </button>
+
+        </div>
+
+        <hr />
+        <div class="flex flex-col md:flex-row items-center mb-16 gap-16">
+            <div class="md:w-1/2 mt-4">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">@SelectedField</h2>
+                <p class="text-gray-600 mb-6">
+                    @SelectedCareerField.Description
+                </p>
+            </div>
+            <div class="md:w-1/2 mt-4">
+                <img src="data:@SelectedCareerField.ImagePreviewUrl;base64,@Convert.ToBase64String(SelectedCareerField.ImageFile)" />
+            </div>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Roles in @SelectedField</h2>
+        <div class="relative w-full">
+            <!-- Scrollable track -->
+            <div id="tailwindScrollTrack"
+                 class="flex overflow-x-hidden scroll-smooth snap-x snap-mandatory w-full gap-4 px-4">
+
+                @if (CareerRoles is not null && CareerRoles.Count > 0)
+                {
+                    foreach (var role in CareerRoles)
+                    {
+                        <div class="p-6 flex flex-col
+                                    h-120 w-80 flex-shrink-0
+                                    bg-gray-200 shadow rounded
+                                    snap-center">
+                            <p class="mb-2 text-sm italic">@role.CareerField</p>
+                            <p class="mb-2 font-bold text-lg">@role.Name</p>
+                            <p class="mb-4 text-sm">@role.Description</p>
+
+                            <!-- Anchor pushed to bottom -->
+                            <a href="/careers/search/?role=@role.Name" class="p-2 mt-auto">
+                                <div class="text-blue-500 inline-flex gap-2">
+                                    <span>Available jobs</span>
+                                    <img src="Icons/arrow-right.svg" alt="arrow" />
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    <!-- Minimal navigation buttons -->
+                    <button type="button"
+                            class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                   p-1 transition"
+                            @onclick="() => MoveSlide(-1)">
+                        <img width="24" height="24" src="Icons/back.png" alt="back" />
+                    </button>
+
+                    <button type="button"
+                            class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                   p-1 transition"
+                            @onclick="() => MoveSlide(1)">
+                        <img width="24" height="24" src="Icons/forward.png" alt="back" />
+                    </button>
+                }
+                else
+                {
+                    <p class="mb-2 font-semi-bold text-sm">There are no role openings at this time. Please check back again later.</p>
+                }
+            </div>
+        </div>
+        <hr />
+    </section>
+</div>
+
+@code {
+    private string? ImageSource { get; set; }
+    private string SelectedField = "Psychology";
+    private List<CareerRole>? CareerRoles { get; set; }
+    private CareerField? SelectedCareerField { get; set; }
+    private List<CareerField>? CareerFields { get; set; }
+    private int currentRoleSlide = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        CareerFields = context.CareerField.ToList();
+        // Get all roles for the selected field
+        CareerRoles = context.CareerRole
+            .Where(c => c.CareerField == SelectedField)
+            .ToList();
+
+        SelectedCareerField = CareerFields.FirstOrDefault(c => c.Name == SelectedField);
+
+        if (SelectedCareerField?.ImagePreviewUrl != null)
+        {
+            ImageSource = SelectedCareerField.ImagePreviewUrl;
+        }
+    }
+
+    private async Task ScrollRoles(int direction)
+    {
+        // direction: -1 for left, +1 for right
+        var track = await JS.InvokeAsync<IJSObjectReference>(
+            "document.getElementById", "roleScrollTrack");
+
+        // Scroll by 200px each click
+        await JS.InvokeVoidAsync("eval",
+            $"document.getElementById('roleScrollTrack').scrollBy({direction * 200}, 0)");
+    }
+
+    private async Task MoveSlide(int direction)
+    {
+        var track = await JS.InvokeAsync<IJSObjectReference>(
+            "document.getElementById", "tailwindScrollTrack");
+
+        // Scroll by 200px each click
+        await JS.InvokeVoidAsync("eval",
+            $"document.getElementById('tailwindScrollTrack').scrollBy({direction * 250}, 0)");
+    }
+    private async Task SelectRole(string role)
+    {
+        SelectedField = role;
+        using var context = await DbFactory.CreateDbContextAsync();
+        SelectedCareerField = context.CareerField.FirstOrDefault(c => c.Name == SelectedField);
+        // Get all roles for the selected field
+        CareerRoles = context.CareerRole
+            .Where(c => c.CareerField == SelectedField)
+            .ToList();
+
+        if (SelectedCareerField?.ImagePreviewUrl != null)
+        {
+            ImageSource = SelectedCareerField.ImagePreviewUrl;
+        }
+    }
+    private async Task ScrollToTarget()
+    {
+        await JS.InvokeVoidAsync("scrollToSection", "contact");
+    }
+    private string GetNavClass(string href)
+    {
+        var currentPath = NavManager.ToBaseRelativePath(NavManager.Uri).TrimEnd('/');
+        var targetPath = href.TrimStart('/').TrimEnd('/');
+        return currentPath == targetPath ? "text-blue-600 underline" : "text-gray-600";
+    }
+}

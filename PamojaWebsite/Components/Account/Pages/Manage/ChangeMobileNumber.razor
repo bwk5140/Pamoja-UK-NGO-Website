@@ -8,25 +8,23 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<div class="container-lg" style="max-width: 700px;">
-    <h3>@Loc["Mobile"]</h3>
-    <StatusMessage />
-    <div class="row">
-        <div class="col-xl-6">
-            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" placeholder=@Loc["EnterPhoneNumber"] />
-                    <label for="Input.PhoneNumber" class="form-label">@Loc["EnterPhoneNumber"]r</label>
-                    <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-                </div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+<h3 class="font-bold text-gray-500 mb-2">@Loc["Mobile"]</h3>
+<StatusMessage />
+<div class="row">
+    <div class="col-xl-6">
+        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" placeholder=@Loc["EnterPhoneNumber"] />
+                <label for="Input.PhoneNumber" class="form-label">@Loc["EnterPhoneNumber"]</label>
+                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                    @Loc["Save"]
-                </button>
-            </EditForm>
-        </div>
+                @Loc["Save"]
+            </button>
+        </EditForm>
     </div>
 </div>
 

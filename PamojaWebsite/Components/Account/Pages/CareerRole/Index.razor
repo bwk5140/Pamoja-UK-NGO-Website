@@ -1,0 +1,70 @@
+﻿@page "/Career-Roles"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="container mx-auto px-4 py-12">
+    <section class="text-green-900 rounded-xl p-2 mb-2">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Career Roles</h1>
+        </div>
+    </section>
+    <div class="space-y-8">
+        <div class="p-8 text-end">
+            <a href="Career-Roles/create" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                Create New
+            </a>
+        </div>
+    </div>
+
+    <QuickGrid Class="table" Items="context.CareerRole">
+        <PropertyColumn Title="Title" Class="py-3" Property="careerrole => careerrole.Name" />
+        <PropertyColumn Title="Field" Class="py-3" Property="careerrole => careerrole.CareerField" />
+        <TemplateColumn Title="Description" Class="py-3" Context="careerrole">
+            <span title="@careerrole.Description">@Truncate(careerrole.Description, 50)</span>
+        </TemplateColumn>
+        <TemplateColumn Title="Link" Class="py-3" Context="careerrole">
+            <a class="text-primary" href="@careerrole.Link" title="@careerrole.Link">View job post</a>
+        </TemplateColumn>
+        <TemplateColumn Context="careerrole" Class="py-3">
+            <div class="text-end">
+                <div class="p-2" style="display: inline-block;">
+                    <a href="@($"Career-Roles/edit?id={careerrole.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
+                        Edit
+                    </a>
+                </div>
+                <div class="p-2" style="display: inline-block;">
+                    <a href="@($"Career-Roles/details?id={careerrole.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
+                        Details
+                    </a>
+                </div>
+                <div class="p-2" style="display: inline-block;">
+                    <a href="@($"Career-Roles/delete?id={careerrole.Id}")" class="bg-red-600 text-white p-2 rounded hover:bg-red-800 transition">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    private string Truncate(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+        return text.Length <= maxLength ? text : text.Substring(0, maxLength) + "...";
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -425,4 +425,16 @@
   <data name="AboutUsTag" xml:space="preserve">
     <value>Pamoja Mental Health and Safeguarding Network es una organización keniana que busca contribuir a la reducción de la brecha en los servicios de salud mental en Kenia. Facilitamos capacitación en salud mental y salvaguardia para desarrollar la resiliencia mental a nivel individual y fortalecer los servicios de salud mental a nivel comunitario.</value>
   </data>
+  <data name="NewToPamoja" xml:space="preserve">
+    <value>Parece que eres nuevo en Pamoja.</value>
+  </data>
+  <data name="LetsCreateAnAccount" xml:space="preserve">
+    <value>Vamos a crear una cuenta con ese correo electrónico.</value>
+  </data>
+  <data name="ContinueRegistration" xml:space="preserve">
+    <value>Continuar registro</value>
+  </data>
+  <data name="PamojaNetworkAndAllRelatedMarks" xml:space="preserve">
+    <value>Pamoja Counselling, Mental Wellbeing and Safeguarding Services y todas las marcas relacionadas son marcas comerciales de pamojasafeguardingnetwork.co.uk.</value>
+  </data>
 </root>

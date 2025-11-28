@@ -423,4 +423,16 @@
   <data name="AboutUsTag" xml:space="preserve">
     <value>Pamoja Mental Health and Safeguarding Network is a Kenyan-led organisation striving to contribute to the gap within mental health services in Kenya. We facilitate Mental Health &amp; Safeguarding training to build mental resilience at the individual level and strengthen mental health services at the community level.</value>
   </data>
+  <data name="NewToPamoja" xml:space="preserve">
+    <value>Looks like you are new to Pamoja.</value>
+  </data>
+  <data name="LetsCreateAnAccount" xml:space="preserve">
+    <value>Let's create an account with that email</value>
+  </data>
+  <data name="ContinueRegistration" xml:space="preserve">
+    <value>Continue registration</value>
+  </data>
+  <data name="PamojaNetworkAndAllRelatedMarks" xml:space="preserve">
+    <value>Pamoja Counselling, Mental Wellbeing and Safeguarding Services and all related marks are trademarks of pamojasafeguardingnetwork.co.uk.</value>
+  </data>
 </root>

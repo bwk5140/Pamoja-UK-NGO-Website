@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,7 @@ using PamojaWebsite.Components.Account;
 using PamojaWebsite.Data;
 using PamojaWebsite.Data.Contexts;
 using PamojaWebsite.Services;
+using System.Configuration;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +24,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddSingleton<EmailEncryptor>();
-builder.Services.AddSingleton<ApplicationUserService>();
+builder.Services.AddScoped<ApplicationUserService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -32,7 +35,14 @@ builder.Services.AddAuthentication(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+//options.UseSqlServer(connectionString));
+options.UseMySql(
+    connectionString,
+    new MySqlServerVersion(new Version(11, 8, 3)) // adjust to your MariaDB version
+));
+
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -64,6 +74,9 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddLocalization();
 
+builder.Services.Configure<CircuitOptions>(
+    builder.Configuration.GetSection("CircuitOptions"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -76,8 +89,12 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    app.UseMigrationsEndPoint();
 }
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 app.UseHttpsRedirection();
 
 var supportedCultures = new[] { "en-KE", "en-US", "en-GB", "es-US", "es-ES", "fr-FR", "fr-CA", "ar-SA", "zh-Hant", "de-DE", "ja-JP", "it-IT", "sw-KE" };

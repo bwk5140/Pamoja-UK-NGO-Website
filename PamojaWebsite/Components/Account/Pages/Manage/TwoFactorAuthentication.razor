@@ -12,7 +12,7 @@
 <PageTitle>Two-factor authentication (2FA)</PageTitle>
 
 <StatusMessage />
-<h3>Two-factor authentication (2FA)</h3>
+<h3 class="font-bold text-gray-500 mb-2">Two-factor authentication (2FA)</h3>
 @if (canTrack)
 {
     if (is2faEnabled)
@@ -43,23 +43,31 @@
         {
             <form style="display: inline-block" @formname="forget-browser" @onsubmit="OnSubmitForgetBrowserAsync" method="post">
                 <AntiforgeryToken />
-                <button type="submit" class="btn btn-primary">Forget this browser</button>
+                <button type="submit" class="btn btn-primary me-3" style="background-color: #2f4f4f;
+                                                                    border-color:transparent; border-radius: 5px;">
+                    Forget this browser
+                </button>
             </form>
         }
 
-        <a href="Account/Manage/Disable2fa" class="btn btn-primary">Disable 2FA</a>
-        <a href="Account/Manage/GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
+        <a href="Account/Manage/Disable2fa" class="btn btn-primary me-3" style="background-color: #2f4f4f;
+                                                    border-color:transparent; border-radius: 5px;">Disable 2FA</a>
+        <a href="Account/Manage/GenerateRecoveryCodes" class="btn btn-primary me-3" style="background-color: #2f4f4f;
+                                                    border-color:transparent; border-radius: 5px;">Reset recovery codes</a>
     }
 
-    <h4>Authenticator app</h4>
+    <h4 class="font-bold text-gray-500 mt-4 mb-2">Authenticator app</h4>
     @if (!hasAuthenticator)
     {
-        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary">Add authenticator app</a>
+        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary" style="background-color: #2f4f4f;
+                                                    border-color:transparent; border-radius: 5px;">Add authenticator app</a>
     }
     else
     {
-        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary">Set up authenticator app</a>
-        <a href="Account/Manage/ResetAuthenticator" class="btn btn-primary">Reset authenticator app</a>
+        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary me-2" style="background-color: #2f4f4f;
+                                                    border-color:transparent; border-radius: 5px;">Set up authenticator app</a>
+        <a href="Account/Manage/ResetAuthenticator" class="btn btn-primary" style="background-color: #2f4f4f;
+                                                    border-color:transparent; border-radius: 5px;">Reset authenticator app</a>
     }
 }
 else

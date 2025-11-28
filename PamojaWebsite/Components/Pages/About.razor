@@ -1,13 +1,225 @@
-﻿@page "/About"
+﻿@page "/about-us"
 
 <PageTitle>About Us</PageTitle>
 
 @inject IStringLocalizer<SharedResource> Loc
 
-<div class="container-xxxl">
-    <div class="center-container" style="padding-left: 10%; padding-right: 10%;">
-        <h4 style="font-family: 'LTC Bodoni 175 Pro'; font-weight: 450; text-align: center; max-width: 1800px;">@Loc["AboutUsTag"]</h4>
+@rendermode InteractiveServer
+
+<!-- Hero Section -->
+    <section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Large blurred gradient blob -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Smaller accent circle -->
+            <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
+
+            <!-- Triangle using clip-path -->
+            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+            </div>
+        </div>
+
+        <!-- Content -->
+    <div class="relative max-w-7xl mx-auto">
+        <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+            <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">About Us</h1>
+        </div>
     </div>
-</div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services strives to contribute to the gap within mental health services in the UK.
+                    </p>
+                    <p class="text-gray-700 text-lg leading-relaxed mt-4 mb-8">
+                        We facilitate Mental Health & Safeguarding training to build mental resilience at the individual level
+                        and strengthen mental health services at the community level.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Art Section-->
+    <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Gradient blob -->
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Accent circle -->
+            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
+            <!-- Image overlay -->
+            <div class="relative">
+                <img src="/Images/Art/business-people-with-startup-rocket.jpg"
+                     alt="Business People with Startup Rocket"
+                     class="relative z-10 rounded-lg shadow-lg" />
+            </div>
+            <div class="relative">
+                <img src="/Images/Art/adorable-couple-having-great-time-together.jpg"
+                     alt="Business People with Startup Rocket"
+                     class="relative z-10 rounded-lg shadow-lg" />
+            </div>
+            
+            <div class="relative">
+                <img src="/Images/Art/young-man-his-son-with-curly-hair.jpg"
+                     alt="Business Hands Joined Together"
+                     class="relative z-10 rounded-lg shadow-lg" />
+            </div>
+        </div>
+    </section>
+
+
+    <!-- History Section -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">HISTORY OF PAMOJA</h2>
+                <div class="prose prose-lg max-w-none text-gray-700">
+                    <p class="mb-6 leading-relaxed">
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services was founded to address the urgent need for mental wellbeing
+                        and safeguarding support in communities where stigma, silence, and systemic barriers have long prevented
+                        access to care.
+                    </p>
+                    <p class="mb-6 leading-relaxed">
+                        The name <em class="text-primary font-semibold">Pamoja</em>, meaning “together” in Kiswahili, reflects
+                        the organisation’s belief that resilience, healing, and safeguarding are collective efforts empowering
+                        individuals, families, institutions, and communities alike.
+                    </p>
+                    <p class="mb-6 leading-relaxed">
+                        The vision for Pamoja was inspired by lived experience. Its founder, Faith, combined her professional
+                        expertise as a mental health nurse and safeguarding specialist with personal experiences of bereavement,
+                        migration, and domestic abuse. These shaped her conviction that care must be compassionate, culturally
+                        sensitive, and trauma informed.
+                    </p>
+                    <p class="mb-6 leading-relaxed">
+                        Faith recognised the gap in healthcare systems in her home country of Kenya, where person-centred,
+                        safeguarding integrated support was often missing and created Pamoja to fill this gap.
+                    </p>
+                    <p class="leading-relaxed">
+                        From the outset, Pamoja has been guided by a team led by experienced mental health nurses, grounding
+                        its work in frontline realities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-12">Meet The Pamoja Team</h2>
+                <div class="max-w-4xl mx-auto bg-gray-100 text-white p-6">
+                    <!-- Top green horizontal rule -->
+                    <hr class="border-t-2 border-blue-800 my-4" />
+                    <!-- Faith Mbula -->
+                    <a href="/about-us/faith-mbula" class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                        Faith Mbula
+                    </a>
+                    <p class="text-black mt-3 mb-2">Chief Executive Officer</p>
+                    
+                    <!-- Bottom green horizontal rule -->
+                    <hr class="border-t-2 border-blue-800 my-4" />
+                </div>
+                <div class="max-w-4xl mt-5 mx-auto bg-gray-100 text-white p-6">
+                    <h2 class="text-3xl md:text-xl font-bold text-gray-800">Kenya</h2>
+                    <!-- Top horizontal rule -->
+                    <hr class="border-t-2 border-blue-800 my-4" />
+
+                    <!-- Grid for names + titles -->
+                    <div class="grid grid-cols-2 gap-x-9 gap-y-6">
+                        <!-- Claire Fuller -->
+                        <div class="ms-2">
+                            <a href="/about-us/claire-fuller"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Claire Fuller
+                            </a>
+                            <p class="text-black mt-2">Head of Therapies & Wellbeing</p>
+                        </div>
+                        <!-- Raphael Imanyara -->
+                        <div class="ms-2">
+                            <a href="/about-us/raphael-imanyara"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Raphael Imanyara
+                            </a>
+                            <p class="text-black mt-2">Head of HR and Operations</p>
+                        </div>
+
+                        <!-- Brian Mahinda -->
+                        <div class="ms-2">
+                            <a href="/about-us/brian-mahinda"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Brian Mahinda
+                            </a>
+                            <p class="text-black mt-2">Head of Strategy and Communication</p>
+                        </div>
+                        <!-- Caroline Nduta -->
+                        <div class="ms-2">
+                            <a href="/about-us/caroline-nduta"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Caroline Nduta
+                            </a>
+                            <p class="text-black mt-2">Head of Operations and Compliance</p>
+                        </div>
+                        <!-- Brian Karimi -->
+                        <div class="ms-2">
+                            <a href="/about-us/brian-karimi"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Brian Karimi
+                            </a>
+                            <p class="text-black mt-2">IT Support Specialist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-w-4xl mt-5 mx-auto bg-gray-100 text-white p-6">
+                    <h2 class="text-3xl md:text-xl font-bold text-gray-800">United Kingdom</h2>
+                    <!-- Top horizontal rule -->
+                    <hr class="border-t-2 border-blue-800 my-4" />
+
+                    <!-- Grid for names + titles -->
+                    <div class="grid grid-cols-2 gap-x-9 gap-y-6">
+                        <!-- Claire Fuller -->
+                        <div class="ms-2">
+                            <a href="/about-us/claire-fuller"
+                               class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Claire Fuller
+                            </a>
+                            <p class="text-black mt-2">Head of Therapies & Wellbeing</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-w-4xl mt-5 mx-auto p-6">
+                    <div class="flex justify-end mt-12">
+                        <p class="text-s text-secondary">
+                            Interested in joining the team? Find out more.
+                        </p>
+                    </div>
+                    <div class="flex justify-end mt-2">
+                        <a href="/careers"
+                           class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition">
+                            Careers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 

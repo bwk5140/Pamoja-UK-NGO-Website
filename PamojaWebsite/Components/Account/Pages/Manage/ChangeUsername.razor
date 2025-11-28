@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage"
+﻿@page "/Account/Manage/ChangeUsername"
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
@@ -9,29 +9,27 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<div class="container-lg" style="max-width: 700px;">
-    <h3>@Loc["Username"]</h3>
-    <StatusMessage />
-    <div class="row">
-        <div class="col-xl-6">
-            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <input type="text" value="@username" id="username" class="form-control" placeholder=@Loc["ChooseUsername"] disabled />
-                    <label for="username" class="form-label">@Loc["CurrentUsername"]</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Username" id="Input.Username" class="form-control" placeholder=@Loc["ChangeUsername"] />
-                    <label for="Input.Username" class="form-label">@Loc["NewUsername"]</label>
-                    <ValidationMessage For="() => Input.Username" class="text-danger" />
-                </div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+<h3 class="font-bold text-gray-500 mb-2">@Loc["Username"]</h3>
+<StatusMessage />
+<div class="row">
+    <div class="col-xl-6">
+        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <input type="text" value="@username" id="username" class="form-control" placeholder=@Loc["ChooseUsername"] disabled />
+                <label for="username" class="form-label">@Loc["CurrentUsername"]</label>
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Username" id="Input.Username" class="form-control" placeholder=@Loc["ChangeUsername"] />
+                <label for="Input.Username" class="form-label">@Loc["NewUsername"]</label>
+                <ValidationMessage For="() => Input.Username" class="text-danger" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                    @Loc["Save"]
-                </button>
-            </EditForm>
-        </div>
+                @Loc["Save"]
+            </button>
+        </EditForm>
     </div>
 </div>
 

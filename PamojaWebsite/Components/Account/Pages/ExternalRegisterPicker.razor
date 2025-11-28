@@ -13,9 +13,12 @@
                     @foreach (var provider in externalLogins)
                     {
                         var imgSrc = "Images/" + provider.DisplayName + ".svg";
-                        <button type="submit" class="w-100 btn btn-lg btn-primary mb-3" c name="provider" value="@provider.Name" title="@Loc["RegisterUsing"] @provider.DisplayName"
-                                style="background-color: transparent; border-color: #2f4f4f; color: black;">
-                            <img src="@imgSrc" height="30" width="30" /> @Loc["RegisterWith"] @provider.DisplayName
+                        <button type="submit" class="w-100 btn btn-lg btn-primary mb-3 flex items-center justify-center" c name="provider" value="@provider.Name" title="@Loc["RegisterUsing"] @provider.DisplayName"
+                                style="background-color: transparent; border-color: #2f4f4f; color: white;">
+                            <img src="@imgSrc" height="30" width="30" />
+                            <span class="ms-3">
+                                @Loc["RegisterWith"] @provider.DisplayName
+                            </span>
                         </button>
                     }
                 </p>

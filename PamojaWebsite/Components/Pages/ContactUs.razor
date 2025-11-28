@@ -1,0 +1,142 @@
+﻿@page "/contact-us"
+
+<PageTitle>School Package</PageTitle>
+
+@inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<!-- Hero Section -->
+<section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <!-- Decorative background shapes -->
+    <div class="absolute inset-0">
+        <!-- Large blurred gradient blob -->
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+        <!-- Smaller accent circle -->
+        <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
+
+        <!-- Diagonal rectangle -->
+        <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
+
+        <!-- Triangle using clip-path -->
+        <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+             style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative max-w-7xl mx-auto">
+        <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+            <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Contact Us</h1>
+        </div>
+    </div>
+</section>
+
+<div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <section class="bg-green-900 text-white rounded-xl p-8 mb-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Get in Touch with Us</h1>
+            <p class="text-xl mb-8">We're here to help with all your mental wellbeing & safeguarding needs.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="tel:+254724357691" class="flex items-center gap-2 bg-white text-green-900 px-6 py-3 rounded-full font-medium hover:bg-blue-50 transition">
+                    <i data-feather="phone"></i> +254 724 357 691
+                </a>
+                <a href="mailto:pamojamentalhealth@pamojasafeguarding.com" class="flex min-w-0 items-center gap-2 bg-white text-green-900 px-6 py-3 rounded-full font-medium hover:bg-blue-50 transition">
+                    <i data-feather="mail"></i> <div class="truncate">pamojamentalhealth@pamojasafeguarding.com</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form and Info -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <!-- Contact Form -->
+        <div class="bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-green-900">Send us a Message</h2>
+            <form class="space-y-6">
+                <div>
+                    <label for="name" class="block text-gray-700 mb-2">Name</label>
+                    <input type="text" id="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="email" class="block text-gray-700 mb-2">Email Address</label>
+                    <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="subject" class="block text-gray-700 mb-2">Subject</label>
+                    <input type="text" id="subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="message" class="block text-gray-700 mb-2">Message</label>
+                    <textarea id="message" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-green-900 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition font-medium">
+                    Submit Message
+                </button>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="space-y-8">
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-green-900">Pamoja Counselling, Mental Wellbeing and Safeguarding Services</h2>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <i data-feather="map-pin" class="text-green-800 mt-1"></i>
+                        <div>
+                            <h3 class="font-medium text-gray-800">Address</h3>
+                            <p class="text-gray-600">00517 Uhuru Gardens, P.O BOX 280, Nairobi, Kenya</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i data-feather="phone" class="text-green-800 mt-1"></i>
+                        <div>
+                            <h3 class="font-medium text-gray-800">Phone</h3>
+                            <p class="text-gray-600">+254 724 357 691</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i data-feather="mail" class="text-green-800 mt-1"></i>
+                        <div class="min-w-0">
+                            <h3 class="font-medium text-gray-800">Email</h3>
+                            <p class="text-gray-600 break-words">pamojamentalhealth@pamojasafeguarding.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-green-900">Connect With Us</h2>
+                <div class="flex gap-4">
+                    <a href="https://www.facebook.com/PamojaSafeguard/" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                        <i data-feather="facebook"></i>
+                    </a>
+                    <a href="https://x.com/PamojaSafeguard" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                        <img src="Icons/twitter-x-green.svg" class="w-6 h-6" />
+                    </a>
+                    <a href="https://www.instagram.com/pamojasafeguard/" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                        <i data-feather="instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("featherInit");
+        }
+    }
+    private async Task ScrollToTarget()
+    {
+        await JS.InvokeVoidAsync("scrollToSection", "contact");
+    }
+}

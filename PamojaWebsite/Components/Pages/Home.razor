@@ -1,12 +1,357 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
 @inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
 
 <div class="container-xxxl">
-    <div class="center-container">
-        <img src="/Images/PamojaLogo.png" />
-    </div>
+    <!-- Hero Section -->
+    @* <section class="relative bg-green-900 text-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+            <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
+            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
+            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+                 style="clip-path: polygon(0 0, 100% 0, 0 100%);"></div>
+        </div>
+
+        <!-- Scrolling text at the top -->
+        <div class="absolute top-0 left-0 w-full overflow-hidden">
+            <div class="whitespace-nowrap animate-marquee text-2xl font-bold text-green-200">
+                Akili bora, Afya bora &nbsp; Akili bora, Afya bora &nbsp; Akili bora, Afya bora
+            </div>
+        </div>
+    </section> *@
+
+    <section class="relative bg-gradient-to-r from-primary to-secondary text-black">
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+
+        <!-- Background media -->
+        @* <div class="relative w-full overflow-hidden" style="aspect-ratio: 16 / 9;">
+            <img id="banner"
+                 class="absolute top-0 left-0 w-full h-full object-cover"
+                 src="/Images/Art/protect-each-other.jpg" />
+        </div> *@
+        <div class="relative w-full overflow-hidden" style="aspect-ratio: 16 / 9;">
+            <video id="myVideo" autoplay
+                   muted
+                   loop
+                   playsinline
+                   class="absolute top-0 left-0 w-full h-full object-cover"
+                   poster="/Images/Art/Elephant.png">
+                <source src="/Videos/Art/Elephants.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Overlay content -->
+        @* <div class="absolute inset-0 flex items-center">
+            <div class="ml-[40%] md:px-16 text-left">
+                <div class="bg-white/70 md:bg-transparent p-4 md:p-0 rounded-lg md:rounded-none max-w-full md:max-w-xl">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-green-900 mb-4 md:mb-6">Who We Are</h2>
+                    <p class="text-base sm:text-lg text-gray-700 mb-4 md:mb-6 leading-relaxed">
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services was founded to address the urgent need...
+                    </p>
+                    <p class="text-base sm:text-lg text-gray-700 mb-4 md:mb-6 leading-relaxed">
+                        The vision for Pamoja was inspired by lived experience. Its founder, Faith, combined her professional expertise...
+                    </p>
+                    <div class="bg-green-800 text-white p-4 md:p-6 rounded-lg shadow-lg">
+                        <p class="italic text-base sm:text-lg">
+                            "Together, we bridge clinical expertise with safeguarding strategies that are both evidence-based and culturally relevant."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+    </section>
+
+
+   @*  <section class="relative bg-gradient-to-r from-primary to-secondary text-black">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="flex flex-col md:flex-col items-center">
+            <div class="md:w-1/4 mb-10 md:mb-0">
+                <div class="relative w-full overflow-hidden" style="aspect-ratio: 16 / 9;">
+                    <video id ="myVideo" autoplay
+                   muted
+                   loop
+                   playsinline
+                   class="absolute top-0 left-0 w-full h-full object-cover"
+                   poster="/Images/Art/Elephant.png">
+                <source src="/Videos/Art/Elephants.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+                    <img id="banner"
+                         class="absolute top-0 left-0 w-full h-full object-cover"
+                         src="/Images/Art/protect-each-other.jpg" type="video/mp4" />
+                </div>
+            </div>
+            <div class="md:w-3/4 mb-10 md:mb-0">
+                <!-- Overlay content -->
+                <div class="absolute inset-0 flex items-center">
+                    <div class="max-w-2xl px-8 md:px-16 text-left">
+                        <h2 class="text-4xl font-bold text-green-900 mb-6">Who We Are</h2>
+                        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                            Pamoja Counselling, Mental Wellbeing and Safeguarding Services was founded to address the urgent need for mental wellbeing and safeguarding support in communities where stigma, silence, and systemic barriers have long prevented access to care.
+                        </p>
+                        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                            The vision for Pamoja was inspired by lived experience. Its founder, Faith, combined her professional expertise as a mental health nurse and safeguarding specialist with personal experiences of bereavement, migration, and domestic abuse.
+                        </p>
+                        <div class="bg-green-800 text-white p-6 rounded-lg shadow-lg">
+                            <p class="italic text-lg">
+                                "Together, we bridge clinical expertise with safeguarding strategies that are both evidence-based and culturally relevant."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- Who We Are Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h2 class="text-4xl font-bold text-green-900 mb-6">Who We Are</h2>
+                    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services was founded to address the urgent need for mental wellbeing and safeguarding support in communities where stigma, silence, and systemic barriers have long prevented access to care.
+                    </p>
+                    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        The vision for Pamoja was inspired by lived experience. Its founder, Faith, combined her professional expertise as a mental health nurse and safeguarding specialist with personal experiences of bereavement, migration, and domestic abuse.
+                    </p>
+                    <div class="bg-green-800 text-white p-6 rounded-lg shadow-lg">
+                        <p class="italic text-lg">
+                            "Together, we bridge clinical expertise with safeguarding strategies that are both evidence-based and culturally relevant."
+                        </p>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="ms-5 bg-white rounded-lg shadow-2xl p-8 text-gray-800">
+                        @* <h2 class="text-3xl font-bold mb-4 text-green-800">
+                            Our Mission & Vision
+                        </h2> *@
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1761336477679-QUMJ1WWE778S5KCMO800/unsplash-image-Q6KzWe-lq9Y.jpg"
+                                     alt="Our Team"
+                                     class="ms-1 w-full h-96 object-cover rounded-lg shadow-2xl">
+                                @* <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1761a630-6e44-4264-9e8b-40609e682f3e/Vision.jpg"
+                                     alt="Our Vision"
+                                     class="w-16 h-16 rounded-full object-cover mr-4 flex-shrink-0"> *@
+
+                            </div>
+                            <div class="flex items-center">
+                                @* <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/49958a89-c7ce-47c4-85cb-293063703f6f/Mission.jpg"
+                                     alt="Our Mission"
+                                     class="w-16 h-16 rounded-full object-cover mr-4 flex-shrink-0"> *@
+                                <div class="me-3">
+                                    <h3 class="text-xl font-bold text-secondary mb-2">Our Vision</h3>
+                                    <p class="text-gray-600">Building a society that values mental wellbeing and safeguarding practice, ensuring every individual can thrive with dignity and respect.</p>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="text-xl font-bold text-secondary mb-2">Our Mission</h3>
+                                    <p class="text-gray-600">Empowering organisations with skills to promote mental well-being, prevent harm, and develop effective safeguarding practices.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Statistics Section -->
+    @* <section class="py-20 bg-gray-100 text-green-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Mental Health in Kenya</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white/10 rounded-lg p-6 backdrop-blur-sm transform hover:scale-125">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757346264639-8ZTQ5TVOJUT1IG4QK46I/1%2Bin%2B10%2BKenyans%2B%252810.3%2525%2529%2Blives%2Bwith%2Ba%2Bcommon%2Bmental%2Bdisorder.%2B4%2Bpeople%2Bdie%2Bby%2Bsuicide%2Bevery%2Bday%2Bin%2BKenya.%2BMental%2Bhealth%2Bissues%2Bcost%2Bthe%2Beconomy%2BKsh%2B62.2%2Bbillion%2Bannually%2Bin%2Blost%2Bproductivity.%2B75%2525%2Bo.png"
+                         alt="Mental Health Statistics"
+                         class="w-full h-64 object-contain rounded-lg mb-4">
+                    <div class="text-center">
+                        <p class="text-lg">1 in 10 Kenyans lives with a common mental disorder</p>
+                    </div>
+                </div>
+                <div class="bg-white/10 rounded-lg p-6 backdrop-blur-sm transform hover:scale-125">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/c0227eed-6028-4c49-9d0c-8fcb28b9779a/Global+vs+Kenya+Mental+Health+Data.PNG"
+                         alt="Global vs Kenya Data"
+                         class="w-full h-64 object-contain rounded-lg mb-4">
+                    <div class="text-center">
+                        <p class="text-lg">Mental health issues cost the economy Ksh 62.2 billion annually</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- Values Section-->
+    <section class="py-20 bg-gray-100">
+         <div class="container mx-auto px-6">
+            <div class="max-w-[1000px] mx-auto">
+                <!-- Header -->
+                <h2 class="text-4xl font-bold text-green-900 text-center mb-12">Our Values</h2>
+                @* <div class="border-b-2 border-green-900 mb-6">
+                    <h2 class="text-4xl font-semibold text-green-900 pt-8 pb-2 mb-6 pl-1/2">Values</h2>
+                </div> *@
+
+                <!-- Grid -->
+                <div class="grid grid-cols-2 grid-rows-3 md:grid-cols-3 md:grid-rows-2 gap-6 text-center">
+                    <!-- Integrity -->
+                    <div class="bg-white rounded-lg shadow">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <circle cx="110" cy="110" r="90" fill="none" stroke="#0ea5e9" stroke-width="14" opacity="0.65" />
+                                <circle cx="110" cy="110" r="60" fill="#2563eb" />
+                            </svg>
+                            <figcaption class="font-semibold text-base">Integrity</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Acting with honesty, transparency, and accountability in everything we do</p>
+                        </figure>
+                    </div>
+
+                    <!-- Respect & Dignity -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <polygon points="110,30 190,180 30,180" fill="#a78bfa" />
+                            </svg>
+                            <figcaption class="mt-2 font-semibold text-base">Respect &amp; Dignity</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Valuing each person’s uniqueness, upholding human rights, and treating all with compassion and fairness</p>
+                        </figure>
+                    </div>
+
+                    <!-- Safety & Protection -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <polygon points="110,30 170,65 170,135 110,170 50,135 50,65" fill="#10b981" />
+                            </svg>
+                            <figcaption class="mt-2 font-semibold text-base">Safety &amp; Protection</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Ensuring safety and wellbeing through supportive environments and robust safeguarding practices</p>
+                        </figure>
+                    </div>
+
+                    <!-- Community & Collaboration -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <path d="M110,40 c-30,0 -55,25 -55,55 c0,35 30,55 55,70 c25,15 55,25 65,45"
+                                      fill="none" stroke="#f59e0b" stroke-width="10" />
+                                <path d="M110,40 c30,0 55,25 55,55 c0,35 -30,55 -55,70 c-25,15 -55,25 -65,45"
+                                      fill="none" stroke="#facc15" stroke-width="10" />
+                            </svg>
+                            <figcaption class="mt-2 font-semibold text-base">Community &amp; Collaboration</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Building inclusive communities that foster belonging, collaboration, and mutual support</p>
+                        </figure>
+                    </div>
+
+                    <!-- Empowerment -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <path d="M110,35 L125,80 L170,85 L135,110 L150,155 L110,130 L70,155 L85,110 L50,85 L95,80 Z"
+                                      fill="#7c3aed" />
+                            </svg>
+                            <figcaption class="mt-2 font-semibold text-base">Empowerment &amp; Prevention</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Supporting people to make choices, build resilience, and take ownership of growth</p>
+                        </figure>
+                    </div>
+
+                    <!-- Empathy & Care -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <figure class="m-0">
+                            <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <path d="M20,130 C60,90 90,170 130,130 C160,100 185,115 200,105 L200,180 L20,180 Z"
+                                      fill="#22d3ee" />
+                            </svg>
+                            <figcaption class="mt-2 font-semibold text-base">Empathy &amp; Care</figcaption>
+                            <p class="mt-1 text-sm text-gray-700">Listening deeply and responding with understanding, compassion, and kindness</p>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+         </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-green-900 text-center mb-12">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-gradient-to-br from-primary to-secondary text-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757321482597-FYSHDUANS0MYOCT2KFCV/unsplash-image-Ko3EMBFggok.jpg"
+                         alt="Awareness & Prevention"
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-4">Awareness & Prevention</h3>
+                        <ul class="space-y-2 text-gray-800/90">
+                            <li>• Wellbeing Assessment & Tembea Plan</li>
+                            <li>• Challenging Stigma</li>
+                            <li>• Suicide Prevention</li>
+                            <li>• Recognizing Trauma</li>
+                            <li>• Substance misuse support</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-gradient-to-br from-secondary to-accent text-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757319795783-PW800YV3WVWNMGBVVUZ3/unsplash-image-rg1y72eKw6o.jpg"
+                         alt="Pamoja Workshops"
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-4">Pamoja Workshops</h3>
+                        <ul class="space-y-2 text-gray-800/90">
+                            <li>• First Aid for Mental Health</li>
+                            <li>• Safeguarding & Policy Integration</li>
+                            <li>• Trauma Informed Practice</li>
+                            <li>• Forensic Mental Health Care</li>
+                            <li>• Neurodiversity and Identity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-gradient-to-br from-accent to-primary text-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757320039101-LBDKT7SW3PKTBFQH46L4/unsplash-image-NTyBbu66_SI.jpg"
+                         alt="Well Being"
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-4">Well Being</h3>
+                        <ul class="space-y-2 text-gray-800/90">
+                            <li>• Burn Out Prevention & Self-care</li>
+                            <li>• Clinical Supervision</li>
+                            <li>• Team Building</li>
+                            <li>• Stress Management</li>
+                            <li>• Eco Therapy</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="/services" class="bg-accent text-gray-800 px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-300 inline-flex items-center">
+                    Learn More
+                    <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
 </div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("featherInit");
+            await JS.InvokeVoidAsync("observeVideoVisibility", "myVideo");
+        }
+    }
+
+}
 
