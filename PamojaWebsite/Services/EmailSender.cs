@@ -66,13 +66,13 @@ namespace PamojaWebsite.Services
                                     <td style=""padding:40px; text-align:center;"">
                                         <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
-                                        <h1 style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
-                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
-                                        </h1>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; border-bottom:1px solid #ddd; text-align:center;"">
+                                        <p style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
+                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
+                                        </p>
                                         <p class=""ms-3"" style=""margin:20px 0 10px; padding-bottom: 40px; font-size:16px; color:#555;"">
                                             Please confirm your account by <a style=""text-decoration: none;"" href=""{0}"">clicking here</a>.
                                         </p>
@@ -160,13 +160,13 @@ namespace PamojaWebsite.Services
                                     <td style=""padding:40px; text-align:center;"">
                                         <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
-                                        <h1 style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
-                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
-                                        </h1>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; border-bottom:1px solid #ddd; text-align:center;"">
+                                        <p style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
+                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
+                                        </p>
                                         <p class=""ms-3"" style=""margin:20px 0 10px; padding-bottom: 40px; font-size:16px; color:#555;"">
                                             Please confirm your account by <a style=""text-decoration: none;"" href=""{0}"">clicking here</a>.
                                         </p>
@@ -253,13 +253,13 @@ namespace PamojaWebsite.Services
                                     <td style=""padding:40px; text-align:center;"">
                                         <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
-                                        <h1 style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
-                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
-                                        </h1>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; border-bottom:1px solid #ddd; text-align:center;"">
+                                        <p style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">
+                                            Welcome to Pamoja Counselling, Mental Wellbeing and Safeguarding Services
+                                        </p>
                                         <p class=""ms-3"" style=""margin:20px 0 10px; padding-bottom: 40px; font-size:16px; color:#555;"">
                                             Please confirm your account by <a style=""text-decoration: none;"" href=""{0}"">clicking here</a>.
                                         </p>

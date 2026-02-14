@@ -102,7 +102,7 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
-        ApplicationUser ??= await ApplicationUserService.GetApplicationUser();
+        ApplicationUser = await ApplicationUserService.GetApplicationUser();
         using var context = await DbFactory.CreateDbContextAsync();
         if (ApplicationUser is not null)
         {
@@ -113,6 +113,7 @@
             }
             Username = ApplicationUser.Name.Substring(0, index);
         }
+        StateHasChanged();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
