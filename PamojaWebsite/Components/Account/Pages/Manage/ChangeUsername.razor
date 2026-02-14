@@ -9,27 +9,30 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<h3 class="font-bold text-gray-500 mb-2">@Loc["Username"]</h3>
-<StatusMessage />
-<div class="row">
-    <div class="col-xl-6">
-        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <input type="text" value="@username" id="username" class="form-control" placeholder=@Loc["ChooseUsername"] disabled />
-                <label for="username" class="form-label">@Loc["CurrentUsername"]</label>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Username" id="Input.Username" class="form-control" placeholder=@Loc["ChangeUsername"] />
-                <label for="Input.Username" class="form-label">@Loc["NewUsername"]</label>
-                <ValidationMessage For="() => Input.Username" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+
+<div class="pt-[5%] mb-5 py-20">
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">@Loc["Username"]</h3>
+    <StatusMessage />
+    <div class="row">
+        <div class="col-xl-6">
+            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <input type="text" value="@username" id="username" class="form-control" placeholder=@Loc["ChooseUsername"] disabled />
+                    <label for="username" class="form-label">@Loc["CurrentUsername"]</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Username" id="Input.Username" class="form-control" />
+                    <label for="Input.Username" class="form-label">@Loc["NewUsername"]</label>
+                    <ValidationMessage For="() => Input.Username" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                @Loc["Save"]
-            </button>
-        </EditForm>
+                    @Loc["Save"]
+                </button>
+            </EditForm>
+        </div>
     </div>
 </div>
 
@@ -55,16 +58,17 @@
     {
         if (Input.Username != username)
         {
-            var setUsernameResult = await UserManager.SetUserNameAsync(user, Input.Username);
-            if (!setUsernameResult.Succeeded)
-            {
-                RedirectManager.RedirectToCurrentPageWithStatus("Error: Username is already taken.", HttpContext);
+            if (user is not null){
+                var setUsernameResult = await UserManager.SetUserNameAsync(user, Input.Username);
+                if (!setUsernameResult.Succeeded)
+                {
+                    RedirectManager.RedirectToCurrentPageWithStatus("Error: Username is already taken.", HttpContext);
+                }
+                await SignInManager.RefreshSignInAsync(user);
+                ApplicationUserService.UpdateUser(user);
+                RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
             }
-        }
-
-        await SignInManager.RefreshSignInAsync(user);
-        ApplicationUserService.UpdateUser(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+        }        
     }
 
     private sealed class InputModel

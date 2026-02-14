@@ -10,7 +10,9 @@ namespace PamojaWebsite.Data
         [Display(Name = "First Name")]
         public string Name { get; set; } = "";
         public byte[]? ProfilePicture { get; set; }
-        public DateTime? Created { get; set; } = DateTime.Now;
+        public string? ImageContentType { get; set; }
+        public string? Bio { get; set; } = "";
+        public DateTime? Created { get; set; } = DateTime.UtcNow;
     }
 
 }

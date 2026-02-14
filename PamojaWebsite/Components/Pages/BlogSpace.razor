@@ -1,0 +1,597 @@
+﻿@page "/blog-space"
+@using System.Text
+@using Markdig
+@using System.Threading.Tasks
+@using System.Text.RegularExpressions
+
+<PageTitle>Blog Space | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IJSRuntime JS
+@inject IMemoryCache Cache
+@inject MyApiService ApiService
+@inject NavigationManager NavigationManager
+@inject ApplicationUserService ApplicationUserService
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <body class="min-h-screen bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <header class="bg-white shadow-sm sticky z-50 text-green-900">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex md:items-center space-x-2 mb-4 md:mb-0 mt-4">
+                    <div class="w-8 h-8 bg-green-900 rounded-lg"></div>
+                    <a href="/blog-space" @onclick="BackToBlogSpace" class="text-2xl font-bold text-dark hover:text-green-900 transition-colors">Blog Space</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+        <main id="main-content" class="container mx-auto px-4 py-8">
+        @if (CurrentBlogPost is null)
+        {
+            <!-- Blog List Page (Default View) -->
+            <div id="blog-list-page" class="fade-in">
+                <!-- Hero Section -->
+                <section class="mb-12">
+                    <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-green-900">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4">Discover, learn, and share knowledge through our curated collection of articles.</h1>
+                        <!-- Search Bar -->
+                        <div class="max-w-4xl mx-auto">
+                            <div class="relative">
+                                <InputText type="text"
+                                           id="search-input"
+                                           @bind-Value="@SearchInput"
+                                           placeholder="Search..."
+                                           class="w-full px-6 py-4 bg-gray-100 rounded-lg text-dark focus:outline-none focus:ring-2 focus:ring-accent" />
+                                <button @onclick="@SearchBlogs" class="absolute right-3 top-3 bg-green-800 hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                @if (BlogCategories is not null && BlogCategories.Any())
+                                {
+                                    foreach (var category in BlogCategories)
+                                    {
+                                        <button @onclick="(() => FilterByCategory(category.Name))" class="@GetFilterClass(category.Name)">@category.Name</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Blog Grid -->
+                <section>
+                    @if (BlogPosts is not null && BlogPosts.Any())
+                    {
+                        <div class="flex justify-between items-center mb-8">
+                            <h2 class="text-2xl font-bold text-dark">Latest Articles</h2>
+                            <div class="text-gray-600">
+                                <span id="blog-count">@BlogPosts.Count()</span> articles found
+                            </div>
+                        </div>
+
+                        <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                            @foreach (var Post in BlogPosts)
+                            {
+
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                    <div class="relative">
+                                        <img src="@GetImageSrc(Post.PreviewImage, Post.PreviewImageContentType)"
+                                             alt="@Post.Title"
+                                             class="w-full h-48 object-cover"
+                                             loading="lazy">
+                                        <span class="absolute top-4 left-4 bg-gray-100 backdrop-blur-sm text-dark px-3 py-1 rounded-full text-sm font-medium">
+                                            @Post.Category
+                                        </span>
+                                    </div>
+
+                                    <div class="p-6">
+                                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                                            @if (Post.ReadTime <= 1)
+                                            {
+                                                <span class="flex items-center mr-4">
+                                                    <i class="far fa-clock mr-1"></i> 1 min
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="flex items-center mr-4">
+                                                    <i class="far fa-clock mr-1"></i> @Post.ReadTime mins
+                                                </span>
+                                            }
+                                            <span class="flex items-center">
+                                                <i class="far fa-calendar mr-1"></i> @GetTimeAgo(Post.Date)
+                                            </span>
+                                        </div>
+
+                                        <h3 class="text-xl font-bold text-dark mb-3 line-clamp-2">@Post.Title</h3>
+                                        <p class="text-gray-600 mb-4 line-clamp-3">@((MarkupString)Truncate(Post.Content, 200))</p>
+
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <img src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
+                                                     alt="@Post.Author"
+                                                     class="w-8 h-8 rounded-full mr-2"
+                                                     loading="lazy">
+                                                <span class="text-sm font-medium">@Post.Author</span>
+                                            </div>
+
+                                            <button @onclick="(() => ViewBlogDetail(Post))" class="text-green-800 hover:text-secondary font-medium flex items-center gap-2">
+                                                Read More <i class="fas fa-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                            if (loadingBlogs)
+                            {
+                                <div class="center-container">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                        <g class="spinner" transform="translate(60,60)">
+                                            <circle cx="0" cy="-40" r="6" />
+                                            <circle cx="28" cy="-28" r="6" />
+                                            <circle cx="40" cy="0" r="6" />
+                                            <circle cx="28" cy="28" r="6" />
+                                            <circle cx="0" cy="40" r="6" />
+                                            <circle cx="-28" cy="28" r="6" />
+                                            <circle cx="-40" cy="0" r="6" />
+                                            <circle cx="-28" cy="-28" r="6" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="center-container">
+                                    <p class="text-gray-600 mb-4 line-clamp-3">No Blogs Found...</p>
+                                </div>
+                            }
+                    }
+                    <!-- Loading State -->
+                    <div id="loading" class="text-center py-12 hidden">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        <p class="mt-4 text-gray-600">Loading blogs...</p>
+                    </div>
+
+                    <!-- No Results -->
+                    <div id="no-results" class="text-center py-12 hidden">
+                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No blogs found</h3>
+                        <p class="text-gray-600">Try adjusting your search or filter to find what you're looking for.</p>
+                    </div>
+                </section>
+            </div>
+        }
+        else
+        {
+                if (loadingCurrentBlog)
+                {
+                    <div class="center-container">
+                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <g class="spinner" transform="translate(60,60)">
+                                <circle cx="0" cy="-40" r="6" />
+                                <circle cx="28" cy="-28" r="6" />
+                                <circle cx="40" cy="0" r="6" />
+                                <circle cx="28" cy="28" r="6" />
+                                <circle cx="0" cy="40" r="6" />
+                                <circle cx="-28" cy="28" r="6" />
+                                <circle cx="-40" cy="0" r="6" />
+                                <circle cx="-28" cy="-28" r="6" />
+                            </g>
+                        </svg>
+                    </div>
+                }
+                else
+                {
+                    <!-- Blog Detail Page (Hidden by default) -->
+                    <div id="blog-detail-page" class="fade-in">
+                        <!-- Back Button -->
+                        <button @onclick="BackToBlogSpace" class="mb-8 text-green-800 hover:text-secondary font-medium flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Back to Blogs
+                        </button>
+                        @{
+                            var dateString = ((CurrentBlogPost.Date.ToLongDateString()).Split(','))[1].Trim();
+                            var index = dateString.IndexOf(" ");
+                            var shortDateString = dateString.Substring(0, index);
+                        }
+                        <!-- Blog Content -->
+                        <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <!-- Blog Header -->
+                            <div class="p-8 md:p-12">
+                                <div class="flex flex-wrap items-center gap-4 mb-6">
+                                    <span class="bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-medium">@CurrentBlogPost.Category</span>
+                                    <span class="text-gray-500"><i class="far fa-clock mr-1"></i> <span id="blog-read-time">@CurrentBlogPost.ReadTime min read</span></span>
+                                    <span class="text-gray-500"><i class="far fa-calendar mr-1"></i> <span id="blog-date">@shortDateString @CurrentBlogPost.Date.Day, @CurrentBlogPost.Date.Year</span></span>
+                                </div>
+
+                                <h1 id="blog-title" class="text-3xl md:text-4xl lg:text-5xl font-bold text-dark mb-6 font-serif">@CurrentBlogPost.Title</h1>
+
+                                <div class="flex items-center gap-4 mb-8">
+                                    <img src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
+                                         alt="Author avatar"
+                                         class="w-12 h-12 rounded-full"
+                                         loading="lazy">
+                                    <div>
+                                        <p id="blog-author" class="font-semibold text-dark">@CurrentBlogPost.Author</p>
+                                        <p id="blog-author-role" class="text-gray-600 text-sm">@CurrentBlogPost.AuthorRole</p>
+                                    </div>
+                                </div>
+
+                                <!-- Featured Image -->
+                                <div class="mb-8">
+                                    <img id="blog-featured-image"
+                                         src="@GetImageSrc(CurrentBlogPost.PreviewImage, CurrentBlogPost.PreviewImageContentType)"
+                                         alt="Featured blog image"
+                                         class="w-full h-64 md:h-96 object-cover rounded-xl"
+                                         loading="lazy">
+                                    <p class="text-gray-500 text-sm mt-2 text-center">Featured image for the blog post</p>
+                                </div>
+                            </div>
+
+                            <!-- Blog Body -->
+                            <div class="px-8 md:px-12 pb-12">
+                                <div class="max-w-3xl mx-auto">
+                                    <div id="blog-content" class="blog-content text-gray-700">
+                                        @((MarkupString)RenderedHtml)
+                                    </div>
+                                    @if (BlogTags is not null && BlogTags.Any())
+                                    {
+                                        <!-- Tags -->
+                                        <div class="mt-12 pt-8 border-t">
+                                            <h3 class="text-lg font-semibold mb-4">Tags</h3>
+                                            <div id="blog-tags" class="flex flex-wrap gap-2">
+                                                @foreach (var tag in BlogTags)
+                                                {
+                                                    <button @onclick="(() => SearchBlogsByTag(tag.Name))" type="button" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">@tag.Name</button>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <!-- Author Bio -->
+                                    <div class="mt-12 bg-gray-50 rounded-xl p-6">
+                                        <div class="flex items-start gap-4">
+                                            <img src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
+                                                 alt="Author bio image"
+                                                 class="w-16 h-16 rounded-full"
+                                                 loading="lazy">
+                                            <div>
+                                                <h3 class="text-xl font-semibold mb-2">About the Author</h3>
+                                                <p id="blog-author-bio" class="text-gray-600">@CurrentBlogPost.AuthorBio</p>
+                                                @if (AuthorSocialMedia is not null && AuthorSocialMedia.Any())
+                                                {
+                                                    <div class="flex gap-4 mt-4">
+                                                        @foreach (var social_link in AuthorSocialMedia)
+                                                        {
+                                                            <a href="@social_link.Url" class="text-gray-500 hover:text-primary"><i class="@SocialMediaLinkCSS_Classes[social_link.Platform]"></i></a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Related Blogs -->
+                                    <div class="mt-12">
+                                        <h3 class="text-2xl font-bold mb-6">Related Articles</h3>
+                                        <div id="related-blogs" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            @if (RelatedBlogPosts is not null && RelatedBlogPosts.Any())
+                                            {
+                                                @foreach (var relatedBlog in RelatedBlogPosts)
+                                                {
+                                                    <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                                                         @onclick="() => ViewBlogDetail(relatedBlog)">
+                                                        <h4 class="font-semibold text-dark mb-2 line-clamp-2">@relatedBlog.Title</h4>
+                                                        <p class="text-gray-600 text-sm line-clamp-2 mb-3">@relatedBlog.Content</p>
+                                                        <div class="flex items-center text-sm text-gray-500">
+                                                            <span class="flex items-center">
+                                                                <i class="far fa-clock mr-1"></i> @relatedBlog.ReadTime
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="col-span-2 text-center py-8 text-gray-500">
+                                                    <p>No related articles found</p>
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+        }
+    </main>
+    </body>
+</div>
+
+@code {
+    private string RenderedHtml => Markdown.ToHtml(CurrentBlogPost.Content);
+    private List<Tag>? BlogTags { get; set; } = new();
+    private List<BlogPost>? BlogPosts { get; set; }
+    private List<BlogPost>? RelatedBlogPosts { get; set; }
+    private List<BlogCategory>? BlogCategories { get; set; }
+    private List<SocialMediaLink>? AuthorSocialMedia { get; set; } = new();
+    private BlogPost? CurrentBlogPost { get; set; } = null;
+    private bool loadingBlogs { get; set; } = false;
+    private bool loadingCurrentBlog { get; set; } = false;
+
+    [Parameter]
+    public string currentFilter { get; set; } = "All";
+
+    [Parameter]
+    public string currentSearch { get; set; } = "";
+
+    [Parameter]
+    public string SearchInput { get; set; } = "";
+
+    [Parameter]
+    public int blogCount { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string Id { get; set; }
+
+    private Dictionary<string, string> SocialMediaLinkCSS_Classes { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        loadingBlogs = true;
+        loadingCurrentBlog = true;
+        using var context = await DbFactory.CreateDbContextAsync();
+        BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+        BlogCategories = await context.BlogCategory.OrderByDescending(bc => bc.Name).ToListAsync();
+        if (BlogPosts is not null)
+        {
+            CurrentBlogPost = BlogPosts.FirstOrDefault(b => b.Id == Id);
+            StateHasChanged();
+        }
+        loadingCurrentBlog = false;
+        var category = new BlogCategory();
+        category.Name = currentFilter;
+        BlogCategories.Add(category);
+
+        if (CurrentBlogPost is not null)
+        {
+            BlogTags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
+            BlogTags = BlogTags.Where(t => t.BlogPostIds.Contains(CurrentBlogPost.Id)).ToList();
+            RelatedBlogPosts = BlogPosts.Where(b => b.Category == CurrentBlogPost.Category && b.Id != CurrentBlogPost.Id).Take(2).ToList();
+            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Facebook");
+            var X = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "X");
+            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Instagram");
+            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "LinkedIn");
+            var Github = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Github");
+
+            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Facebook.Id);
+                SocialMediaLinkCSS_Classes["Facebook"] = "fab fa-facebook";
+                AuthorSocialMedia.Add(Facebook);
+            }
+            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Instagram.Id);
+                SocialMediaLinkCSS_Classes["Instagram"] = "fab fa-instagram";
+                AuthorSocialMedia.Add(Instagram);
+            }
+            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(X.Id);
+                SocialMediaLinkCSS_Classes["X"] = "fab fa-twitter";
+                AuthorSocialMedia.Add(X);
+            }
+            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Github.Id);
+                SocialMediaLinkCSS_Classes["Github"] = "fab fa-github";
+                AuthorSocialMedia.Add(Github);
+            }
+            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(LinkedIn.Id);
+                SocialMediaLinkCSS_Classes["LinkedIn"] = "fab fa-linkedin";
+                AuthorSocialMedia.Add(LinkedIn);
+            }
+        }
+        loadingBlogs = false;
+        StateHasChanged();
+    }
+    private string GetFilterClass(string filter)
+    {
+        return !string.IsNullOrWhiteSpace(currentFilter) && currentFilter.Equals(filter) == true
+            ? "px-4 py-2 rounded-full border text-white bg-green-900 border-green-800 hover:bg-green-900 transition"
+            : "px-4 py-2 rounded-full border bg-gray-300 border-gray-300 hover:bg-gray-400 transition";
+    }
+    private string GetImageSrc(byte[] imageBytes, string contentType)
+    {
+        var base64 = Convert.ToBase64String(imageBytes);
+        return $"data:{contentType};base64,{base64}";
+    }
+    private async Task SearchBlogsByTag(string tag)
+    {
+        CurrentBlogPost = null;
+        using var context = await DbFactory.CreateDbContextAsync();
+        BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+        var regexPattern = ".*" + Regex.Escape(tag) + ".*";
+
+        if (!string.IsNullOrEmpty(regexPattern))
+        {
+            BlogPosts = BlogPosts?
+                .Where(bp =>
+                    bp.Tags.Any(t =>
+                        t != null && Regex.IsMatch(t.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase))
+                )
+                .ToList();
+        }
+        SearchInput = "";
+        StateHasChanged();
+    }
+    private async Task SearchBlogs()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchInput))
+        {
+            using var context = await DbFactory.CreateDbContextAsync();
+            currentSearch = SearchInput?.Trim() ?? "";
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            var regexPattern = ".*" + Regex.Escape(currentSearch.ToLower()) + ".*";
+
+            if (!string.IsNullOrEmpty(SearchInput))
+            {
+                BlogPosts = BlogPosts?
+                    .Where(bp =>
+                        (bp.Author != null && Regex.IsMatch(bp.Author.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (bp.Title != null && Regex.IsMatch(bp.Title.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (bp.Category != null && Regex.IsMatch(bp.Category.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        bp.Tags.Any(t => t != null && Regex.IsMatch(t.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase))
+                    )
+                    .ToList();
+            }
+
+
+            SearchInput = "";
+            StateHasChanged();
+        }
+    }
+    private async Task FilterByCategory(string category)
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        currentFilter = category;
+        currentSearch = "";
+        SearchInput = "";
+        var query  = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+
+        // Category filter
+        if (!string.IsNullOrWhiteSpace(currentFilter) && currentFilter.ToLower() != "all")
+        {
+            BlogPosts = query?.Where(b => b.Category.Equals(currentFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            BlogPosts = query;
+        }
+
+        // Search filter
+        if (!string.IsNullOrWhiteSpace(currentSearch))
+        {
+            var searchLower = currentSearch.ToLower();
+
+            BlogPosts = query?.Where(b =>
+                b.Title.ToLower().Contains(searchLower) ||
+                b.Content.ToLower().Contains(searchLower) ||
+                b.Author.ToLower().Contains(searchLower) ||
+                b.Category.ToLower().Contains(searchLower) ||
+                b.Tags.Any(tag => tag.ToLower().Contains(searchLower))
+            ).ToList<BlogPost>();
+        }
+        StateHasChanged();
+    }
+    public async Task ViewBlogDetail(BlogPost Post)
+    {
+        loadingCurrentBlog = true;
+        CurrentBlogPost = Post;
+        if (CurrentBlogPost is not null){
+            using var context = await DbFactory.CreateDbContextAsync();
+            BlogTags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
+            BlogTags = BlogTags?.Where(t => t.BlogPostIds.Contains(CurrentBlogPost.Id)).ToList();
+            RelatedBlogPosts = BlogPosts.Where(b => b.Category == CurrentBlogPost.Category && b.Id != CurrentBlogPost.Id).Take(2).ToList();
+            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Facebook");
+            var X = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "X");
+            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Instagram");
+            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "LinkedIn");
+            var Github = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Github");
+
+            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Facebook.Id);
+                SocialMediaLinkCSS_Classes["Facebook"] = "fab fa-facebook";
+                AuthorSocialMedia.Add(Facebook);
+            }
+            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Instagram.Id);
+                SocialMediaLinkCSS_Classes["Instagram"] = "fab fa-instagram";
+                AuthorSocialMedia.Add(Instagram);
+            }
+            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(X.Id);
+                SocialMediaLinkCSS_Classes["X"] = "fab fa-twitter";
+                AuthorSocialMedia.Add(X);
+            }
+            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(Github.Id);
+                SocialMediaLinkCSS_Classes["Github"] = "fab fa-github";
+                AuthorSocialMedia.Add(Github);
+            }
+            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
+            {
+                CurrentBlogPost.AuthorSocialMediaIds.Add(LinkedIn.Id);
+                SocialMediaLinkCSS_Classes["LinkedIn"] = "fab fa-linkedin";
+                AuthorSocialMedia.Add(LinkedIn);
+            }
+        }
+        loadingCurrentBlog = false;
+        currentSearch = "";
+        SearchInput = "";
+        
+        StateHasChanged();
+    }
+    private void BackToBlogSpace()
+    {
+        CurrentBlogPost = null;
+        currentFilter = null;
+        currentSearch = "";
+        SearchInput = "";
+        StateHasChanged();
+    }
+    public string Truncate(string value, int maxChars)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+        return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
+    }
+    public static string GetTimeAgo(DateTime dateTime)
+    {
+        TimeSpan timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan <= TimeSpan.FromSeconds(60))
+            return $"{timeSpan.Seconds} seconds ago";
+
+        if (timeSpan <= TimeSpan.FromMinutes(60))
+            return timeSpan.Minutes > 1 ? $"{timeSpan.Minutes} minutes ago" : "1 minute ago";
+
+        if (timeSpan <= TimeSpan.FromHours(24))
+            return timeSpan.Hours > 1 ? $"{timeSpan.Hours} hours ago" : "1 hour ago";
+
+        if (timeSpan <= TimeSpan.FromDays(30))
+            return timeSpan.Days > 1 ? $"{timeSpan.Days} days ago" : "yesterday";
+
+        if (timeSpan <= TimeSpan.FromDays(365))
+            return timeSpan.Days > 30 ? $"{timeSpan.Days / 30} months ago" : "1 month ago";
+
+        return timeSpan.Days > 365 ? $"{timeSpan.Days / 365} years ago" : "1 year ago";
+    }
+}

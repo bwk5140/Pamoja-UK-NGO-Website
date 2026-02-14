@@ -1,4 +1,4 @@
-﻿@page "/Career-Fields"
+﻿@page "/career-fields"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using PamojaWebsite.Data
@@ -8,45 +8,47 @@
 
 <PageTitle>Index</PageTitle>
 
-<div class="container mx-auto px-4 py-12">
-    <section class="text-green-900 rounded-xl p-2 mb-2">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Career Fields</h1>
-        </div>
-    </section>
-    <div class="space-y-8">
-        <div class="p-8 text-end">
-            <a href="Career-Fields/create" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
-                Create New
-            </a>
-        </div>
-    </div>
-
-    <QuickGrid Class="table" Items="context.CareerField">
-        <PropertyColumn Title="Field" Class="py-3" Property="careerfield =>  careerfield.Name" />
-        <TemplateColumn Title="Description" Class="py-3" Context="careerfield">
-            <span title="@careerfield.Description">@Truncate(careerfield.Description, 50)</span>
-        </TemplateColumn>
-        <TemplateColumn Context="careerfield" Class="py-3">
-            <div class="text-end">
-                <div class="p-2" style="display: inline-block;">
-                    <a href="@($"Career-Fields/edit?id={careerfield.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
-                        Edit
-                    </a>
-                </div>
-                <div class="p-2" style="display: inline-block;">
-                    <a href="@($"Career-Fields/details?id={careerfield.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
-                        Details
-                    </a>
-                </div>
-                <div class="p-2" style="display: inline-block;">
-                    <a href="@($"Career-Fields/delete?id={careerfield.Id}")" class="bg-red-600 text-white p-2 rounded hover:bg-red-800 transition">
-                        Delete
-                    </a>
-                </div>
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container mx-auto px-4 py-12">
+        <section class="text-green-900 rounded-xl p-2 mb-2">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Career Fields</h1>
             </div>
-        </TemplateColumn>
-    </QuickGrid>
+        </section>
+        <div class="space-y-8">
+            <div class="p-8 text-end">
+                <a href="Career-Fields/create" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                    Create New
+                </a>
+            </div>
+        </div>
+
+        <QuickGrid Class="table" Items="context.CareerField">
+            <PropertyColumn Title="Field" Class="py-3" Property="careerfield => careerfield.Name" />
+            <TemplateColumn Title="Description" Class="py-3" Context="careerfield">
+                <span title="@careerfield.Description">@Truncate(careerfield.Description, 50)</span>
+            </TemplateColumn>
+            <TemplateColumn Context="careerfield" Class="py-3">
+                <div class="text-end">
+                    <div class="p-2" style="display: inline-block;">
+                        <a href="@($"Career-Fields/edit?id={careerfield.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
+                            Edit
+                        </a>
+                    </div>
+                    <div class="p-2" style="display: inline-block;">
+                        <a href="@($"Career-Fields/details?id={careerfield.Id}")" class="bg-gray-100 text-green-900 p-2 rounded hover:bg-gray-200 transition">
+                            Details
+                        </a>
+                    </div>
+                    <div class="p-2" style="display: inline-block;">
+                        <a href="@($"Career-Fields/delete?id={careerfield.Id}")" class="bg-red-600 text-white p-2 rounded hover:bg-red-800 transition">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
 </div>
 
 

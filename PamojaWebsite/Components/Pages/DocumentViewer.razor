@@ -1,0 +1,206 @@
+﻿@page "/document-viewer"
+
+<PageTitle>Document Viewer | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IJSRuntime JS
+@inject IMemoryCache Cache
+@inject MyApiService ApiService
+@inject NavigationManager NavigationManager
+@inject ApplicationUserService ApplicationUserService
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<div class="bg-gray-50 font-sans mx-auto pt-[5%]">
+    <!-- Top Navigation Bar -->
+    <header class="bg-white shadow-sm border-b border-gray-200 no-print p-6">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo and Back Button -->
+                <div class="flex items-center space-x-4">
+                    <button @onclick="GoBack" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>Back</span>
+                    </button>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="text-xl font-semibold text-gray-800">Document Viewer</div>
+                </div>
+
+                <!-- Document Actions -->
+                <div class="flex items-center space-x-4 mt-5">
+                    <button @onclick="ToggleSidebar" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Toggle sidebar">
+                        <i class="fas fa-columns"></i>
+                    </button>
+                    <button @onclick="ToggleFullscreen" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button @onclick="PrintDocument" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Print">
+                        <i class="fas fa-print"></i>
+                    </button>
+                    <button @onclick="DownloadDocument" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="flex">
+        <!-- Sidebar -->
+        <DocumentSidebar Metadata="@CurrentDoc?.Metadata" />
+
+        <!-- Main Viewer -->
+        <div class="flex-1 document-content">
+            @if (CurrentDoc is not null)
+            {
+                @if (CurrentDoc.ContentType.Contains("openxmlformats-officedocument"))
+                {
+                    <iframe id="docFrame" src="@GetViewerUrl(CurrentDoc)"
+                            width="100%" height="100%" style="border:none"></iframe>
+                }
+                else if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType == "text/plain")
+                {
+                    <iframe id="docFrame" src="@($"api/documents/{CurrentDoc.Id}")"
+                            width="100%" height="100%" style="border:none"></iframe>
+                }
+                else
+                {
+                    <a href="@($"api/documents/{CurrentDoc.Id}")" target="_blank">
+                        Download File
+                    </a>
+                }
+            }
+            else
+            {
+                if (loadingDoc)
+                {
+                    <div class="center-container">
+                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <g class="spinner" transform="translate(60,60)">
+                                <circle cx="0" cy="-40" r="6" />
+                                <circle cx="28" cy="-28" r="6" />
+                                <circle cx="40" cy="0" r="6" />
+                                <circle cx="28" cy="28" r="6" />
+                                <circle cx="0" cy="40" r="6" />
+                                <circle cx="-28" cy="28" r="6" />
+                                <circle cx="-40" cy="0" r="6" />
+                                <circle cx="-28" cy="-28" r="6" />
+                            </g>
+                        </svg>
+                    </div>
+                }
+                else
+                {
+                    <div class="center-container">
+                        <p class="text-gray-600">No document selected.</p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string pdfBase64 = "";
+    private List<string> highlights = new();
+    private List<string> comments = new();
+    private List<string> bookmarks = new();
+    private string comment { get; set; } = "";
+    private bool loadingDoc { get; set; } = false;
+
+    [SupplyParameterFromQuery] 
+    public string Id { get; set; }
+
+    private PamojaWebsite.Data.Document? CurrentDoc;
+    private string selectedText = string.Empty;
+    private string? DocumentDataUri =>
+    CurrentDoc != null
+        ? $"data:{CurrentDoc.ContentType};base64,{Convert.ToBase64String(CurrentDoc.Data)}"
+        : null;
+
+    private void GoBack() => JS.InvokeVoidAsync("history.back");
+
+    private async Task ToggleSidebar()
+    => await JS.InvokeVoidAsync("eval",
+        "document.body.classList.toggle('sidebar-open')");
+
+    private async Task ToggleFullscreen()
+    {
+        await JS.InvokeVoidAsync("eval", @"
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }");
+    }
+
+    private void PrintDocument() => JS.InvokeVoidAsync("print");
+
+    private async Task DownloadDocument()
+    {
+        if (CurrentDoc is not null)
+        {
+            // Convert byte array to Base64 string
+            var base64 = Convert.ToBase64String(CurrentDoc.Data);
+            await JS.InvokeVoidAsync("downloadFile",
+                CurrentDoc.Title,
+                CurrentDoc.ContentType,
+                base64);
+
+            // Format as a Data URL
+            pdfBase64 = $"data:application/pdf;base64,{base64}";
+            CurrentDoc.Downloads += 1;
+            using var context = await DbFactory.CreateDbContextAsync();
+            context.Attach(CurrentDoc).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+        }
+    }
+    private string? ViewerUrl
+    {
+        get
+        {
+            if (CurrentDoc == null) return null;
+
+            if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType.StartsWith("image/"))
+            {
+                return $"data:{CurrentDoc.ContentType};base64,{Convert.ToBase64String(CurrentDoc.Data)}";
+            }
+            else if (CurrentDoc.ContentType.Contains("word") || CurrentDoc.ContentType.Contains("excel"))
+            {
+                // Use Office Web Viewer
+                var fileUrl = NavigationManager.BaseUri + $"api/documents/{CurrentDoc.Id}";
+                return $"https://view.officeapps.live.com/op/embed.aspx?src={Uri.EscapeDataString(fileUrl)}";
+            }
+            else
+            {
+                return null; // fallback: force download
+            }
+        }
+    }
+    private string GetViewerUrl(PamojaWebsite.Data.Document doc)
+    {
+        var fileUrl = NavigationManager.BaseUri + $"api/documents/{doc.Id}";
+        return $"https://view.officeapps.live.com/op/embed.aspx?src={Uri.EscapeDataString(fileUrl)}";
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        loadingDoc = true;
+        using var context = await DbFactory.CreateDbContextAsync();
+        CurrentDoc = await context.Document.FirstOrDefaultAsync(d => d.Id == Id);
+        if (CurrentDoc is not null)
+        {    
+            CurrentDoc.Metadata = await context.DocumentMetadata?.FirstOrDefaultAsync(dm => dm.DocumentId == CurrentDoc.Id);
+            StateHasChanged();
+        }
+    }
+
+}

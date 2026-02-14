@@ -1,0 +1,121 @@
+﻿@page "/donations/edit"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Edit</h1>
+
+    <h2>Donation</h2>
+    <hr />
+    @if (Donation is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="Donation" OnValidSubmit="UpdateDonation" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" />
+                    <input type="hidden" name="Donation.Id" value="@Donation.Id" />
+                    <div class="mb-3">
+                        <label for="invoicenumber" class="form-label">InvoiceNumber:</label>
+                        <InputText id="invoicenumber" @bind-Value="Donation.InvoiceNumber" class="form-control" />
+                        <ValidationMessage For="() => Donation.InvoiceNumber" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <InputText id="name" @bind-Value="Donation.Name" class="form-control" />
+                        <ValidationMessage For="() => Donation.Name" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <InputText id="email" @bind-Value="Donation.Email" class="form-control" />
+                        <ValidationMessage For="() => Donation.Email" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="currency" class="form-label">Currency:</label>
+                        <InputText id="currency" @bind-Value="Donation.Currency" class="form-control" />
+                        <ValidationMessage For="() => Donation.Currency" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount:</label>
+                        <InputNumber id="amount" @bind-Value="Donation.Amount" class="form-control" />
+                        <ValidationMessage For="() => Donation.Amount" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="processingfee" class="form-label">ProcessingFee:</label>
+                        <InputNumber id="processingfee" @bind-Value="Donation.ProcessingFee" class="form-control" />
+                        <ValidationMessage For="() => Donation.ProcessingFee" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="total" class="form-label">Total:</label>
+                        <InputNumber id="total" @bind-Value="Donation.Total" class="form-control" />
+                        <ValidationMessage For="() => Donation.Total" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    <div>
+        <a href="/donations">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Donation? Donation { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Donation ??= await context.Donation.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Donation is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateDonation()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Donation!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!DonationExists(Donation!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/donations");
+    }
+
+    private bool DonationExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Donation.Any(e => e.Id == id);
+    }
+}

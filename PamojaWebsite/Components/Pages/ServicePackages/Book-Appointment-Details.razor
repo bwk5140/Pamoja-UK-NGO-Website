@@ -1,0 +1,437 @@
+﻿@page "/services/book-appointment/details"
+
+<PageTitle>Book Appointment Details | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@inject MyApiService ApiService
+
+@rendermode InteractiveServer
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-xxxl">
+        <!-- Banner Section -->
+        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+            <div class="absolute inset-0">
+                <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
+            </div>
+
+            <!-- Content -->
+            <div class="relative max-w-7xl mx-auto">
+                <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                    <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Custom Package Solutions</h1>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breadcrumb Section-->
+        <div class="py-10">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <!-- About Us -->
+                            <li class="inline-flex items-center">
+                                <a href="/services"
+                                   class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                                    Services
+                                </a>
+                            </li>
+
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/services/book-appointment"
+                                       class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
+                                        Book an Appointment
+                                    </a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </section>
+
+            <section class="bg-white py-12 px-6 max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Book an Appointment</h1>
+                <p class="text-center font-bold text-lg text-gray-600 mb-3">Limited 1-Hour Consultations Now Available</p>
+                <p class="text-center text-lg text-gray-600 mb-6">
+                    Please book your 1 hour consultation (2900KSH) designed to assess your needs and determine the most appropriate service package for your objectives.
+                    This consultation provides an opportunity for an open and thoughtful discussion about your goals and how we can best support them.
+                    Availability is limited, and appointments are scheduled on a first-come, first-served basis.
+                </p>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Book an Appointment</h1>
+                    <div class="bg-white p-6 rounded-lg shadow-md w-88">
+                        <div class="flex flex-col md:flex-row gap-8 justify-between">
+                            <div class="md:w-3/4 flex flex-row md:flex-col gap-8">
+                                <div class="mb-3 mt-3">
+                                    <img src="Images/PamojaLogo.png"
+                                         width="200"
+                                         height="200" />
+                                </div>
+                                <div class="mb-3 mt-3">
+                                    <p class="font-bold text-lg text-gray-800 mb-6">
+                                        Consultation with Pamoja Mental Health and Safeguarding Team
+                                    </p>
+                                    <p class="text-lg text-gray-600 mb-6">
+                                        1 hour
+                                    </p>
+                                    @if (latestAppointment is not null)
+                                    {
+                                        <div class="flex flex-col">
+                                            <p class="font-bold text-lg text-gray-800 mb-3">
+                                                @latestAppointment.Date.DayOfWeek, @getMonth(latestAppointment.Date.Month) @latestAppointment.Date.Day at @latestAppointment.Time.ToString("hh:mm tt")
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="md:w-1/4 px-2">
+                                <button class="p-2 rounded hover:bg-gray-200" @onclick="BackToAppointmentBooking">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke-width="2"
+                                         stroke="currentColor"
+                                         class="w-6 h-6 text-gray-700">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88">
+                        <EditForm Model="appointmentDetailsDTO" OnValidSubmit="BookAnAppointment" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-sm text-red-600" />
+
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                <InputText id="name" @bind-Value="appointmentDetailsDTO.FirstName"
+                                           class="@InputClass(() => appointmentDetailsDTO.FirstName)" />
+                                <ValidationMessage For="@(() => appointmentDetailsDTO.FirstName)" class="text-sm text-red-600 mt-1" />
+                            </div>
+
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                <InputText id="name" @bind-Value="appointmentDetailsDTO.LastName"
+                                           class="@InputClass(() => appointmentDetailsDTO.LastName)" />
+                                <ValidationMessage For="@(() => appointmentDetailsDTO.LastName)" class="text-sm text-red-600 mt-1" />
+                            </div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <button @onclick="ToggleDropdown"
+                                        type="button"
+                                        class="inline-flex justify-center w-40 rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    @if (SelectedCountryCode is not null)
+                                    {
+                                        @if (!IsOpen)
+                                        {
+                                            <SVGFlag class="vertical-align: center;" CountryCode="@SelectedCountryCode.ISOCode" Width="30" Height="20" />
+                                            <span class="ml-2">+@SelectedCountryCode.Code</span>
+                                        }
+                                    }
+                                </button>
+                                @if (IsOpen)
+                                {
+                                    <div id="countryDropdown" class="origin-top-right absolute mt-2 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-96 overflow-y-auto">
+                                        
+                                        <div class="relative">
+                                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <InputText id="country" class="w-full h-8 left-4 px-12" @bind-Value="Country" @bind-Value:after="(() => SearchCountry(Country))" @oninput="(() => SearchCountry(Country))" />
+                                        </div>
+                                        
+                                        <ul class="py-1">
+                                            @if (CountryCodes is not null)
+                                            {
+                                                foreach (var country in CountryCodes)
+                                                {
+                                                    <li>
+                                                        <button type="button" class="flex items-center w-full h-16 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                                @onclick="() => OnCountrySelected(country)">
+                                                            <SVGFlag class="vertical-align: center;" CountryCode="@country.ISOCode" Width="30" Height="20" />
+                                                            <span class="ml-2">+@country.Code @country.Country</span>
+                                                        </button>
+                                                    </li>
+                                                }
+                                            }
+
+                                        </ul>
+                                    </div>
+                                }
+                                <div>
+                                    <InputText id="subject" type="tel" @bind-Value="appointmentDetailsDTO.Phone"
+                                               class="@InputClass(() => appointmentDetailsDTO.Phone)" placeholder="732123876" />
+                                    <ValidationMessage For="@(() => appointmentDetailsDTO.Phone)" class="text-sm text-red-600 mt-1" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <InputText id="email" type="email" @bind-Value="appointmentDetailsDTO.Email"
+                                           class="@InputClass(() => appointmentDetailsDTO.Email)" />
+                                <ValidationMessage For="@(() => appointmentDetailsDTO.Email)" class="text-sm text-red-600 mt-1" />
+                            </div>
+                            <div>
+                                <label for="subject" class="block text-md font-medium text-gray-700 mb-1">
+                                    Please provide a brief description of
+                                    what you hope to achieve from this consultation, including any current challenges or concerns
+                                </label>
+                                <InputTextArea id="subject" @bind-Value="appointmentDetailsDTO.Message" rows="5"
+                                               class="@InputClass(() => appointmentDetailsDTO.Message)" />
+                                <ValidationMessage For="@(() => appointmentDetailsDTO.Message)" class="text-sm text-red-600 mt-1" />
+                            </div>
+                            <div>
+                                <button type="submit"
+                                        class="w-full bg-green-800 hover:bg-green-900 text-white font-medium py-3 px-6 rounded-lg transition duration-300">
+                                    Confirm Appointment
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CountryCode SelectedCountryCode { get; set; }
+
+    [Parameter]
+    public bool Selected { get; set; } = false;
+
+    [Parameter]
+    public string Country { get; set; } = "";
+
+    private CultureInfo? selectedCulture;
+    private List<CountryCode> CountryCodes { get; set; }
+    private Donation Donation { get; set; }
+
+    private EditContext editContext;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private AppointmentDetailsDTO appointmentDetailsDTO { get; set; } = new();
+
+    [Parameter]
+    public string? Month { get; set; }
+
+    [Parameter]
+    public Appointment latestAppointment { get; set; }
+
+    private bool IsOpen { get; set; }
+
+    private void ToggleDropdown()
+    {
+        IsOpen = !IsOpen;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedCulture = CultureInfo.CurrentCulture;
+        if (Id is not null){
+            using var context = await DbFactory.CreateDbContextAsync();
+            var appointments = await context.Appointment.ToListAsync();
+            if (appointments is not null){
+                latestAppointment = appointments.FirstOrDefault(a => a.Id == Id);
+                if (latestAppointment is not null)
+                {
+                    Month = getMonth(latestAppointment.Date.Month);
+                }
+            }
+            
+            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+            if (CountryCodes is not null){
+                CountryCodes = CountryCodes.OrderByDescending(c => c.Country).ToList();
+            }
+            else{
+                return;
+            }
+            SelectedCountryCode = CountryCodes.Last();
+            StateHasChanged();
+        }
+    }
+    [JSInvokable]
+    public void CloseDropdown(){
+        IsOpen = false;
+        StateHasChanged();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("registerOutsideClick", "countryDropdown", DotNetObjectReference.Create(this));
+        }
+    }
+
+    private async Task SearchCountry(string searchterm)
+    {
+        if (string.IsNullOrEmpty(searchterm))
+        {
+            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+        }
+        else
+        {
+            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+            if (CountryCodes is not null){
+                CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Country.StartsWith(searchterm)).ToList();
+            }
+        }
+        StateHasChanged();
+    }
+    private string getMonth(int month)
+    {
+        switch (month)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+        return Month;
+    }
+    private void OnCountrySelected(CountryCode countryCode)
+    {
+        SelectedCountryCode = CountryCodes.FirstOrDefault(c => c.Code == countryCode.Code);
+        IsOpen = false;
+    }
+    private async Task BookAnAppointment()
+    {
+        if (latestAppointment is not null)
+        {
+            latestAppointment.FirstName = appointmentDetailsDTO.FirstName;
+            latestAppointment.LastName = appointmentDetailsDTO.LastName;
+            latestAppointment.Email = appointmentDetailsDTO.Email;
+            latestAppointment.Phone = appointmentDetailsDTO.Phone;
+            latestAppointment.Message = appointmentDetailsDTO.Message;
+
+            using var context = DbFactory.CreateDbContext();
+            context.Attach(latestAppointment!).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+
+            appointmentDetailsDTO.FirstName = "";
+            appointmentDetailsDTO.LastName = "";
+            appointmentDetailsDTO.Phone = "";
+            appointmentDetailsDTO.Email = "";
+            appointmentDetailsDTO.Message = "";
+
+            StateHasChanged();
+
+            Donation = new Donation();
+            Donation.Name = latestAppointment.FirstName + " " + latestAppointment.LastName;
+            Donation.Amount = 2900;
+            Donation.Currency = "KES";
+            Donation.ProcessingFee = 195;
+            Donation.Email = latestAppointment.Email;
+
+            context.Donation.Add(Donation);
+            await context.SaveChangesAsync();
+
+            NavigationManager.NavigateTo($"/book-appointment/payment?Id={Donation.Id}&AptId={latestAppointment.Id}");
+        }   
+    }
+    private void HandleInvalidSubmit()
+    {
+        // Optionally focus first invalid field or show a message
+    }
+
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+            ? $"{baseClasses} border-red-500 focus:border-red-500"
+            : $"{baseClasses} border-gray-300";
+    }
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
+    private void BackToAppointmentBooking()
+    {
+        NavigationManager.NavigateTo($"/services/book-appointment");
+    }
+    public class AppointmentDetailsDTO
+    {
+        [Required(ErrorMessage = "First Name is required")]
+        [StringLength(100, ErrorMessage = "Name must be 100 characters or fewer")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last Name is required")]
+        [StringLength(100, ErrorMessage = "Name must be 100 characters or fewer")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Phone is required")]
+        [Phone(ErrorMessage = "Enter a valid phone number")]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Message is required")]
+        [StringLength(2000, ErrorMessage = "Message is too long")]
+        public string Message { get; set; }
+
+        public DateTime Datetime { get; set; }
+        public string Calendar { get; set; }
+    }
+}

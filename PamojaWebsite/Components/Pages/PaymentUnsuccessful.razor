@@ -1,0 +1,98 @@
+﻿@page "/payment-unsuccessful"
+@using Microsoft.JSInterop
+@using System.Linq.Expressions
+@using System.ComponentModel.DataAnnotations
+
+@inject MyApiService ApiService
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
+@inject IMemoryCache Cache
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Payment-Unsuccessful | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@rendermode InteractiveServer
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="max-w-screen-sm mx-auto">
+        <div class="mt-5 text-center text-[#2f4f4f]">
+            <a href="/" class="no-underline">
+                <img class="mb-2" src="Images/PamojaLogo.png" width="80" height="60" />
+            </a>
+            <div class="max-w-screen-sm mx-auto mt-5 text-center text-gray-600">
+                <!-- Centered container -->
+                <div class="flex justify-center">
+                    <!-- Card -->
+                    <div class="max-w-[350px] w-full bg-white shadow rounded">
+                        <!-- Card header -->
+                        <div class="px-4 py-2 border-b">
+                            <strong>Payment Abandoned</strong>
+                        </div>
+
+                        <!-- Card body -->
+                        <div class="p-4">
+                            <!-- Red alert card -->
+                            <div class="mt-2 mb-2 max-w-[1200px] border-l-8 border-r-2 border-t-2 border-b-2 border-red-600 text-red-600 bg-white rounded">
+                                <div class="p-2 flex items-center space-x-2">
+                                    <img src="Icons/info-circle-red.svg" />
+                                    <span>Your payment was unsuccessful.</span>
+                                </div>
+                            </div>
+
+                            <p>Status: @message</p>
+
+                            <!-- Blue info card -->
+                            <div class="mt-2 mb-2 text-gray-600 bg-white rounded">
+                                <div class="p-2">
+                                    You have not been charged
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? Id { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? message { get; set; }
+
+    private string? id;
+
+    [Parameter]
+    public Payment? payment { get; set; }
+
+    Dictionary<string, string> CurrencySymbols = new()
+    {
+        { "USD", "$" },
+        { "EUR", "€" },
+        { "GBP", "£" },
+        { "JPY", "¥" },
+        { "CAD", "C$" },
+        { "AUD", "A$" },
+        { "KES", "KSh" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        var payments = await (await ApiService.GetClient()).GetFromJsonAsync<List<Payment>>("api/db/payments");
+        payment = payment ?? payments.FirstOrDefault(d => d.Id == id);
+    }
+}

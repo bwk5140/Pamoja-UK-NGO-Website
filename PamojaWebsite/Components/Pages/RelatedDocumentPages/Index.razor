@@ -1,0 +1,40 @@
+﻿@page "/relateddocuments"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="relateddocuments/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.RelatedDocument">
+        <PropertyColumn Property="relateddocument => relateddocument.Title" />
+        <PropertyColumn Property="relateddocument => relateddocument.LastUpdated" />
+
+        <TemplateColumn Context="relateddocument">
+            <a href="@($"relateddocuments/edit?id={relateddocument.Id}")">Edit</a> |
+            <a href="@($"relateddocuments/details?id={relateddocument.Id}")">Details</a> |
+            <a href="@($"relateddocuments/delete?id={relateddocument.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

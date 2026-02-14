@@ -10,5 +10,7 @@
         public string? ExperienceLevel { get; set; }
         public string? Link { get; set; }
         public string? CareerField { get; set; }
+        public DateTime? Created { get; set; } = DateTime.UtcNow;
+        public DateTime? Expiration { get; set; }
     }
 }

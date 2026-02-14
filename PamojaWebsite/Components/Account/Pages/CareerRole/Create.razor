@@ -1,4 +1,4 @@
-﻿@page "/Career-Roles/create"
+﻿@page "/career-roles/create"
 @using Microsoft.EntityFrameworkCore
 @using PamojaWebsite.Data
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
@@ -8,92 +8,99 @@
 
 <PageTitle>Create</PageTitle>
 
-<div class="container mx-auto px-4 py-12">
-    <section class="text-green-900 rounded-xl p-2">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl md:text-5xl font-bold mb-4">Create</h1>
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container mx-auto px-4 py-12 max-w-7xl">
+        <section class="text-green-900 rounded-xl p-2">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-2xl md:text-5xl font-bold mb-4">Create</h1>
+            </div>
+        </section>
+        <div class="space-y-8">
+            <div class="p-8 text-end">
+                <a href="/career-roles" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                    Back to List
+                </a>
+            </div>
         </div>
-    </section>
-    <div class="space-y-8">
-        <div class="p-8 text-end">
-            <a href="/Career-Roles" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
-                Back to List
-            </a>
-        </div>
-    </div>
-    <div class="row mx-auto px-20">
-        <div class="col-md-4">
-            <EditForm method="post" Model="careerRoleDTO" OnValidSubmit="AddCareerRole" FormName="create" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="mb-3">
-                    <label for="name" class="form-label">Title:</label>
-                    <InputText id="name" @bind-Value="careerRoleDTO.Name" class="form-control" />
-                    <ValidationMessage For="() => careerRoleDTO.Name" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="careerfield" class="form-label">Field:</label>
-                    <InputSelect id="career" class="form-select" @bind-Value="careerRoleDTO.CareerField">
-                        <option value="">-- Choose a field --</option>
-                        @if (CareerFields is not null)
-                        {
-                            @foreach (var field in CareerFields)
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 place-content-center">
+            <div class="bg-white p-8 rounded-xl shadow-lg w-full">
+                <EditForm method="post" Model="careerRoleDTO" OnValidSubmit="AddCareerRole" FormName="create" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Title:</label>
+                        <InputText id="name" @bind-Value="careerRoleDTO.Name" class="form-control" />
+                        <ValidationMessage For="() => careerRoleDTO.Name" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="careerfield" class="form-label">Field:</label>
+                        <InputSelect id="career" class="form-select" @bind-Value="careerRoleDTO.CareerField">
+                            <option value="">-- Choose a field --</option>
+                            @if (CareerFields is not null)
                             {
-                                <option value="@field.Name">@field.Name</option>
+                                @foreach (var field in CareerFields)
+                                {
+                                    <option value="@field.Name">@field.Name</option>
+                                }
                             }
-                        }
-                    </InputSelect>
+                        </InputSelect>
 
-                    <ValidationMessage For="() => careerRoleDTO.CareerField" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="experiencelevel" class="form-label">Experience Level:</label>
-                    <InputSelect id="level" class="form-select" @bind-Value="careerRoleDTO.ExperienceLevel">
-                        <option value="">-- Choose an experience level --</option>
-                        @foreach (var level in ExperienceLevels)
-                        {
-                            <option value="@level">@level</option>
-                        }
-                    </InputSelect>
+                        <ValidationMessage For="() => careerRoleDTO.CareerField" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="experiencelevel" class="form-label">Experience Level:</label>
+                        <InputSelect id="level" class="form-select" @bind-Value="careerRoleDTO.ExperienceLevel">
+                            <option value="">-- Choose an experience level --</option>
+                            @foreach (var level in ExperienceLevels)
+                            {
+                                <option value="@level">@level</option>
+                            }
+                        </InputSelect>
 
-                    <ValidationMessage For="() => careerRoleDTO.ExperienceLevel" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="location" class="form-label">Location:</label>
-                    <InputSelect id="location" class="form-select" @bind-Value="careerRoleDTO.Location">
-                        <option value="">-- Choose a location --</option>
-                        @foreach (var location in AvailableLocations)
-                        {
-                            <option value="@location">@location</option>
-                        }
-                    </InputSelect>
+                        <ValidationMessage For="() => careerRoleDTO.ExperienceLevel" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location:</label>
+                        <InputSelect id="location" class="form-select" @bind-Value="careerRoleDTO.Location">
+                            <option value="">-- Choose a location --</option>
+                            @foreach (var location in AvailableLocations)
+                            {
+                                <option value="@location">@location</option>
+                            }
+                        </InputSelect>
 
-                    <ValidationMessage For="() => careerRoleDTO.Location" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="worktype" class="form-label">Work Type:</label>
-                    <InputSelect id="worktype" class="form-select" @bind-Value="careerRoleDTO.WorkType">
-                        <option value="">-- Choose a work type --</option>
-                        @foreach (var worktype in WorkTypes)
-                        {
-                            <option value="@worktype">@worktype</option>
-                        }
-                    </InputSelect>
+                        <ValidationMessage For="() => careerRoleDTO.Location" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="worktype" class="form-label">Work Type:</label>
+                        <InputSelect id="worktype" class="form-select" @bind-Value="careerRoleDTO.WorkType">
+                            <option value="">-- Choose a work type --</option>
+                            @foreach (var worktype in WorkTypes)
+                            {
+                                <option value="@worktype">@worktype</option>
+                            }
+                        </InputSelect>
 
-                    <ValidationMessage For="() => careerRoleDTO.WorkType" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description:</label>
-                    <InputTextArea rows="6" id="description" @bind-Value="careerRoleDTO.Description" class="form-control" />
-                    <ValidationMessage For="() => careerRoleDTO.Description" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="link" class="form-label">Link:</label>
-                    <InputText id="link" @bind-Value="careerRoleDTO.Link" class="form-control" />
-                    <ValidationMessage For="() => careerRoleDTO.Link" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Create</button>
-            </EditForm>
+                        <ValidationMessage For="() => careerRoleDTO.WorkType" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiration" class="form-label">Expiration Date:</label>
+                        <InputDate DateTimeKind rows="6" id="description" @bind-Value="careerRoleDTO.Expiration" class="form-control" />
+                        <ValidationMessage For="() => careerRoleDTO.Expiration" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <InputTextArea rows="6" id="description" @bind-Value="careerRoleDTO.Description" class="form-control" />
+                        <ValidationMessage For="() => careerRoleDTO.Description" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="link" class="form-label">Link:</label>
+                        <InputText id="link" @bind-Value="careerRoleDTO.Link" class="form-control" />
+                        <ValidationMessage For="() => careerRoleDTO.Link" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </EditForm>
+            </div>
         </div>
     </div>
 </div>
@@ -130,10 +137,12 @@
         CareerRole.ExperienceLevel = careerRoleDTO.ExperienceLevel;
         CareerRole.Link = careerRoleDTO.Link;
         CareerRole.CareerField = careerRoleDTO.CareerField;
+        careerRoleDTO.Expiration = DateTime.SpecifyKind(careerRoleDTO.Expiration, DateTimeKind.Utc);
+        CareerRole.Expiration = careerRoleDTO.Expiration;
 
         context.CareerRole.Add(CareerRole);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/Career-Roles");
+        NavigationManager.NavigateTo("/career-roles");
     }
     public class CareerRoleDTO
     {
@@ -144,5 +153,6 @@
         public string? ExperienceLevel { get; set; }
         public string? Link { get; set; }
         public string? CareerField { get; set; }
+        public DateTime Expiration { get; set; } = DateTime.UtcNow;
     }
 }

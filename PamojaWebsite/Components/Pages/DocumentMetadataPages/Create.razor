@@ -1,0 +1,68 @@
+﻿@page "/documentmetadata/create"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Create</h1>
+
+    <h2>DocumentMetadata</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="DocumentMetadata" OnValidSubmit="AddDocumentMetadata" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="DocumentMetadata.Title" class="form-control" />
+                    <ValidationMessage For="() => DocumentMetadata.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="author" class="form-label">Author:</label>
+                    <InputText id="author" @bind-Value="DocumentMetadata.Author" class="form-control" />
+                    <ValidationMessage For="() => DocumentMetadata.Author" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastmodified" class="form-label">LastModified:</label>
+                    <InputDate id="lastmodified" @bind-Value="DocumentMetadata.LastModified" class="form-control" />
+                    <ValidationMessage For="() => DocumentMetadata.LastModified" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category:</label>
+                    <InputText id="category" @bind-Value="DocumentMetadata.Category" class="form-control" />
+                    <ValidationMessage For="() => DocumentMetadata.Category" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="pagecount" class="form-label">PageCount:</label>
+                    <InputNumber id="pagecount" @bind-Value="DocumentMetadata.PageCount" class="form-control" />
+                    <ValidationMessage For="() => DocumentMetadata.PageCount" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div>
+        <a href="/documentmetadata">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private DocumentMetadata DocumentMetadata { get; set; } = default!;
+
+    protected override void OnInitialized() => DocumentMetadata ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddDocumentMetadata()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.DocumentMetadata.Add(DocumentMetadata);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/documentmetadata");
+    }
+}

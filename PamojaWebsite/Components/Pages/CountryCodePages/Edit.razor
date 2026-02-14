@@ -1,0 +1,91 @@
+﻿@page "/countrycodes/edit"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Edit</h1>
+
+    <h2>CountryCode</h2>
+    <hr />
+    @if (CountryCode is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="CountryCode" OnValidSubmit="UpdateCountryCode" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" />
+                    <input type="hidden" name="CountryCode.Id" value="@CountryCode.Id" />
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Code:</label>
+                        <InputText id="code" @bind-Value="CountryCode.Code" class="form-control" />
+                        <ValidationMessage For="() => CountryCode.Code" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    <div>
+        <a href="/countrycodes">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private CountryCode? CountryCode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        CountryCode ??= await context.CountryCode.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (CountryCode is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateCountryCode()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(CountryCode!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!CountryCodeExists(CountryCode!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/countrycodes");
+    }
+
+    private bool CountryCodeExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.CountryCode.Any(e => e.Id == id);
+    }
+}

@@ -1,0 +1,47 @@
+﻿@page "/blogposts"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="blogposts/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.BlogPost">
+        <PropertyColumn Property="blogpost => blogpost.Title" />
+        <PropertyColumn Property="blogpost => blogpost.Author" />
+        <PropertyColumn Property="blogpost => blogpost.Date" />
+        <PropertyColumn Property="blogpost => blogpost.ReadTime" />
+        <PropertyColumn Property="blogpost => blogpost.Content" />
+        <PropertyColumn Property="blogpost => blogpost.PreviewImageContentType" />
+        <PropertyColumn Property="blogpost => blogpost.PreviewImage" />
+        <PropertyColumn Property="blogpost => blogpost.Likes" />
+        <PropertyColumn Property="blogpost => blogpost.Comments" />
+        <PropertyColumn Property="blogpost => blogpost.Category" />
+
+        <TemplateColumn Context="blogpost">
+            <a href="@($"blogposts/edit?id={blogpost.Id}")">Edit</a> |
+            <a href="@($"blogposts/details?id={blogpost.Id}")">Details</a> |
+            <a href="@($"blogposts/delete?id={blogpost.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

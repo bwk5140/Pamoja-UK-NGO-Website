@@ -1,0 +1,65 @@
+﻿@page "/events"
+
+<PageTitle>School Package | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@rendermode InteractiveServer
+<div class="container-xxxl pt-[5%] mb-5 py-20 mt-5">
+    <!-- Banner Section -->
+    <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+        <div class="absolute inset-0">
+            <img class="relative object-cover object-top md:w-full md:h-48" src="Images/Art/tree.jpg" />
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Events</h1>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events -->
+    <section class="relative text-gray-800 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="center-container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12" style="justify-content: space-between;">
+                <div class="bg-white shadow">
+                    <a href="/events/mental-health-and-suicide-awareness">
+                        <img class="h-80 w-full"
+                             src="Images/Events/CEO_KTN.png" />
+                    </a>
+                    <a class="center-container py-10" href="/events/mental-health-and-suicide-awareness" style="font-size: x-large;">
+                        Mental Health and Suicide Awareness
+                    </a>
+                </div>
+                <div class="bg-white shadow">
+                    <a href="/events/mental-health-&-safeguarding-webinar">
+                        <img class="h-80 w-full object-cover object-top"
+                             src="Images/Events/Webinar.webp" />
+                    </a>
+                    <a class="center-container py-10" href="/events/mental-health-&-safeguarding-webinar" style="font-size: x-large;">
+                        Mental Health & Safeguarding Webinar
+                    </a>
+                </div>
+                <div class="bg-white shadow">
+                    <a href="/events/c-e-o-faith-henton-interview-with-kbc">
+                        <img class="h-80 w-full"
+                             src="Images/Events/CEO_KBC.webp" />
+                    </a>
+                    <a class="center-container py-10" href="/events/c-e-o-faith-henton-interview-with-kbc" style="font-size: x-large;">
+                        C.E.O Faith Henton Interview with KBC
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

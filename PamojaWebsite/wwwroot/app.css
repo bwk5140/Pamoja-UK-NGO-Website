@@ -1,7 +1,12 @@
 h1:focus {
     outline: none;
 }
-
+.div {
+    font-family: Arial, Helvetica, sans-serif;
+}
+.p{
+    font-family: Arial, Helvetica, sans-serif;
+}
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -11,7 +16,7 @@ h1:focus {
 }
 
 .validation-message {
-    color: #e50000;
+    color: #ff8500;
 }
 
 .blazor-error-boundary {
@@ -216,11 +221,129 @@ html {
 }
 
 .video-container {
-    position: relative;
-    top: 0%;
+  position: relative;
+  width: 100%;
+  height: 100vh; /* always full screen height */
+  overflow: hidden;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;          /* stretch to container height */
+  object-fit: cover;     /* crop/scale to fill */
+}
+
+/* Dark overlay effect */
+.video-container::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, 80%);
+  color: #fff;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+  padding: 0 1rem;
+}
+
+/* Larger screens */
+@media (min-width: 769px) {
+  .video-container::after {
+        height: 100%;
+    }
+}
+
+/* Smaller screens */
+@media (max-width: 768px) {
+  .video-container::after {
+        height: 100%;
+    }
+}
+
+.overlay h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.overlay p {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.buttons .btn {
+  display: inline-block;
+  margin: 0 10px;
+  padding: 12px 24px;
+  background: #ff6600;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+@media (max-width: 768px) {
+  .overlay h1 {
+    font-size: 2rem;
+  }
+  .overlay p {
+    font-size: 1rem;
+  }
+  .buttons .btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+.buttons .btn:hover {
+  background: #e65c00;
+}
+/* Modal styling */
+.backdrop {
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1040; /* backdrop layer */
+}
+
+.modal-header {
+    background: #f5f1f1;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 100%;
+    z-index: 1050; /* modal above backdrop */
+}
+.modal-box {
+    background: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+    min-height: 100px;
+    max-width: 500px;
+    width: 100%;
+    z-index: 1050; /* modal above backdrop */
 }
 
 /* Card hover effects */
@@ -231,4 +354,50 @@ html {
     .card-hover:hover {
         transform: translateY(-8px);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+.ql-editor {
+    min-height: 200px;
+}
+.spinner circle {
+    fill: #1f6806;
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+    .spinner circle:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .spinner circle:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .spinner circle:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+
+    .spinner circle:nth-child(5) {
+        animation-delay: 0.4s;
+    }
+
+    .spinner circle:nth-child(6) {
+        animation-delay: 0.5s;
+    }
+
+    .spinner circle:nth-child(7) {
+        animation-delay: 0.6s;
+    }
+
+    .spinner circle:nth-child(8) {
+        animation-delay: 0.7s;
+    }
+
+@keyframes pulse {
+    0%, 100% {
+        r: 6;
+        opacity: 0.3;
+    }
+
+    50% {
+        r: 10;
+        opacity: 1;
     }

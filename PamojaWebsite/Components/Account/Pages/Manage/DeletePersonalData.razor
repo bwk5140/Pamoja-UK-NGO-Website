@@ -8,29 +8,32 @@
 
 <PageTitle>Delete Personal Data</PageTitle>
 
-<StatusMessage Message="@message" />
 
-<h3 class="font-bold text-gray-500 mb-2">Delete Personal Data</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong class="mt-2 mb-2">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-    </p>
-</div>
+<div class="pt-[5%] mb-5 py-20">
+    <StatusMessage Message="@message" />
 
-<div>
-    <EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
-        <DataAnnotationsValidator />
-        <ValidationSummary class="text-danger" role="alert" />
-        @if (requirePassword)
-        {
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
-                <label for="Input.Password" class="form-label">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-        }
-        <button class="w-100 btn btn-lg btn-danger mt-2" type="submit">Delete data and close my account</button>
-    </EditForm>
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">Delete Personal Data</h3>
+    <div class="alert alert-warning" role="alert">
+        <p>
+            <strong class="mt-2 mb-2">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        </p>
+    </div>
+
+    <div>
+        <EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            @if (requirePassword)
+            {
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
+                    <label for="Input.Password" class="form-label">Password</label>
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+            }
+            <button class="w-100 btn btn-lg btn-danger mt-2" type="submit">Delete data and close my account</button>
+        </EditForm>
+    </div>
 </div>
 
 @code {
@@ -48,28 +51,31 @@
     {
         Input ??= new();
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        requirePassword = await UserManager.HasPasswordAsync(user);
+        if (user is not null){
+            requirePassword = await UserManager.HasPasswordAsync(user);
+        }
     }
 
     private async Task OnValidSubmitAsync()
     {
-        if (requirePassword && !await UserManager.CheckPasswordAsync(user, Input.Password))
-        {
-            message = "Error: Incorrect password.";
-            return;
+        if (user is not null){
+            if (requirePassword && !await UserManager.CheckPasswordAsync(user, Input.Password))
+            {
+                message = "Error: Incorrect password.";
+                return;
+            }
+
+            var result = await UserManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Unexpected error occurred deleting user.");
+            }
+
+            await SignInManager.SignOutAsync();
+
+            var userId = await UserManager.GetUserIdAsync(user);
+            Logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
         }
-
-        var result = await UserManager.DeleteAsync(user);
-        if (!result.Succeeded)
-        {
-            throw new InvalidOperationException("Unexpected error occurred deleting user.");
-        }
-
-        await SignInManager.SignOutAsync();
-
-        var userId = await UserManager.GetUserIdAsync(user);
-        Logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
-
         RedirectManager.RedirectToCurrentPage();
     }
 

@@ -1,0 +1,305 @@
+﻿@page "/book-appointment/payment"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+
+@inject IJSRuntime JS
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject MyApiService ApiService
+
+@rendermode InteractiveServer
+
+<PageTitle>Book Appointment Payment | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <main class="container mx-auto px-4 py-12 max-w-7xl">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-green-700 mb-4">Thanks for booking with us</h1>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-8">
+                <div class="flex flex-col md:flex-row gap-8">
+                    @if (donation is not null)
+                    {
+                        <!-- Donation Form -->
+                        <div class="md:w-2/3">
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Make a Payment</h2>
+
+                            <EditForm Model="donateFormDTO" OnValidSubmit="DonateForm" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="text-sm text-red-600" />
+                                <div>
+                                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm me-2">@CurrencySymbols[donateFormDTO.Currency]</span>
+                                        </div>
+                                        <InputNumber type="number" id="amount" name="amount" disabled
+                                                     class="ms-4 focus:ring-green-500 focus:border-green-500 block w-full pl-7 pr-12 py-3 sm:text-sm border-gray-300 rounded-md"
+                                                     placeholder="0.00" min="1" step="0.01" required @bind-Value="@donateFormDTO.Amount" @bind-Value:after="(() => SetAmount(donateFormDTO.Amount))" />
+
+                                        <div class="absolute inset-y-0 right-0 flex items-center">
+                                            <InputSelect id="currency" name="currency" @bind-Value="@donateFormDTO.Currency" @bind-Value:after="(() => ChangeCurrency(donateFormDTO.Currency))"
+                                                         class="focus:ring-green-500 focus:border-green-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500
+                                                            sm:text-sm rounded-md me-3">
+                                                <option value="USD">USD</option>
+                                                <option value="EUR">EUR</option>
+                                                <option value="GBP">GBP</option>
+                                                <option value="JPY">JPY</option>
+                                                <option value="CAD">CAD</option>
+                                                <option value="AUD">AUD</option>
+                                                <option value="KES">KES</option>
+                                            </InputSelect>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <InputText type="text" id="name" name="name" @bind-Value="@donateFormDTO.Name" disabled
+                                               class="focus:ring-green-500 focus:border-green-500 block w-full px-3 py-2 sm:text-sm border border-gray-300 rounded-md"
+                                               placeholder="John Doe" required />
+                                </div>
+
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <InputText type="email" id="email" name="email" disabled
+                                               class="focus:ring-green-500 focus:border-green-500 block w-full px-3 py-2 sm:text-sm border border-gray-300 rounded-md"
+                                               placeholder="your@email.com" required @bind-Value="@donateFormDTO.Email" />
+                                </div>
+
+                                <div class="flex items-center">
+                                    <InputCheckbox id="anonymous" name="anonymous" type="checkbox"
+                                                   class="h-4 w-4 text-green-700 focus:ring-green-500 border-gray-300 rounded" @bind-Value="Anonymous" />
+                                    <label for="anonymous" class="ml-2 block text-sm text-gray-700">
+                                        Make this payment anonymous
+                                    </label>
+                                </div>
+
+                                <div class="pt-4">
+                                    <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white
+                                            font-bold py-3 px-4 rounded-md transition-colors flex items-center justify-center" disabled="@isProcessing">
+                                        <i data-feather="credit-card" class="mr-2"></i>
+                                        @(isProcessing ? "Proceeding to Payment" + "..." : "Confirm Details")
+                                    </button>
+                                </div>
+                            </EditForm>
+                        </div>
+
+                        <!--Invoice Preview-->
+                        <div class="md:w-1/3">
+                            <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-6">
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">Payment Summary</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Amount:</span>
+                                        <span id="previewAmount" class="font-medium">@CurrencySymbols[donateFormDTO.Currency]   @donateFormDTO.Amount</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Processing Fee:</span>
+                                        <span id="previewAmount" class="font-medium">@CurrencySymbols[donateFormDTO.Currency]   @donateFormDTO.ProcessingFee</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Currency:</span>
+                                        <span id="previewCurrency" class="font-medium">@donateFormDTO.Currency</span>
+                                    </div>
+                                    <div class="border-t border-gray-200 pt-4 mt-4">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600 font-medium">Total:</span>
+                                            <span id="previewTotal" class="text-green-700 font-bold">@CurrencySymbols[donateFormDTO.Currency]   @donateFormDTO.Total</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="invoicePreview" class="mt-6 hidden">
+                                    <div class="bg-white p-4 rounded-md border border-gray-200">
+                                        <h4 class="font-medium text-gray-800 mb-2">Invoice Preview</h4>
+                                        <p class="text-sm text-gray-600 mb-1">Name: <span id="invoiceName"></span></p>
+                                        <p class="text-sm text-gray-600 mb-1">Email: <span id="invoiceEmail"></span></p>
+                                        <p class="text-sm text-gray-600">Anonymous: <span id="invoiceAnonymous">No</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? AptId { get; set; }
+
+    private decimal Amount { get; set; }
+    private decimal Total { get; set; }
+    private decimal ProcessingFee { get; set; }
+    private string? Currency { get; set; }
+    private string? Name { get; set; }
+    private string? Email { get; set; }
+    private string? Phone { get; set; }
+    private string FromCurrency { get; set; } = "KES";
+    private string ToCurrency { get; set; } = "KES";
+    private bool Anonymous { get; set; } = false;
+    private Donation? donation { get; set; }
+    Dictionary<string, string> CurrencySymbols = new()
+    {
+        { "USD", "$" },
+        { "EUR", "€" },
+        { "GBP", "£" },
+        { "JPY", "¥" },
+        { "CAD", "C$" },
+        { "AUD", "A$" },
+        { "KES", "KSh" }
+    };
+
+    Dictionary<string, decimal> ExchangeRates = new()
+    {
+        { "USD", 1m },
+        { "EUR", 0.92m },
+        { "GBP", 0.78m },
+        { "JPY", 145m },
+        { "CAD", 1.35m },
+        { "AUD", 1.50m },
+        { "KES", 153m }
+    };
+    decimal[] QuickAmounts = { 10, 25, 50, 100, 250, 500 };
+
+    [SupplyParameterFromQuery]
+    private string? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private DonateFormDTO donateFormDTO { get; set; } = new();
+
+    private bool isProcessing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is not null)
+        {
+            using var context = await DbFactory.CreateDbContextAsync();
+        var donations = await context.Donation.ToListAsync();
+        if (donations is not null){
+            donation = donations.FirstOrDefault(d => d.Id == Id);
+        }
+        
+        if (donation is not null)
+        {
+           donateFormDTO.Currency = donation.Currency;
+            donateFormDTO.Amount = donation.Amount;
+            donateFormDTO.ProcessingFee = donation.ProcessingFee;
+            donateFormDTO.Name = donation.Name;
+            donateFormDTO.Email = donation.Email;
+            donateFormDTO.Total = donateFormDTO.Amount + donateFormDTO.ProcessingFee;
+            donation.Total = donateFormDTO.Total;
+        }
+        }
+        else
+        {
+            donateFormDTO.Currency = "KES";
+            donateFormDTO.Amount = (decimal)0.0;
+            donateFormDTO.ProcessingFee = (decimal)195;
+            donateFormDTO.Total = donateFormDTO.Amount + donateFormDTO.ProcessingFee;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("featherInit");
+        }
+    }
+    private async Task DonateForm()
+    {
+        isProcessing = true;
+        using var context = DbFactory.CreateDbContext();
+         if (donation is not null)
+         {
+             donation.Name = donateFormDTO.Name;
+             donation.Email = donateFormDTO.Email;
+             donation.Amount = donateFormDTO.Amount;
+             donation.Total = donateFormDTO.Total;
+             donation.Currency = donateFormDTO.Currency;
+             donation.ProcessingFee = donateFormDTO.ProcessingFee;
+             context.Donation.Add(donation);
+             context.Attach(donation!).State = EntityState.Modified;
+             await context.SaveChangesAsync();
+         }
+        isProcessing = false;
+        NavigationManager.NavigateTo($"/book-appointment/payment/invoice?Id={donation.Id}&AptId={AptId}");
+    }
+    private void HandleInvalidSubmit()
+    {
+        // Optionally focus first invalid field or show a message
+    }
+
+    decimal ConvertAmount(decimal amount, string fromCurrency, string toCurrency)
+    {
+        if (!ExchangeRates.ContainsKey(fromCurrency) || !ExchangeRates.ContainsKey(toCurrency))
+            throw new ArgumentException("Unsupported currency");
+
+        // Step 1: normalize to USD
+        decimal amountInUsd = amount / ExchangeRates[fromCurrency];
+
+        // Step 2: convert USD → target
+        decimal converted = amountInUsd * ExchangeRates[toCurrency];
+
+        return converted;
+    }
+    protected override void OnInitialized()
+    {
+        donateFormDTO.ProcessingFee = ProcessingFee;
+        donateFormDTO.Total = donateFormDTO.Amount + donateFormDTO.ProcessingFee;
+    }
+    private void SetAmount(decimal amount)
+    {
+        amount = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+        donateFormDTO.Amount = amount;
+        donateFormDTO.Total = donateFormDTO.Amount + donateFormDTO.ProcessingFee;
+    }
+    private void ChangeCurrency(string toCurrency)
+    {
+        FromCurrency = ToCurrency;
+        ToCurrency = toCurrency;
+        donateFormDTO.Currency = toCurrency;
+        donateFormDTO.Amount = ConvertAmount(donateFormDTO.Amount, FromCurrency, ToCurrency);
+        donateFormDTO.Amount = Math.Round(donateFormDTO.Amount, 2, MidpointRounding.AwayFromZero);
+        donateFormDTO.ProcessingFee = ConvertAmount(donateFormDTO.ProcessingFee, FromCurrency, ToCurrency);
+        donateFormDTO.ProcessingFee = Math.Round(donateFormDTO.ProcessingFee, 2, MidpointRounding.AwayFromZero);
+        donateFormDTO.Total = donateFormDTO.Amount + donateFormDTO.ProcessingFee;
+        for (int i = 0; i < QuickAmounts.Length; i++)
+        {
+            QuickAmounts[i] = ConvertAmount(QuickAmounts[i], FromCurrency, ToCurrency);
+        }
+    }
+    public class DonateFormDTO
+    {
+
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, ErrorMessage = "Name must be 100 characters or fewer")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address")]
+        public string Email { get; set; }
+
+        public string Currency { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public decimal ProcessingFee { get; set; }
+
+        public decimal Total { get; set; }
+    }
+}

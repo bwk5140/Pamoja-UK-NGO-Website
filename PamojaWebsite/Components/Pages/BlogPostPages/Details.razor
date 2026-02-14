@@ -1,0 +1,67 @@
+﻿@page "/blogposts/details"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Details</h1>
+
+    <div>
+        <h2>BlogPost</h2>
+        <hr />
+        @if (blogpost is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <dl class="row">
+                <dt class="col-sm-2">Title</dt>
+                <dd class="col-sm-10">@blogpost.Title</dd>
+                <dt class="col-sm-2">Author</dt>
+                <dd class="col-sm-10">@blogpost.Author</dd>
+                <dt class="col-sm-2">Date</dt>
+                <dd class="col-sm-10">@blogpost.Date</dd>
+                <dt class="col-sm-2">ReadTime</dt>
+                <dd class="col-sm-10">@blogpost.ReadTime</dd>
+                <dt class="col-sm-2">Content</dt>
+                <dd class="col-sm-10">@blogpost.Content</dd>
+                <dt class="col-sm-2">ImageContentType</dt>
+                <dd class="col-sm-10">@blogpost.PreviewImageContentType</dd>
+                <dt class="col-sm-2">Image</dt>
+                <dd class="col-sm-10">@blogpost.PreviewImage</dd>
+                <dt class="col-sm-2">Likes</dt>
+                <dd class="col-sm-10">@blogpost.Likes</dd>
+                <dt class="col-sm-2">Comments</dt>
+                <dd class="col-sm-10">@blogpost.Comments</dd>
+                <dt class="col-sm-2">Category</dt>
+                <dd class="col-sm-10">@blogpost.Category</dd>
+            </dl>
+            <div>
+                <a href="@($"/blogposts/edit?id={blogpost.Id}")">Edit</a> |
+                <a href="@($"/blogposts")">Back to List</a>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private BlogPost? blogpost;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        blogpost = await context.BlogPost.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (blogpost is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

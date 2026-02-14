@@ -4,27 +4,30 @@
 
 <PageTitle>Personal Data</PageTitle>
 
-<StatusMessage />
 
-<h3 class="font-bold text-gray-500 mb-2">Personal Data</h3>
+<div class="pt-[5%] mb-5 py-20">
+    <StatusMessage />
 
-<div class="row">
-    <div class="col-md-6">
-        <p class="mt-2 mb-2">Your account contains personal data that you have given us. You can download or delete that data.</p>
-        <p>
-            <strong class="mt-3 mb-3">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <div class="btn-group">
-            <form action="Account/Manage/DownloadPersonalData" method="post">
-                <AntiforgeryToken />
-                <button class="btn btn-primary me-3 mt-3" style="background-color: #2f4f4f;
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">Personal Data</h3>
+    <hr/>
+    <div class="row">
+        <div class="col-md-6">
+            <p class="mt-2 mb-2">Your account contains personal data that you have given us. You can download or delete that data.</p>
+            <p>
+                <strong class="mt-3 mb-3">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+            </p>
+            <div class="btn-group">
+                <form action="Account/Manage/DownloadPersonalData" method="post">
+                    <AntiforgeryToken />
+                    <button class="btn btn-primary me-3 mt-3" style="background-color: #2f4f4f;
                         border-color:transparent;" type="submit">
-                    Download
-                </button>
-            </form>
-            <a  href="Account/Manage/DeletePersonalData" class="btn btn-danger mt-3">Delete</a>
-        </div>
+                        Download
+                    </button>
+                </form>
+                <a href="Account/Manage/DeletePersonalData" class="btn btn-danger mt-3">Delete</a>
+            </div>
 
+        </div>
     </div>
 </div>
 

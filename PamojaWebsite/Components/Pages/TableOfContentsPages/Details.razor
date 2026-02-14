@@ -1,0 +1,51 @@
+﻿@page "/tableofcontents/details"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Details</h1>
+
+    <div>
+        <h2>TableOfContents</h2>
+        <hr />
+        @if (tableofcontents is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <dl class="row">
+                <dt class="col-sm-2">Title</dt>
+                <dd class="col-sm-10">@tableofcontents.Title</dd>
+                <dt class="col-sm-2">Anchor</dt>
+                <dd class="col-sm-10">@tableofcontents.Anchor</dd>
+            </dl>
+            <div>
+                <a href="@($"/tableofcontents/edit?id={tableofcontents.Id}")">Edit</a> |
+                <a href="@($"/tableofcontents")">Back to List</a>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private TableOfContents? tableofcontents;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        tableofcontents = await context.TableOfContents.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (tableofcontents is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

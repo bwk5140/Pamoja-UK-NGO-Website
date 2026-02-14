@@ -1,0 +1,43 @@
+﻿@page "/countrycodes"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject CountryCodeService CountryCodeService
+
+@rendermode InteractiveServer
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="countrycodes/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.CountryCode">
+        <PropertyColumn Property="countrycode => countrycode.Code" />
+
+        <TemplateColumn Context="countrycode">
+            <a href="@($"countrycodes/edit?id={countrycode.Id}")">Edit</a> |
+            <a href="@($"countrycodes/details?id={countrycode.Id}")">Details</a> |
+            <a href="@($"countrycodes/delete?id={countrycode.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+@code {
+    private ApplicationDbContext context = default!;
+    private List<CountryCode> CountryCodes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+        CountryCodes = context.CountryCode.ToList<CountryCode>();
+        await CountryCodeService.ImportCountryCodesAsync("wwwroot/Data/CountryCodes.txt");
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -1,428 +1,373 @@
 ﻿@page "/services/company-package"
 
-<PageTitle>Company Package</PageTitle>
+@using System.Linq.Expressions
+@using System;
+@using System.ComponentModel.DataAnnotations;
 
+<PageTitle>Company Package | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 @inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@implements IDisposable
 
 @rendermode InteractiveServer
 
-<div class="container-xxxl">
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-xxxl">
         <!-- Banner Section -->
-        <section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            <!-- Decorative background shapes -->
+        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
             <div class="absolute inset-0">
-                <!-- Large blurred gradient blob -->
-                <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-                <!-- Smaller accent circle -->
-                <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
-
-                <!-- Diagonal rectangle -->
-                <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
-
-                <!-- Triangle using clip-path -->
-                <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
-                     style="clip-path: polygon(0 0, 100% 0, 0 100%);">
-                </div>
+                <img class="relative object-cover object-top md:w-full md:h-48" src="Images/Art/tree.jpg" />
             </div>
 
             <!-- Content -->
             <div class="relative max-w-7xl mx-auto">
                 <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-                        <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Company Package</h1>
+                    <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Company Package</h1>
                 </div>
             </div>
         </section>
         <!-- Breadcrumb Section-->
-        <section class="py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Breadcrumb -->
-                <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                        <!-- About Us -->
-                        <li class="inline-flex items-center">
-                            <a href="/services"
-                               class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
-                                Services
-                            </a>
-                        </li>
-
-                        <!-- Separator -->
-                        <li>
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                          clip-rule="evenodd" />
-                                </svg>
-                                <a href="/services/company-package"
-                                   class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
-                                    Company Package
+        <div class="py-10">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <!-- About Us -->
+                            <li class="inline-flex items-center">
+                                <a href="/services"
+                                   class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                                    Services
                                 </a>
+                            </li>
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/services/company-package"
+                                       class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
+                                        Company Package
+                                    </a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </section>
+            <!-- About Section -->
+            <section class="py-10 bg-white">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
+                                Empower Your Team, Boost Productivity.
+                                Build a safe and productive workspace with our tailored mental health and safeguarding packages.
+                            </p>
+                            <button type="button" class="mt-3 btn bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                                    @onclick="ScrollToTarget">
+                                Get Started
+                                <i data-feather="arrow-right" class="ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Art Section-->
+            <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <!-- Decorative background shapes -->
+                <div class="absolute inset-0">
+                    <!-- Gradient blob -->
+                    <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+                    <!-- Accent circle -->
+                    <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
+
+                    <!-- Diagonal rectangle -->
+                    <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
+                    <!-- Image overlay -->
+                    <div class="relative">
+                        <img loading="lazy" src="/Images/Art/corporate.jpg"
+                             alt="Shaking hands"
+                             class="relative z-10 rounded-lg shadow-lg">
+                    </div>
+                    <div class="relative">
+                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624752/patient-meet-a-doctor-for-therapy_xwkso1.jpg"
+                             alt="Patient meeting doctor for therapy"
+                             class="relative z-10 rounded-lg shadow-lg">
+                    </div>
+                    <div class="relative">
+                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624803/portrait-of-stressed-black-man_kc9wyq.jpg"
+                             alt="Portrait of stressed black man"
+                             class="relative z-10 rounded-lg shadow-lg" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="py-16 bg-white">
+                <div class="container mx-auto px-6 lg:px-8">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <p class="text-gray-600 mb-8">
+                            In 2021, the estimated economic burden of mental health conditions on the Kenyan economy was Sh62.2 billion, or 0.6% of the GDP, with lost productivity due to premature mortality, absenteeism,
+                            and presenteeism accounting for the largest share at Sh56.6 billion
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                            <div class="bg-green-50 p-6 rounded-xl">
+                                <span class="text-4xl font-bold text-green-600">62.2B</span>
+                                <p class="mt-2 text-gray-700">Economic burden in Kenya</p>
                             </div>
-                        </li>
-                    </ol>
-                </nav>
-            </div>
-        </section>
-    <!-- About Section -->
-    <section class="py-10 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="prose prose-lg max-w-none">
-                    <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
-                        Empower Your Team, Boost Productivity.
-                        Build a safe and productive workspace with our tailored mental health and safeguarding packages.
-                    </p>
-                    <button type="button" class="mt-3 btn bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
-                            @onclick="ScrollToTarget">
-                        Get Started
-                        <i data-feather="arrow-right" class="ml-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Art Section-->
-    <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <!-- Decorative background shapes -->
-        <div class="absolute inset-0">
-            <!-- Gradient blob -->
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-            <!-- Accent circle -->
-            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
-
-            <!-- Diagonal rectangle -->
-            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
-        </div>
-
-        <!-- Content -->
-        <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
-            <!-- Image overlay -->
-            <div class="relative">
-                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757405571523-MV10I664UB4UJ87L240N/unsplash-image-n95VMLxqM2I.jpg"
-                     alt="Shaking hands"
-                     class="relative z-10 rounded-lg shadow-lg">
-            </div>
-            <div class="relative">
-                <img src="Images/Art/patient-meet-a-doctor-for-therapy.jpg"
-                     alt="Patient meeting doctor for therapy"
-                     class="relative z-10 rounded-lg shadow-lg">
-            </div>
-            <div class="relative">
-                <img src="Images/Art/portrait-of-stressed-black-man.jpg" alt="Portrait of stressed black man"
-                     class="relative z-10 rounded-lg shadow-lg" />
-            </div>
-        </div>
-    </section>
-@*     <!-- Hero Section -->
-    <section class="relative bg-primary-600 text-gray-700 py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-                <div>
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Company Package</h1>
-                    <p class="text-xl mb-8">
-                        Empower Your Team, Boost Productivity.
-                        Build a safe and productive workspace with our tailored mental health and safeguarding packages.
-                    </p>
-                    <button type="button" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
-                            @onclick="ScrollToTarget">
-                        Get Started
-                        <i data-feather="arrow-right" class="ml-2"></i>
-                    </button>
-                </div>
-                <div class="mt-10 md:mt-0">
-                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757405571523-MV10I664UB4UJ87L240N/unsplash-image-n95VMLxqM2I.jpg" alt="Mental Health Support" class="rounded-lg shadow-2xl">
-                </div>
-            </div>
-        </div>
-    </section> *@
-
-    <!-- Stats Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-6 lg:px-8">
-            <div class="max-w-4xl mx-auto text-center">
-                <p class="text-gray-600 mb-8">In 2021, the estimated economic burden of mental health conditions on the Kenyan economy was Sh62.2 billion, or 0.6% of the GDP, with lost productivity due to premature mortality, absenteeism, 
-                    and presenteeism accounting for the largest share at Sh56.6 billion</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-                    <div class="bg-green-50 p-6 rounded-xl">
-                        <span class="text-4xl font-bold text-green-600">62.2B</span>
-                        <p class="mt-2 text-gray-700">Economic burden in Kenya</p>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-xl">
-                        <span class="text-4xl font-bold text-green-600">0.6%</span>
-                        <p class="mt-2 text-gray-700">Of Kenya's GDP</p>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-xl">
-                        <span class="text-4xl font-bold text-green-600">56.6B</span>
-                        <p class="mt-2 text-gray-700">Lost productivity</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Comprehensive Services</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Expert-led, trauma-informed and culturally relevant services for your organization</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Service Card 1 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i data-feather="alert-circle" class="text-green-600 w-6 h-6"></i>
+                            <div class="bg-green-50 p-6 rounded-xl">
+                                <span class="text-4xl font-bold text-green-600">0.6%</span>
+                                <p class="mt-2 text-gray-700">Of Kenya's GDP</p>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900">Early Identification</h3>
-                        </div>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Identify stress, burnout, anxiety, and depression early</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Prevent crisis situations</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Reduce absenteeism and turnover</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Service Card 2 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i data-feather="users" class="text-green-600 w-6 h-6"></i>
+                            <div class="bg-green-50 p-6 rounded-xl">
+                                <span class="text-4xl font-bold text-green-600">56.6B</span>
+                                <p class="mt-2 text-gray-700">Lost productivity</p>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900">Employee Support</h3>
                         </div>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Employee Assistance Programs (EAPs)</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Flexible working arrangements</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Resilience and stress management training</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Return to Work plans</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Reasonable workplace adjustments</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Recognising signs of adult abuse, exploitation, or coercion</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Handling disclosures and building trauma-informed responses</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Bystander intervention and safe referral practices</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Promoting boundaries and dignity at work</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Medication Management</span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
+            </section>
 
-                <!-- Service Card 3 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i data-feather="heart" class="text-green-600 w-6 h-6"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-900">Employee Training</h3>
-                        </div>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Reducing Stigma and Promoting Openness</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Mental Health, Safeguarding & Trauma-Informed Support from Pamoja</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Confidential staff mental wellbeing drop-in sessions</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Critical incident debriefing and post-trauma support</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Support planning for vulnerable employees</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>On-Call Safeguarding Consultancy</span>
-                            </li>
-                        </ul>
+            <!-- Services Section -->
+            <section id="services" class="py-16 bg-gray-50">
+                <div class="container mx-auto px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Comprehensive Services</h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Expert-led, trauma-informed and culturally relevant services for your organization</p>
                     </div>
-                </div>
 
-                <!-- Service Card 4 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i data-feather="briefcase" class="text-green-600 w-6 h-6"></i>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Service Card 1 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i data-feather="alert-circle" class="text-green-600 w-6 h-6"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Mental Wellbeing Assessment</h3>
+                                </div>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Identify stress, burnout, anxiety, and depression early</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Prevent crisis situations</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Reduce absenteeism and turnover</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900">Manager Training</h3>
                         </div>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Full day wellbeing workshops</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Individual manager support</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Recognize early signs of mental distress</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Design policies to prevent overwork</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Encourage regular check-ins and transparent communication</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Foster inclusive team cultures</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
 
-                <!-- Service Card 5 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i data-feather="trending-up" class="text-green-600 w-6 h-6"></i>
+                        <!-- Service Card 2 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i data-feather="users" class="text-green-600 w-6 h-6"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Employee Support</h3>
+                                </div>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Employee Assistance Programs (EAPs)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Flexible working arrangements</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Resilience and stress management training</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Return to Work plans</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Reasonable workplace adjustments</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Recognising signs of adult abuse, exploitation, or coercion</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Handling disclosures and building trauma-informed responses</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Bystander intervention and safe referral practices</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Promoting boundaries and dignity at work</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Medication Management</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900">Organizational Level Support</h3>
                         </div>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Team building away day with our occupational therapist</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Train employees on creating  boundaries around after-hours communication</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Create career growth, learning, and creative expression pathways</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Innovation hubs and creativity spaces</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Team building days to foster collaboration, and improve communication</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
-                                <span>Policy Review & Compliance Alignment</span>
-                            </li>
-                        </ul>
+
+                        <!-- Service Card 3 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i data-feather="heart" class="text-green-600 w-6 h-6"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Employee Training</h3>
+                                </div>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Reducing Stigma and Promoting Openness</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Mental Health, Safeguarding & Trauma-Informed Support from Pamoja</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Confidential staff mental wellbeing drop-in sessions</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Critical incident debriefing and post-trauma support</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Support planning for vulnerable employees</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>On-Call Safeguarding Consultancy</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Service Card 4 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i data-feather="briefcase" class="text-green-600 w-6 h-6"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Manager Training</h3>
+                                </div>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Full day wellbeing workshops</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Individual manager support</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Recognize early signs of mental distress</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Design policies to prevent overwork</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Encourage regular check-ins and transparent communication</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Foster inclusive team cultures</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Service Card 5 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i data-feather="trending-up" class="text-green-600 w-6 h-6"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Organizational Level Support</h3>
+                                </div>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Team building away day with our occupational therapist</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Train employees on creating  boundaries around after-hours communication</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Create career growth, learning, and creative expression pathways</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Innovation hubs and creativity spaces</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Team building days to foster collaboration, and improve communication</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1 w-4 h-4"></i>
+                                        <span>Policy Review & Compliance Alignment</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Get Started With Our Company Services</h2>
-
-            <div class="bg-white p-8 rounded-xl shadow-md">
-                <form class="space-y-6">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div>
-                            <label for="school" class="block text-sm font-medium text-gray-700 mb-1">School/Organization</label>
-                            <input type="text" id="school" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="program" class="block text-sm font-medium text-gray-700 mb-1">Service of Interest</label>
-                        <select id="program" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">Select a service</option>
-                            <option value="primary">Early Identification Services</option>
-                            <option value="secondary">Employee Support Services</option>
-                            <option value="university">Safeguarding Services</option>
-                            <option value="staff">Wellbeing Support Services</option>
-                            <option value="parents">Manager Training Services</option>
-                            <option value="parents">Team Performance Services</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                        <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"></textarea>
-                    </div>
-                    <div>
-                        <button type="submit" class="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-md transition duration-300">
-                            Request Information
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
+    </div>
 </div>
 
 @code {
+
+    [SupplyParameterFromForm]
+    private ContactFormDTO contactFormDTO { get; set; } = new();
+
+    private EditContext editContext;
+
+    private bool FormSubmitted { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -432,7 +377,56 @@
     }
     private async Task ScrollToTarget()
     {
-        await JS.InvokeVoidAsync("scrollToSection", "contact");
+        NavigationManager.NavigateTo("services/book-appointment");
     }
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+        ? $"{baseClasses} border-red-500 focus:border-red-500"
+        : $"{baseClasses} border-gray-300";
+    }
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
+    
+    public void Dispose()
+    {
+        if (editContext != null)
+            editContext.OnFieldChanged -= (_, __) => StateHasChanged();
+    }
+    private void HandleInvalidSubmit()
+    {
+        // Optionally focus first invalid field or show a message
+    }
+    public class ContactFormDTO
+    {
 
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, ErrorMessage = "Name must be 100 characters or fewer")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Organization is required")]
+        [StringLength(150, ErrorMessage = "Organization must be 150 characters or fewer")]
+        public string Organization { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Phone number is required")]
+        [Phone(ErrorMessage = "Enter a valid phone number")]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = "Service desired is required")]
+        public string SelectedService { get; set; }
+
+        [Required(ErrorMessage = "Message is required")]
+        [StringLength(2000, ErrorMessage = "Message is too long")]
+        public string Message { get; set; }
+    }
 }

@@ -437,4 +437,13 @@
   <data name="PamojaNetworkAndAllRelatedMarks" xml:space="preserve">
     <value>Pamoja Counselling, Mental Wellbeing and Safeguarding Services y todas las marcas relacionadas son marcas comerciales de pamojasafeguardingnetwork.co.uk.</value>
   </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol de trabajo</value>
+  </data>
+  <data name="Bio" xml:space="preserve">
+    <value>La biografía</value>
+  </data>
+  <data name="SocialMedia" xml:space="preserve">
+    <value>Redes Sociales</value>
+  </data>
 </root>

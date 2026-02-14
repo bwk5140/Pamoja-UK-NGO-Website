@@ -1,0 +1,395 @@
+﻿@page "/careers/search/occupational-therapist"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Occupational Therapist Job | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container mx-auto px-6 lg:px-8">
+        <section class="mt-5">
+            <div class="max-w-7xl sm:px-6 lg:px-8">
+                <div style="display: inline-block;">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-start text-sm text-gray-600" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3" style="list-style: none;">
+                            <!-- About Us -->
+                            <li class="inline-flex items-center">
+                                <a href="/careers"
+                                   class="inline-flex items-center text-secondary hover:text-gray-800 font-medium">
+                                    Careers
+                                </a>
+                            </li>
+
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-start">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/careers/search/?role=Occupational%20Therapist"
+                                       class="ml-1 text-secondary hover:text-gray-800 font-medium">
+                                        Search
+                                    </a>
+                                </div>
+                            </li>
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-start">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/careers/search/occupational-therapist" class="inline-flex items-center text-secondary hover:text-gray-800 font-medium font-bold">
+                                        Occupational Therapist
+                                    </a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                @if (OccupationalTherapist is not null && OccupationalTherapist.Expiration < DateTime.UtcNow)
+                {
+                    <div class="text-right">
+                        <div style="display: inline-block;" class="bg-red-600 rounded text-white px-3 md:px-5">
+                            <p>Closed</p>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </section>
+        <div class="flex flex-col md:flex-row items-start mb-16 gap-16 py-20">
+            <div class="md:w-3/4">
+                <div class="container">
+                    <h1 class="text-3xl">Occupational Therapist</h1>
+                    <div class="meta">
+                        Location: Nairobi, Kenya | Contractual
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Introduction</h2>
+                        <p>
+                            Are you an Occupational Therapist with experience in mental health and a passion for innovative,
+                            impact-driven work? Pamoja Mental Health &amp; Safeguarding Network is seeking a motivated
+                            Occupational Therapist to join our growing multidisciplinary team in Nairobi. Working within a
+                            diverse team, you will deliver person-centred, occupation-focused mental health interventions
+                            and contribute to the design and delivery of mental health and safeguarding training for
+                            communities and organisations.
+                        </p>
+                        <p>
+                            We welcome applications from adaptable, values-driven clinicians committed to ethical and
+                            innovative mental health services.
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Role Profile</h2>
+                        <p>
+                            Organisation: Pamoja Mental Health &amp; Safeguarding Network
+                        </p>
+                        <p>
+                            Position Title: Occupational Therapist
+                        </p>
+                        <p>
+                            Reports To: Head of Therapies &amp; Training
+                        </p>
+                        <p>
+                            Location: Nairobi, Kenya (with possible field assignments)
+                        </p>
+                        <p>
+                            Job Type: Contractual / Consultancy
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Organisational Overview</h2>
+                        <p>
+                            Pamoja Mental Health &amp; Safeguarding Network is a multidisciplinary organisation committed to
+                            preventing harm, strengthening safeguarding practices, and promoting holistic mental health care.
+                            We provide individual mental health support and facilitate Mental Health &amp; Safeguarding training
+                            to build mental resilience at the individual level and strengthen mental health services at the
+                            community level. Trained in the UK and Kenya, we bridge clinical expertise with safeguarding
+                            strategies that are both evidence-based and culturally relevant.
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Job Purpose</h2>
+                        <p>
+                            The Occupational Therapist will design and deliver occupation-focused, person-centred, and
+                            trauma-informed interventions to support individuals, groups, and communities to improve
+                            mental health, wellbeing, and meaningful participation in daily life. The role suits a motivated and
+                            creative practitioner who is excited to contribute to a growing and innovative organisation and
+                            work flexibly across diverse settings.
+                        </p>
+                        <p>
+                            The post-holder will also contribute to the development of Occupational Therapy informed mental
+                            health services and training across Pamoja’s programmes. Working collaboratively within a
+                            multidisciplinary team (MDT), they will support service development, capacity building, and the
+                            design, delivery, and evaluation of mental health and safeguarding training, helping to shape
+                            evolving services and maximise community impact.
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Key Responsibilities</h2>
+                        <ol>
+                            <li>
+                                <strong>
+                                    Clinical &amp; Therapeutic Practice
+                                </strong>
+
+                                <ul>
+                                    <li>
+                                        Deliver occupational therapy assessments and interventions addressing mental health,
+                                        psychosocial wellbeing, and functional participation.
+                                    </li>
+                                    <li>
+                                        Work with individuals and groups experiencing trauma, stress, psychosocial difficulties, or
+                                        mental health challenges.
+                                    </li>
+                                    <li>
+                                        Apply trauma-informed, recovery-oriented, and culturally responsive approaches to
+                                        practice.
+                                    </li>
+                                    <li>
+                                        Develop collaborative, goal-focused intervention plans that promote independence,
+                                        resilience, and meaningful engagement.
+                                    </li>
+                                    <li>
+                                        Maintain accurate, timely, and confidential client records in line with ethical and
+                                        organisational standards.
+                                    </li>
+                                    <li>
+                                        Participate in risk assessment, safeguarding processes, and multidisciplinary case
+                                        discussions.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>
+                                    Programme Development &amp; Innovation
+                                </strong>
+
+                                <ul>
+                                    <li>
+                                        Contribute to the design, implementation, and evaluation of mental health and
+                                        safeguarding programmes across diverse settings.
+                                    </li>
+                                    <li>
+                                        Integrate creative, holistic, occupation-focused approaches into Pamoja’s service model
+                                        (e.g. group work, life skills, wellbeing programmes).
+                                    </li>
+                                    <li>
+                                        Support the development of new services, pilot projects, and innovative therapeutic
+                                        models.
+                                    </li>
+                                    <li>Adapt interventions to meet the needs of diverse populations and contexts.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>
+                                    Training, Education &amp; Capacity Building
+                                </strong>
+
+                                <ul>
+                                    <li>
+                                        Contribute to the delivery of mental health, wellbeing, and safeguarding training for staff,
+                                        partners, schools, corporate organisations, and community groups.
+                                    </li>
+                                    <li>
+                                        Support the development of training materials, resources, and practical toolkits informed
+                                        by occupational therapy perspectives.
+                                    </li>
+                                    <li>
+                                        Participate in internal learning, reflective practice, and continuous professional
+                                        development activities.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>
+                                    Multidisciplinary &amp; Organisational Contribution
+                                </strong>
+                                <ul>
+                                    <li>
+                                        Work collaboratively within a multidisciplinary team including psychologists, counsellors,
+                                        and safeguarding specialists.
+                                    </li>
+                                    <li>
+                                        Participate in team meetings, case reviews, supervision, and service planning activities.
+                                    </li>
+                                    <li>
+                                        Contribute to monitoring, evaluation, reporting, and impact measurement.
+                                    </li>
+                                    <li>
+                                        Uphold organisational values, safeguarding standards, and professional ethics at all times.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Essential Qualifications</h2>
+                        <ul>
+                            <li>Bachelor’s and/or Master’s degree in Occupational Therapy.</li>
+                            <li>Registered with the Occupational Therapy Council of Kenya</li>
+                            <li>
+                                Additional training in mental health, trauma-informed practice, or psychosocial
+                                interventions (desirable).
+                            </li>
+                        </ul>
+
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Experience</h2>
+                        <ul>
+                            <li>
+                                Minimum 2 years’ experience working in mental health settings across clinical and/or
+                                community contexts.
+                            </li>
+                            <li>Experience delivering individual and group-based occupational therapy interventions.</li>
+                            <li>
+                                Experience using evidence-based OT assessments, and outcome measures to support
+                                people with complex mental health needs.
+                            </li>
+                            <li>
+                                Experience delivering rehabilitation focused individual and group interventions within a
+                                mental health context.
+                            </li>
+                            <li>
+                                Experience managing a diverse workload including those exhibiting distress and with
+                                complex mental health conditions.
+                            </li>
+                            <li>Experience in NGO, educational, or community health contexts <em>(desirable)</em>.</li>
+                            <li>Demonstrable experience in teaching, training or education <em>(desirable)</em>.</li>
+                        </ul>
+
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl">Knowledge, Skills &amp; Abilities</h2>
+                        <ul>
+                            <li>
+                                Strong understanding of occupational therapy in mental health principles and recovery-
+                                oriented practice.
+                            </li>
+                            <li>
+                                Ability to design and adapt interventions creatively using meaningful activities and
+                                occupations.
+                            </li>
+                            <li>Skilled in activity analysis and recovery focused interventions.</li>
+                            <li>Knowledge of trauma-informed care and safeguarding principles.</li>
+                            <li>Strong communication, interpersonal, and collaborative skills.</li>
+                            <li>Ability to work independently while contributing effectively to a multidisciplinary team.</li>
+                            <li>Good organisational, time management, and documentation skills.</li>
+                            <li>Ability to work across diverse communities.</li>
+                            <li>Awareness of cross-cultural approaches to Occupational Therapy &amp; Mental Health Care.</li>
+                            <li>Training and presentation skills.</li>
+                            <li>Ability to maintain confidentiality and ethical standards.</li>
+                            <li>Compassionate and client-centred.</li>
+                            <li>Creative, flexible, and open to innovation.</li>
+                            <li>Motivated to contribute to a growing organisation and help shape services.</li>
+                            <li>Strong sense of professional integrity and accountability.</li>
+                            <li>Enthusiastic about learning, service development, and community impact.</li>
+                            <li>
+                                Ability to remain calm under pressure and adapt effectively to evolving organisational
+                                needs.
+                            </li>
+                            <li>Ability to reflect and critically appraise own performance.</li>
+                            <li>Ability to maintain professional boundaries.</li>
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <h2 class="text-2xl">Performance Indicators</h2>
+                        <ul>
+                            <li>Quality and effectiveness of occupational therapy interventions delivered.</li>
+                            <li>Contribution to client outcomes, participation, and wellbeing.</li>
+                            <li>Adherence to ethical, safeguarding, and professional standards.</li>
+                            <li>Quality and timeliness of documentation and reporting.</li>
+                            <li>Contribution to service development, innovation, and teamwork.</li>
+                            <li>Feedback from clients, colleagues, and partner organisations.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="text-2xl"> Why Join Pamoja?</h2>
+                        <ul>
+                            <li>Be part of an innovative, multidisciplinary organisation with a strong social mission.</li>
+                            <li>Opportunity to contribute creatively to service development and programme design.</li>
+                            <li>Exposure to diverse practice settings and populations.</li>
+                            <li>Supportive team culture that values learning, collaboration, and wellbeing.</li>
+                            <li>
+                                Opportunity to grow with the organisation and shape the future of mental health and
+                                safeguarding services in Kenya.
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div class="cta">
+                        <h2 class="text-2xl"> How to Apply</h2>
+                        <p class="mb-4">
+                            Please submit your CV and a covering letter outlining your relevant experience and interest in the
+                            role to jobs@pamojasafeguarding.com. Application deadline: 2 January 2026.
+                        </p>
+                        @if (OccupationalTherapist is not null && OccupationalTherapist.Expiration > DateTime.UtcNow)
+                        {
+                            <a href="mailto:jobs@pamojasafeguarding.com">Apply now</a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/4 items-start">
+                <div style="border: 1px solid #ccc; border-radius: 8px; background-color: #fff; padding: 24px; max-width: 320px; font-family: Arial, sans-serif;">
+                    <p class="mb-2"><strong>Job Title:</strong> Occupational Therapist</p>
+                    <p class="mb-2"><strong>City:</strong> Nairobi, Kenya</p>
+                    <p class="mb-2"><strong>Country:</strong> Kenya</p>
+                    <p class="mb-2"><strong>Area of Work:</strong> Therapy</p>
+                    <p class="mb-2"><strong>Employment Type:</strong> Contractual</p>
+                    <p class="mb-2"><strong>Travel:</strong> Possible field assignments</p>
+                    <p class="mb-2"><strong>Company:</strong> Pamoja Counselling, Mental Wellbeing and Safeguarding Services</p>
+                    @if (OccupationalTherapist is not null && OccupationalTherapist.Expiration > DateTime.UtcNow)
+                    {
+                        <a href="mailto:jobs@pamojasafeguarding.com" style="display: inline-block; margin-top: 16px; padding: 10px 20px; background-color: #1f4e79;
+                            color: #fff; text-decoration: none; border-radius: 4px;">
+                            Apply now
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CareerRole? OccupationalTherapist { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? Id { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        OccupationalTherapist = await context.CareerRole.FirstOrDefaultAsync(c => c.Id == Id);
+    }
+}

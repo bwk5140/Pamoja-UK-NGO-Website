@@ -1,91 +1,118 @@
 ﻿@page "/Account/Register"
+@using ChoicesStoreManagementSystem.Data
 
 @inject IStringLocalizer<SharedResource> Loc
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IEmailSender<ApplicationUser> EmailSender
+@inject IRoleStore<IdentityRole> RoleStore
+@inject IRoleValidator<IdentityRole> RoleValidator
+@inject IEnumerable<RoleValidator<IdentityRole>> RoleValidators
+@inject ILogger<RoleManager<IdentityRole>> RoleLogger
 @inject ILogger<Register> Logger
+@inject IdentityErrorDescriber IdentityErrorDescriber
+@inject ILookupNormalizer KeyNormalizer
 @inject NavigationManager NavigationManager
 @inject EmailEncryptor EmailEncryptor
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register</PageTitle>
-<div class="container-sm" style="text-align: center; color: #2f4f4f;">
-    <div class="flex justify-center w-full">
-        <a href="/" style="text-decoration: none;"><img class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
-    </div>
-    <div class="center-container">
-        <div class="card" style="border-radius: 15px; width: 400px;">
-            <div class="card-header">
-                <h4 class="header mb-3">@Loc["Registration"]</h4>
-            </div>
-            <div class="card-body">
-                <StatusMessage Message="@Message" />
-                <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" role="alert" />
-                    @if (Email is not null)
-                    {
-                        <div class="row mb-3">
-                            <div class="col-sm-9" style="text-align: left;">
-                                <strong>@Email</strong>
-                            </div>
-                            <div class="col-sm-3" style="text-align: right;">
-                                <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?>
-                                   { ["ReturnUrl"] = ReturnUrl, ["Id"] = EmailEncryptor.EncryptEmail(Email) }))" style="text-decoration: none;">
-                                    @Loc["Change"]
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form form-floating mb-3">
-                            <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
-                            <label for="Input.FullName">@Loc["FullName"]</label>
-                            <ValidationMessage For="() => Input.FullName" class="text-danger" />
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="form form-floating mb-3">
-                            <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
-                            <label for="Input.FullName">@Loc["FullName"]</label>
-                            <ValidationMessage For="() => Input.FullName" class="text-danger" />
-                        </div>
-                        <div class="form form-floating mb-3">
-                            <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="" />
-                            <label for="Input.Email">@Loc["Email"]</label>
-                            <ValidationMessage For="() => Input.Email" class="text-danger" />
-                        </div>
-                    }
-                    
-                    <div class="form form-floating mb-3">
-                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
-                        <label for="Input.Password">@Loc["Password"]</label>
-                        <ValidationMessage For="() => Input.Password" class="text-danger" />
-                    </div>
-                    <div class="form form-floating mb-3">
-                        <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
-                        <label for="Input.ConfirmPassword">@Loc["ConfirmPassword"]</label>
-                        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-                    </div>
-                    <button style="background-color: #2f4f4f; color: white;" class="w-100 btn btn-lg btn-primary mb-3">@Loc["UserRegistration"]</button>
-                </EditForm>
-            </div>
-            <section>
-                <div style="display: flex; align-items: center; text-align: center; color: gray;">
-                    <hr style="flex: 1;" />
-                    <span style="padding: 0 1em;">or</span>
-                    <hr style="flex: 1;" />
+
+<PageTitle>Register | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-sm" style="text-align: center; color: #2f4f4f;">
+        <div class="flex justify-center w-full">
+            <a href="/" style="text-decoration: none;"><img loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
+        </div>
+        <div class="center-container">
+            <div class="card" style="border-radius: 15px; width: 400px;">
+                <div class="card-header">
+                    <h4 class="header mb-3">@Loc["Registration"]</h4>
                 </div>
-                <ExternalRegisterPicker />
-            </section>
+                <div class="card-body">
+                    <StatusMessage Message="@Message" />
+                    <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" role="alert" />
+                        @if (Email is not null)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-sm-9" style="text-align: left;">
+                                    <strong>@Email</strong>
+                                </div>
+                                <div class="col-sm-3" style="text-align: right;">
+                                    <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?>
+                                       { ["ReturnUrl"] = ReturnUrl, ["Id"] = EmailEncryptor.EncryptEmail(Email) }))" style="text-decoration: none;">
+                                        @Loc["Change"]
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="form form-floating mb-3">
+                                <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
+                                <label for="Input.FullName">@Loc["FullName"]</label>
+                                <ValidationMessage For="() => Input.FullName" class="text-danger" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form form-floating mb-3">
+                                <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
+                                <label for="Input.FullName">@Loc["FullName"]</label>
+                                <ValidationMessage For="() => Input.FullName" class="text-danger" />
+                            </div>
+                            <div class="form form-floating mb-3">
+                                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="" />
+                                <label for="Input.Email">@Loc["Email"]</label>
+                                <ValidationMessage For="() => Input.Email" class="text-danger" />
+                            </div>
+                        }
+                        <div class="form form-floating mb-3">
+                            <InputText type="text" @bind-Value="Input.Role" id="Input.Role" class="form-control" autocomplete="role" aria-required="true" placeholder="" />
+                            <label for="Input.Role">@Loc["Role"]</label>
+                            <ValidationMessage For="() => Input.Role" class="text-danger" />
+                        </div>
+                        <div class="form form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
+                            <label for="Input.Password">@Loc["Password"]</label>
+                            <ValidationMessage For="() => Input.Password" class="text-danger" />
+                        </div>
+                        <div class="form form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
+                            <label for="Input.ConfirmPassword">@Loc["ConfirmPassword"]</label>
+                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                        </div>
+                        <button style="background-color: #2f4f4f; color: white;" class="w-100 btn btn-lg btn-primary mb-3">@Loc["UserRegistration"]</button>
+                    </EditForm>
+                </div>
+                <section>
+                    <div style="display: flex; align-items: center; text-align: center; color: gray;">
+                        <hr style="flex: 1;" />
+                        <span style="padding: 0 1em;">or</span>
+                        <hr style="flex: 1;" />
+                    </div>
+                    <ExternalRegisterPicker />
+                </section>
+            </div>
         </div>
     </div>
 </div>
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
+    private ApplicationRoleManager? RoleManager;
+    private IdentityRole? Role;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -115,17 +142,54 @@
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
+        if (user is null)
+            return;
         var emailStore = GetEmailStore();
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
 
+         if (!result.Succeeded)
+        {
+            identityErrors = result.Errors;
+            return;
+        }
+        //Create Role
+            RoleManager = new ApplicationRoleManager(RoleStore, RoleValidators, KeyNormalizer, IdentityErrorDescriber, RoleLogger);
+            Role = await RoleManager.FindByNameAsync(Input.Role).ConfigureAwait(false);
+
+            if (Role == null)
+            {
+                Role = new IdentityRole(Input.Role);
+                var roleResult = await RoleManager.CreateAsync(Role);
+            }
+            result = await UserManager.AddToRoleAsync(user, Role.Name!);
+
+        if (Input.Email.Contains("@pamojasafeguarding.com"))
+        {
+            //Create Role
+            RoleManager = new ApplicationRoleManager(RoleStore, RoleValidators, KeyNormalizer, IdentityErrorDescriber, RoleLogger);
+            Role = await RoleManager.FindByNameAsync("PamojaMember").ConfigureAwait(false);
+
+            if (Role == null)
+            {
+                Role = new IdentityRole("PamojaMember");
+                var roleResult = await RoleManager.CreateAsync(Role);
+            }
+            result = await UserManager.AddToRoleAsync(user, Role.Name!);
+        }
+        //Check if UserRole was added successfully
         if (!result.Succeeded)
         {
             identityErrors = result.Errors;
             return;
         }
+
         Logger.LogInformation("User created a new account with password.");
+
+        var imageSource = "wwwroot/Images/Art/DefaultUserProfilePicSmall.jpg";
+        user.ProfilePicture = File.ReadAllBytes(imageSource);
+        user.ImageContentType = System.Net.Mime.MediaTypeNames.Image.Jpeg;
 
         using var context = await DbFactory.CreateDbContextAsync();
         user.Name = Input.FullName;
@@ -134,13 +198,17 @@
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
+        if (code is not null){
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = NavigationManager.GetUriWithQueryParameters(
             NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
+            await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+        }
+        else{
+            return;
+        }
 
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-        
         if (UserManager.Options.SignIn.RequireConfirmedAccount)
         {
             RedirectManager.RedirectTo(
@@ -186,6 +254,10 @@
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
         [Display(Name = "Full name")]
         public string FullName { get; set; } = "";
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+        [Display(Name = "Role")]
+        public string Role { get; set; } = "";
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

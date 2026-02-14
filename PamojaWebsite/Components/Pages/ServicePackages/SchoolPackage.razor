@@ -1,466 +1,417 @@
 ﻿@page "/services/school-package"
 
-<PageTitle>School Package</PageTitle>
+@using System.Linq.Expressions
+@using System;
+@using System.ComponentModel.DataAnnotations;
 
+<PageTitle>School Package | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 @inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@implements IDisposable
 
 @rendermode InteractiveServer
 
-<div class="container-xxxl">
-    <!-- Banner Section -->
-    <section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <!-- Decorative background shapes -->
-        <div class="absolute inset-0">
-            <!-- Large blurred gradient blob -->
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-            <!-- Smaller accent circle -->
-            <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
-
-            <!-- Diagonal rectangle -->
-            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
-
-            <!-- Triangle using clip-path -->
-            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
-                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-xxxl">
+        <!-- Banner Section -->
+        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+            <div class="absolute inset-0">
+                <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
             </div>
-        </div>
 
-        <!-- Content -->
-        <div class="relative max-w-7xl mx-auto">
-            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">School Package</h1>
+            <!-- Content -->
+            <div class="relative max-w-7xl mx-auto">
+                <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                    <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">School Package</h1>
+                </div>
             </div>
-        </div>
-    </section>
-    <!-- Breadcrumb Section-->
-    <section class="py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Breadcrumb -->
-            <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <!-- About Us -->
-                    <li class="inline-flex items-center">
-                        <a href="/services"
-                           class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
-                            Services
-                        </a>
-                    </li>
+        </section>
+        <!-- Breadcrumb Section-->
+        <div class="py-10">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <!-- About Us -->
+                            <li class="inline-flex items-center">
+                                <a href="/services"
+                                   class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                                    Services
+                                </a>
+                            </li>
 
-                    <!-- Separator -->
-                    <li>
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                      clip-rule="evenodd" />
-                            </svg>
-                            <a href="/services/school-package"
-                               class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
-                                School Package
-                            </a>
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/services/school-package"
+                                       class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
+                                        School Package
+                                    </a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="py-10 bg-white">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
+                                Tailored educational packages to safeguard the well-being of children and young adults through compassionate support, advocacy, and education.
+                            </p>
+                            <button type="button" class="mt-3 btn bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                                    @onclick="ScrollToTarget">
+                                Get Started
+                                <i data-feather="arrow-right" class="ml-2"></i>
+                            </button>
                         </div>
-                    </li>
-                </ol>
-            </nav>
-        </div>
-    </section>
+                    </div>
+                </div>
+            </section>
+            <!-- Art Section-->
+            <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <!-- Decorative background shapes -->
+                <div class="absolute inset-0">
+                    <!-- Gradient blob -->
+                    <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
 
-    <!-- About Section -->
-    <section class="py-10 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="prose prose-lg max-w-none">
-                    <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
-                        Tailored educational packages to safeguard the well-being of children and adults through compassionate support, advocacy, and education.
+                    <!-- Accent circle -->
+                    <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
+
+                    <!-- Diagonal rectangle -->
+                    <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
+                    <!-- Image overlay -->
+                    <div class="relative">
+                        <img loading="lazy" src="/Images/Art/group-cheerful-friends-with-facemasks-taking-selfie-park.jpg"
+                             alt="Young School Boy"
+                             class="relative z-10 rounded-lg shadow-lg">
+                    </div>
+                    <div class="relative">
+                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764623940/papercut-head-with-green-leaves-and-flowers_csmnsw.jpg"
+                             alt="Papercut Head With Green Leaves and Flowers"
+                             class="relative z-10 rounded-lg shadow-lg">
+                    </div>
+                    <div class="relative">
+                        <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757405914459-AB7KF8RPJL0YK5974FD2/unsplash-image-wjCYyd_KppE.jpg"
+                             alt="Students in Classroom"
+                             class="relative z-10 rounded-lg shadow-lg" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+                <div class="max-w-4xl mx-auto text-center">
+                    <p class="text-lg text-gray-600 mb-8">
+                        We aim to break down stigma, prevent harm, and empower young people to make choices that protect their safety, dignity,
+                        and mental health in both the short- and long-term.
                     </p>
-                    <button type="button" class="mt-3 btn bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
-                            @onclick="ScrollToTarget">
-                        Get Started
-                        <i data-feather="arrow-right" class="ml-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Art Section-->
-    <section class="relative bg-primary-100 text-gray-900 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <!-- Decorative background shapes -->
-        <div class="absolute inset-0">
-            <!-- Gradient blob -->
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-            <!-- Accent circle -->
-            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-bounce"></div>
-
-            <!-- Diagonal rectangle -->
-            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div>
-        </div>
-
-        <!-- Content -->
-        <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
-            <!-- Image overlay -->
-            <div class="relative">
-                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1755859608390-8K6UY597102585EWC3DK/unsplash-image-83tkHLPgg2Q.jpg"
-                     alt="Education"
-                     class="relative z-10 rounded-lg shadow-lg">
-            </div>
-            <div class="relative">
-                <img src="Images/Art/papercut-head-with-green-leaves-and-flowers.jpg"
-                     alt="Education"
-                     class="relative z-10 rounded-lg shadow-lg">
-            </div>
-            <div class="relative">
-                <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757405914459-AB7KF8RPJL0YK5974FD2/unsplash-image-wjCYyd_KppE.jpg" alt="Mental Health Support"
-                     class="relative z-10 rounded-lg shadow-lg" />
-            </div>
-        </div>
-    </section>
-
-    @* <!-- Hero Section -->
-    <section class="relative bg-primary-600 text-gray-700 py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-                <div>
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6">School Package</h1>
-                    <p class="text-xl mb-8">Tailored educational packages to safeguard the well-being of children and adults through compassionate support, advocacy, and education.</p>
-                    <button type="button" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
-                            @onclick="ScrollToTarget">
-                        Get Started
-                        <i data-feather="arrow-right" class="ml-2"></i>
-                    </button>
-                </div>
-                <div class="mt-10 md:mt-0">
-                    <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1757405914459-AB7KF8RPJL0YK5974FD2/unsplash-image-wjCYyd_KppE.jpg" alt="Mental Health Support" 
-                    class="rounded-lg shadow-2xl">
-                </div>
-            </div>
-        </div>
-    </section> *@
-
-    <!-- About Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div class="max-w-4xl mx-auto text-center">
-            <p class="text-lg text-gray-600 mb-8">We aim to break down stigma, prevent harm, and empower young people to make choices that protect their safety, dignity, 
-                and mental health in both the short- and long-term.
-            </p>
-            <div class="grid md:grid-cols-3 gap-8 mt-12">
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <i data-feather="shield" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
-                    <h3 class="font-bold text-xl mb-3 text-gray-600">Safeguarding</h3>
-                    <p class="text-gray-600">Protecting students through comprehensive support systems</p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <i data-feather="heart" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
-                    <h3 class="font-bold text-xl mb-3 text-gray-600">Mental Health</h3>
-                    <p class="text-gray-600">Building resilience and emotional literacy</p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <i data-feather="users" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
-                    <h3 class="font-bold text-xl mb-3 text-gray-600">Community</h3>
-                    <p class="text-gray-600">Creating supportive networks for students and staff</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Programs Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Our Educational Programs</h2>
-
-            <div class="space-y-12">
-                <!-- Primary School -->
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <div class="md:flex items-start">
-                        <div class="md:w-1/3 mb-6 md:mb-0">
-                            <img src="Images/primary_students.jpg" alt="Primary School Program" class="rounded-lg w-full">
+                    <div class="grid md:grid-cols-3 gap-8 mt-12">
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <i data-feather="shield" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
+                            <h3 class="font-bold text-xl mb-3 text-gray-600">Safeguarding</h3>
+                            <p class="text-gray-600">Protecting students through comprehensive support systems</p>
                         </div>
-                        <div class="md:w-2/3 md:pl-8">
-                            <h3 class="text-2xl font-bold text-primary-600 mb-4">Primary School Program</h3>
-                            <p class="text-gray-600 mb-4">Introducing basic emotional literacy, self awareness, and resilience building in a developmentally appropriate way.</p>
-                            <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
-                            <ul class="grid md:grid-cols-2 gap-2 mb-4">
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <i data-feather="heart" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
+                            <h3 class="font-bold text-xl mb-3 text-gray-600">Mental Health</h3>
+                            <p class="text-gray-600">Building resilience and emotional literacy</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <i data-feather="users" class="w-12 h-12 text-gray-500 mb-4 mx-auto"></i>
+                            <h3 class="font-bold text-xl mb-3 text-gray-600">Community</h3>
+                            <p class="text-gray-600">Creating supportive networks for students and staff</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Programs Section -->
+            <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Our Educational Programs</h2>
+
+                    <div class="space-y-12">
+                        <!-- Primary School -->
+                        <div class="bg-white p-8 rounded-xl shadow-md">
+                            <div class="md:flex items-start">
+                                <div class="md:w-1/3 mb-6 md:mb-0">
+                                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624261/primary_students_cuuqsk.jpg"
+                                         alt="Young Primary School Students" class="rounded-lg w-full">
+                                </div>
+                                <div class="md:w-2/3 md:pl-8">
+                                    <h3 class="text-2xl font-bold text-primary-600 mb-4">Primary School Program</h3>
+                                    <p class="text-gray-600 mb-4">Introducing basic emotional literacy, self awareness, and resilience building in a developmentally appropriate way.</p>
+                                    <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
+                                    <ul class="grid md:grid-cols-2 gap-2 mb-4">
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Understanding Feelings and Emotions
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Coping Strategies
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Friendship and Kindness
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Online Safety
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Asking for Help & Building Resilience
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Secondary School -->
+                        <div class="bg-white p-8 rounded-xl shadow-md">
+                            <div class="md:flex items-start">
+                                <div class="md:w-1/3 mb-6 md:mb-0">
+                                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624331/high-school_nqhonv.jpg" alt="High School Building" class="rounded-lg w-full">
+                                </div>
+                                <div class="md:w-2/3 md:pl-8">
+                                    <h3 class="text-2xl font-bold text-primary-600 mb-4">Secondary School Program</h3>
+                                    <p class="text-gray-600 mb-4">Equipping students with skills to manage stress, social pressures, and mental health challenges.</p>
+                                    <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
+                                    <ul class="grid md:grid-cols-2 gap-2 mb-4">
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Mental Health Awareness
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Anxiety & Depression
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Social Pressures & Social Media
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Suicide Prevention & TEMBEA Crisis Support
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Alcohol & Substance Use
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Coping Strategies
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- University Program -->
+                        <div class="bg-white p-8 rounded-xl shadow-md">
+                            <div class="md:flex items-start">
+                                <div class="md:w-1/3 mb-6 md:mb-0">
+                                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624405/african-american-patients-talking-about-healthcare_fuqeps.jpg"
+                                         alt="University Student Discussing Mental Health" class="rounded-lg w-full">
+                                </div>
+                                <div class="md:w-2/3 md:pl-8">
+                                    <h3 class="text-2xl font-bold text-primary-600 mb-4">University Program</h3>
+                                    <p class="text-gray-600 mb-4">Supporting young adults in managing academic stress, independence, and mental health challenges.</p>
+                                    <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
+                                    <ul class="grid md:grid-cols-2 gap-2 mb-4">
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Mental Health Awareness
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Stress & Time Management
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Recognising & addressing Mental Health Conditions
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Substance Misuse
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Suicide Prevention & TEMBEA Crisis Response
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                                            Building Healthy Relationships
+                                        </li>
+                                    </ul>
+                                    <div class="text-sm bg-gray-100 p-3 rounded-lg">
+                                        <i data-feather="clock" class="inline mr-2 text-gray-500"></i>
+                                        <span class="font-medium">Session Duration:</span> 45 minutes per session
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Support Section -->
+            <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Staff Support Services</h2>
+
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary-600 mb-4">We Strengthen Your Role</h3>
+                            <p class="text-gray-600 mb-6">Pamoja doesn't replace your role, we strengthen it. Together, we can ensure that every student, teacher, and counsellor feels supported, valued and equipped to handle the challenges of today's world.</p>
+
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
+                                        <i data-feather="award" class="text-primary-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg">Mental Health First Aid Training</h4>
+                                        <p class="text-gray-600">Certificate program for educators</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
+                                        <i data-feather="book" class="text-primary-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg">Safeguarding Guides</h4>
+                                        <p class="text-gray-600">Confidentiality and protection resources</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
+                                        <i data-feather="coffee" class="text-primary-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg">Self Care Tool Kits</h4>
+                                        <p class="text-gray-600">Burnout prevention and self care tool kit for educators</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
+                                        <i data-feather="users" class="text-primary-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg">Neurodiversity Training</h4>
+                                        <p class="text-gray-600">
+                                            Designed to help teachers and school leaders understand neurodiversity
+                                            and common neuro-divergences present in the classroom
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-4">How We Deliver Support:</h4>
+                            <ul class="space-y-3">
                                 <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Understanding Feelings and Emotions
+                                    <i data-feather="calendar" class="text-secondary-500 mr-3 mt-1"></i>
+                                    <span>Monthly Drop-In Clinics for Staff</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Coping Strategies
+                                    <i data-feather="book-open" class="text-secondary-500 mr-3 mt-1"></i>
+                                    <span>Termly Staff Training sessions</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Friendship and Kindness
+                                    <i data-feather="package" class="text-secondary-500 mr-3 mt-1"></i>
+                                    <span>Tailored Resource Packs</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Online Safety
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Asking for Help & Building Resilience
+                                    <i data-feather="users" class="text-secondary-500 mr-3 mt-1"></i>
+                                    <span>Joint Case Management</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Secondary School -->
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <div class="md:flex items-start">
-                        <div class="md:w-1/3 mb-6 md:mb-0">
-                            <img src="Images/high-school.jpg" alt="Secondary School Program" class="rounded-lg w-full">
-                        </div>
-                        <div class="md:w-2/3 md:pl-8">
-                            <h3 class="text-2xl font-bold text-primary-600 mb-4">Secondary School Program</h3>
-                            <p class="text-gray-600 mb-4">Equipping students with skills to manage stress, social pressures, and mental health challenges.</p>
-                            <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
-                            <ul class="grid md:grid-cols-2 gap-2 mb-4">
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Mental Health Awareness
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Anxiety & Depression
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Social Pressures & Social Media
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Suicide Prevention & TEMBEA Crisis Support
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Alcohol & Substance Use
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Coping Strategies
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <!-- Parents Section -->
+            <section class="py-16 px-4 sm:px-6 lg:px-8 bg-primary-600">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center mb-12">Parent & Guardian Resources</h2>
 
-                <!-- University Program -->
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <div class="md:flex items-start">
-                        <div class="md:w-1/3 mb-6 md:mb-0">
-                            <img src="Images/Art/african-american-patients-talking-about-healthcare.jpg" alt="University Program" class="rounded-lg w-full">
-                        </div>
-                        <div class="md:w-2/3 md:pl-8">
-                            <h3 class="text-2xl font-bold text-primary-600 mb-4">University Program</h3>
-                            <p class="text-gray-600 mb-4">Supporting young adults in managing academic stress, independence, and mental health challenges.</p>
-                            <h4 class="font-bold text-lg mb-2">Session Topics:</h4>
-                            <ul class="grid md:grid-cols-2 gap-2 mb-4">
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Mental Health Awareness
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Stress & Time Management
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Recognising & addressing Mental Health Conditions
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Substance Misuse
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Suicide Prevention & TEMBEA Crisis Response
-                                </li>
-                                <li class="flex items-start">
-                                    <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                                    Building Healthy Relationships
-                                </li>
-                            </ul>
-                            <div class="text-sm bg-gray-100 p-3 rounded-lg">
-                                <i data-feather="clock" class="inline mr-2 text-gray-500"></i>
-                                <span class="font-medium">Session Duration:</span> 45 minutes per session
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Staff Support Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Staff Support Services</h2>
-
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                    <h3 class="text-2xl font-bold text-primary-600 mb-4">We Strengthen Your Role</h3>
-                    <p class="text-gray-600 mb-6">Pamoja doesn't replace your role, we strengthen it. Together, we can ensure that every student, teacher, and counsellor feels supported, valued and equipped to handle the challenges of today's world.</p>
-
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
-                                <i data-feather="award" class="text-primary-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg">Mental Health First Aid Training</h4>
-                                <p class="text-gray-600">Certificate program for educators</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
-                                <i data-feather="book" class="text-primary-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg">Safeguarding Guides</h4>
-                                <p class="text-gray-600">Confidentiality and protection resources</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
-                                <i data-feather="coffee" class="text-primary-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg">Self Care Tool Kits</h4>
-                                <p class="text-gray-600">Burnout prevention and self care tool kit for educators</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary-100 rounded-full p-2 mr-4">
-                                <i data-feather="users" class="text-primary-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg">Neurodiversity Training</h4>
-                                <p class="text-gray-600">Designed to help teachers and school leaders understand neurodiversity 
-                                    and common neuro-divergences present in the classroom</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h4 class="font-bold text-lg mb-4">How We Deliver Support:</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-start">
-                            <i data-feather="calendar" class="text-secondary-500 mr-3 mt-1"></i>
-                            <span>Monthly Drop-In Clinics for Staff</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="book-open" class="text-secondary-500 mr-3 mt-1"></i>
-                            <span>Termly Staff Training sessions</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="package" class="text-secondary-500 mr-3 mt-1"></i>
-                            <span>Tailored Resource Packs</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="users" class="text-secondary-500 mr-3 mt-1"></i>
-                            <span>Joint Case Management</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Parents Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-primary-600">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Parent & Guardian Resources</h2>
-
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                    <p class="text-lg mb-6">Parents and guardians play a critical role in supporting children's mental health. Many families struggle with understanding signs of mental distress, reducing stigma, and accessing appropriate resources.</p>
-                    <div class="bg-white text-gray-800 p-6 rounded-lg">
-                        <h3 class="font-bold text-xl mb-3 text-primary-600">Workshop Objectives:</h3>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
-                                Understanding Mental Health conditions
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
-                                Supporting neurodivergent needs
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
-                                Impact of social media and peers
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
-                                Practical parenting strategies
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <img src="Images/book.jpg" alt="Parent Resources" class="rounded-lg shadow-xl">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Get Started With Our School Package</h2>
-
-            <div class="bg-white p-8 rounded-xl shadow-md">
-                <form class="space-y-6">
-                    <div class="grid md:grid-cols-2 gap-6">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                            <p class="text-lg mb-6">Parents and guardians play a critical role in supporting children's mental health. Many families struggle with understanding signs of mental distress, reducing stigma, and accessing appropriate resources.</p>
+                            <div class="bg-white text-gray-800 p-6 rounded-lg">
+                                <h3 class="font-bold text-xl mb-3 text-primary-600">Workshop Objectives:</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
+                                        Understanding Mental Health conditions
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
+                                        Supporting neurodivergent needs
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
+                                        Impact of social media and peers
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i data-feather="check" class="text-secondary-500 mr-2 mt-1"></i>
+                                        Practical parenting strategies
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <div>
-                            <label for="school" class="block text-sm font-medium text-gray-700 mb-1">School/Organization</label>
-                            <input type="text" id="school" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
+                            <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624468/book_ezh57e.jpg" alt="Book" class="rounded-lg shadow-xl">
                         </div>
                     </div>
-                    <div>
-                        <label for="program" class="block text-sm font-medium text-gray-700 mb-1">Program of Interest</label>
-                        <select id="program" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">Select a program</option>
-                            <option value="primary">Primary School Program</option>
-                            <option value="secondary">Secondary School Program</option>
-                            <option value="university">University Program</option>
-                            <option value="staff">Staff Support</option>
-                            <option value="parents">Parent Resources</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                        <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"></textarea>
-                    </div>
-                    <div>
-                        <button type="submit" class="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-md transition duration-300">
-                            Request Information
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+            </section>
         </div>
-    </section>
+    </div>
 </div>
 
 @code {
+
+    [SupplyParameterFromForm]
+    private ContactFormDTO contactFormDTO { get; set; } = new();
+
+    private EditContext editContext;
+
+    private bool FormSubmitted { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -470,6 +421,55 @@
     }
     private async Task ScrollToTarget()
     {
-        await JS.InvokeVoidAsync("scrollToSection", "contact");
+        NavigationManager.NavigateTo("services/book-appointment");
+    }
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+        ? $"{baseClasses} border-red-500 focus:border-red-500"
+        : $"{baseClasses} border-gray-300";
+    }
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
+    public void Dispose()
+    {
+        if (editContext != null)
+            editContext.OnFieldChanged -= (_, __) => StateHasChanged();
+    }
+    private void HandleInvalidSubmit()
+    {
+        // Optionally focus first invalid field or show a message
+    }
+    public class ContactFormDTO
+    {
+
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, ErrorMessage = "Name must be 100 characters or fewer")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "School is required")]
+        [StringLength(150, ErrorMessage = "School must be 150 characters or fewer")]
+        public string Organization { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Phone number is required")]
+        [Phone(ErrorMessage = "Enter a valid phone number")]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = "Service desired is required")]
+        public string SelectedService { get; set; }
+
+        [Required(ErrorMessage = "Message is required")]
+        [StringLength(2000, ErrorMessage = "Message is too long")]
+        public string Message { get; set; }
     }
 }

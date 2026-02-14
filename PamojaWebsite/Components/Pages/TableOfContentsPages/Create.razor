@@ -1,0 +1,52 @@
+﻿@page "/tableofcontents/create"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Create</h1>
+
+    <h2>TableOfContents</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="TableOfContents" OnValidSubmit="AddTableOfContents" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="TableOfContents.Title" class="form-control" />
+                    <ValidationMessage For="() => TableOfContents.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="anchor" class="form-label">Anchor:</label>
+                    <InputText id="anchor" @bind-Value="TableOfContents.Anchor" class="form-control" />
+                    <ValidationMessage For="() => TableOfContents.Anchor" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div>
+        <a href="/tableofcontents">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private TableOfContents TableOfContents { get; set; } = default!;
+
+    protected override void OnInitialized() => TableOfContents ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddTableOfContents()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.TableOfContents.Add(TableOfContents);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/tableofcontents");
+    }
+}

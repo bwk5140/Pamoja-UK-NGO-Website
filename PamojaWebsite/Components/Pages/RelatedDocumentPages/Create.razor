@@ -1,0 +1,53 @@
+﻿@page "/relateddocuments/create"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Create</h1>
+
+    <h2>RelatedDocument</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="RelatedDocument" OnValidSubmit="AddRelatedDocument" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="RelatedDocument.Title" class="form-control" />
+                    <ValidationMessage For="() => RelatedDocument.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastupdated" class="form-label">LastUpdated:</label>
+                    <InputDate id="lastupdated" @bind-Value="RelatedDocument.LastUpdated" class="form-control" />
+                    <ValidationMessage For="() => RelatedDocument.LastUpdated" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div>
+        <a href="/relateddocuments">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private RelatedDocument RelatedDocument { get; set; } = default!;
+
+    protected override void OnInitialized() => RelatedDocument ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddRelatedDocument()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.RelatedDocument.Add(RelatedDocument);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/relateddocuments");
+    }
+}

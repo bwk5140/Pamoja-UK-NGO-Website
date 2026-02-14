@@ -1,0 +1,71 @@
+﻿.calendar {
+    width: contain;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+    .calendar .prev_day {
+        text-align: center;
+        color: darkgrey;
+    }
+
+    .calendar .day {
+        cursor: pointer;
+        padding: min();
+    }
+
+        .calendar .day.header {
+            font-weight: bold;
+            background-color: transparent;
+        }
+        .calendar .day.today {
+            background-image: linear-gradient(#228B22, #085208);
+            color: white;
+        }
+
+        .calendar .day.selected {
+            background-image: linear-gradient(#58cca5, #13a876);
+            color: white;
+        }
+    .calendar td {
+        width: contain;
+        font: bold;
+    }
+/* Default: small screens */
+.days-md {
+    display: none;
+}
+
+.days-sm {
+    display: table-row;
+}
+
+/* Medium and up */
+@media (min-width: 768px) {
+    .days-md {
+        display: table-row;
+    }
+
+    .days-sm {
+        display: none;
+    }
+}
+
+.weekdays {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+    .weekdays li {
+        flex: 1;
+        padding: 10px 0;
+        font-weight: bold;
+    }
+
+.Row {
+    text-align: left;
+}

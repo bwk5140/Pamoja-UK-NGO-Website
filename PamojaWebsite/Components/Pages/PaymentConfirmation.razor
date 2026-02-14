@@ -1,0 +1,337 @@
+﻿@page "/payment-confirmation"
+@using Azure.Identity
+@using Azure.Security.KeyVault.Secrets
+@using MailKit.Net.Smtp
+@using Microsoft.JSInterop
+@using System.Linq.Expressions
+@using System.ComponentModel.DataAnnotations
+@using MimeKit
+@using System.Security.Cryptography.X509Certificates
+
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
+@inject IMemoryCache Cache
+@inject MyApiService ApiService
+@inject IHttpClientFactory ClientFactory
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject EmailService EmailSender
+@inject IMemoryCache Cache
+@inject ApplicationUserService ApplicationUserService
+
+<PageTitle>Payment-Confirmation | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@rendermode InteractiveServer
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="max-w-screen-sm mx-auto py-20">
+        <div class="mt-5 text-center text-gray-600">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg rounded">
+                    <div class="px-4 py-2 border-b">
+                        <strong>Appointment Confirmation</strong>
+                    </div>
+                    <div class="p-4">
+                        <div class="mt-2 mb-2 max-w-[1200px] border-l-8 border-r-2 border-t-2 border-b-2 border-green-600 bg-white rounded">
+                            <div class="p-2 flex flex-col items-center space-x-2 gap-16">
+                                <img src="Icons/check-circle-fill.svg" />
+                                <span>Your payment was successful.</span>
+                                <p>Thank you for the donation! Confirmation will be sent to your email.</p>
+                                <div class="bg-white p-6 rounded-lg shadow-md">
+                                    <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Appointment Details</h1>
+                                    <div class="bg-white p-6 rounded-lg shadow-md w-88">
+                                        <div class="flex flex-col md:flex-row gap-8 justify-between">
+                                            <div class="md:w-3/4 flex flex-row md:flex-col gap-8">
+                                                <div class="mb-3 mt-3">
+                                                    <img src="Images/PamojaLogo.png"
+                                                         width="200"
+                                                         height="200" />
+                                                </div>
+                                                <div class="mb-3 mt-3">
+                                                    <p class="font-bold text-lg text-gray-800 mb-6">
+                                                        Consultation with Pamoja Mental Health and Safeguarding Team
+                                                    </p>
+                                                    <p class="text-lg text-gray-600 mb-6">
+                                                        1 hour
+                                                    </p>
+                                                    @if (appointment is not null)
+                                                    {
+                                                        <div class="flex flex-col">
+                                                            <p class="font-bold text-lg text-gray-800 mb-3">
+                                                                @appointment.Date.DayOfWeek, @getMonth(appointment.Date.Month) @appointment.Date.Day at @appointment.Time.ToString("hh:mm tt")
+                                                            </p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? Id { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? AptId { get; set; }
+
+    private readonly string smtpServer = "smtp.gmail.com";
+    private readonly int smtpPort = 587;
+    private string? id;
+    private bool EmailSent { get; set; } = false;
+
+    [Parameter]
+    public Payment? payment { get; set; }
+
+    [Parameter]
+    public Appointment? appointment { get; set; }
+
+    [Parameter]
+    public string? Month { get; set; }
+
+
+    Dictionary<string, string> CurrencySymbols = new()
+            {
+                { "USD", "$" },
+                { "EUR", "€" },
+                { "GBP", "£" },
+                { "JPY", "¥" },
+                { "CAD", "C$" },
+                { "AUD", "A$" },
+                { "KES", "KSh" }
+            };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        var payments = await (await ApiService.GetClient()).GetFromJsonAsync<List<Payment>>("api/db/payments");
+        payment = payments.FirstOrDefault(d => d.Id == Id);
+        if (payment is null)
+        {
+            NavigationManager.NavigateTo("not-found");
+        }
+        var appointments = await (await ApiService.GetClient()).GetFromJsonAsync<List<Appointment>>("api/db/appointments");
+        if (appointment is not null){
+            appointment = appointments.FirstOrDefault(a => a.Id == AptId);
+        }
+        
+        if (appointment is null)
+        {
+            NavigationManager.NavigateTo("not-found");
+        }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        var user = await ApplicationUserService.GetApplicationUser();
+        var builder = new BodyBuilder();
+        builder.HtmlBody = string.Format(@"
+            <html lang=""en"">
+            <head>
+                <meta charset=""UTF-8"">
+            </head>
+            <body style=""margin:0; padding:0; background-color:#f4f4f4;"">
+                <table width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""background-color:#f4f4f4;"">
+                    <tr>
+                        <td align=""center"" valign=""top"">
+                            <table width=""50%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
+                                <tr>
+                                    <td style=""padding:40px; text-align:center;"">
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                        <h1 style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">Payment Invoice</h1>
+                                        <p style=""margin:0; font-size:16px; color:#555;"">Thank you!</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px; border-bottom:1px solid #ddd;"">
+                                        <table width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"">
+                                            <tr>
+                                                <td style=""text-align:left; font-size:14px; color:#333;"">
+                                                    <h2 style=""margin:0 0 10px; font-size:16px; font-weight:bold;"">
+                                                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services
+                                                    </h2>
+                                                    <p style=""margin:0; font-size:12px; color:#555;"">
+                                                        Unit 3, Office A, 1st Floor, 6-7 St Mary At Hill<br/>
+                                                        London, EC3R 8EE, England
+                                                    </p>
+                                                </td>
+                                                <td style=""text-align:right; font-size:12px; color:#555;"">
+                                                    Invoice <span id=""invoice-number"">{0}</span><br/>
+                                                    <span id=""invoice-date"">{1}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px;"">
+                                        <table width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
+                                            <thead>
+                                                <tr style=""background-color:#f9f9f9;"">
+                                                    <th align=""left"" style=""padding:8px; font-size:12px; color:#555; text-transform:uppercase;"">Description</th>
+                                                    <th align=""left"" style=""padding:8px; font-size:12px; color:#555; text-transform:uppercase;"">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style=""padding:8px; font-size:14px; color:#333;"">Appointment Payment</td>
+                                                    <td style=""padding:8px; font-size:14px; color:#555;"" id=""donation-amount"">{2}{3}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style=""padding:8px; font-size:14px; color:#333;"">Processing Fee</td>
+                                                    <td style=""padding:8px; font-size:14px; color:#555;"" id=""processing-fee"">{2}{4}</td>
+                                                </tr>
+                                                <tr style=""background-color:#f9f9f9;"">
+                                                    <td style=""padding:8px; font-size:14px; font-weight:bold; color:#333;"">Total</td>
+                                                    <td style=""padding:8px; font-size:14px; font-weight:bold; color:#333;"" id=""total-amount"">{2}{5}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px; background-color:#e6f4ea; border-radius:6px;"">
+                                        <h3 style=""margin:0 0 10px; font-size:14px; font-weight:bold; color:#2f855a;"">Your payment is tax deductible</h3>
+                                        <p style=""margin:0; font-size:12px; color:#276749;"">
+                                            Pamoja Counselling, Mental Wellbeing and Safeguarding Services is a registered 501(c)(3) nonprofit organization. Your donation is tax-deductible to the extent allowed by law.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px; background-color:#ffffff; border-radius:6px;"">
+                                        <!-- Appointment Confirmation Block -->
+                                        <div style=""max-width:100%; margin:0 auto; padding:16px;"">
+                                            <div style=""max-width:100%; margin:0 auto; background-color:#ffffff; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"">
+                                                <div style=""padding:8px 16px; border-bottom:1px solid #ddd;"">
+                                                    <strong>Appointment Confirmation</strong>
+                                                </div>
+                                                <div style=""padding:16px;"">
+                                                    <div style=""margin:16px 0; max-width:100%; border:2px solid #16a34a; border-left:8px solid #16a34a; background-color:#ffffff; border-radius:8px;"">
+                                                        <div style=""padding:8px; display:flex; flex-direction:column; align-items:center; gap:24px;"">
+                                                            <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); width:90%;"">
+                                                                <h1 style=""font-size:18px; font-weight:bold; text-align:center; color:#1f2937; margin:16px 0;"">Appointment Details</h1>
+                                                                <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1);"">
+                                                                    <div style=""display:flex; flex-direction:row; justify-content:space-between; gap:16px;"">
+                                                                        <div style=""flex:1; display:flex; flex-direction:row; gap:16px;"">
+                                                                            <div style=""margin:12px 0; padding-right: 12px;"">
+                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                                                            </div>
+                                                                            <div style=""margin:12px 0;"">
+                                                                                <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:16px;"">
+                                                                                    Consultation with Pamoja Mental Health and Safeguarding Team
+                                                                                </p>
+                                                                                <p style=""font-size:16px; color:#4b5563; margin-bottom:16px;"">1 hour</p>
+                                                                                <div style=""display:flex; flex-direction:column;"">
+                                                                                    <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        {6} at {7}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Appointment Block -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
+                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        {8}<br/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>",
+        payment?.InvoiceNumber,
+        DateOnly.FromDateTime(DateTime.UtcNow).ToLongDateString(),
+        CurrencySymbols[payment?.Currency],
+        payment.Amount,
+        payment.ProcessingFee,
+        payment.Total,
+        DateOnly.FromDateTime(appointment.Date).ToLongDateString(),
+        appointment.Time.ToString("hh:mm tt"),
+        Loc["PamojaNetworkAndAllRelatedMarks"]);
+        Cache.TryGetValue("EmailSent", out var emailSent);
+        if (emailSent is null)
+        {
+            await EmailSender.SendEmailAsync(payment.Email, "Appointment Confirmation", builder.HtmlBody);
+            EmailSent = true;
+            EmailSent = await Cache.GetOrCreateAsync("EmailSent", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var emailSent = true;
+                return emailSent;
+            });
+        }
+    }
+    private string getMonth(int month)
+    {
+        switch (month)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+        return Month;
+    }
+}

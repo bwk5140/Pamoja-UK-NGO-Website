@@ -6,26 +6,38 @@
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<LoginWithRecoveryCode> Logger
 
-<PageTitle>Recovery code verification</PageTitle>
+<PageTitle>Recovery code verification | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<h1>@Loc["RecoveryCodeVerification"]</h1>
-<hr />
-<StatusMessage Message="@message" />
-<p>
-    @Loc["YouHaveRequestedToLogInWith2FA"]
-</p>
-<div class="row">
-    <div class="col-md-4">
-        <EditForm Model="Input" FormName="login-with-recovery-code" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.RecoveryCode" id="Input.RecoveryCode" class="form-control" autocomplete="off" placeholder="RecoveryCode" />
-                <label for="Input.RecoveryCode" class="form-label">@Loc["RecoveryCode"]</label>
-                <ValidationMessage For="() => Input.RecoveryCode" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["Login"]</button>
-        </EditForm>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>@Loc["RecoveryCodeVerification"]</h1>
+    <hr />
+    <StatusMessage Message="@message" />
+    <p>
+        @Loc["YouHaveRequestedToLogInWith2FA"]
+    </p>
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="Input" FormName="login-with-recovery-code" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.RecoveryCode" id="Input.RecoveryCode" class="form-control" autocomplete="off" placeholder="RecoveryCode" />
+                    <label for="Input.RecoveryCode" class="form-label">@Loc["RecoveryCode"]</label>
+                    <ValidationMessage For="() => Input.RecoveryCode" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["Login"]</button>
+            </EditForm>
+        </div>
     </div>
 </div>
 
@@ -48,6 +60,8 @@
 
     private async Task OnValidSubmitAsync()
     {
+        if (user is null)
+            return;
         var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
 
         var result = await SignInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);

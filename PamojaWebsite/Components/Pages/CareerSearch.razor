@@ -1,32 +1,32 @@
 ﻿@page "/careers/search"
+@using Microsoft.Extensions.Caching.Memory
 @using PamojaWebsite.Data.Contexts
 
-<PageTitle>Careers</PageTitle>
+<PageTitle>Search Careers | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
 
 @inject IStringLocalizer<SharedResource> Loc
 @inject NavigationManager NavManager
-@implements IAsyncDisposable
+@inject IMemoryCache Cache
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject MyApiService ApiService
 
 @rendermode InteractiveServer
 
-<!-- Hero Section -->
-<section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
-    <!-- Decorative background shapes -->
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <!-- Hero Section -->
+<section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
     <div class="absolute inset-0">
-        <!-- Large blurred gradient blob -->
-        <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-        <!-- Smaller accent circle -->
-        <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
-
-        <!-- Diagonal rectangle -->
-        <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
-
-        <!-- Triangle using clip-path -->
-        <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
-             style="clip-path: polygon(0 0, 100% 0, 0 100%);">
-        </div>
+        <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
     </div>
 
     <!-- Content -->
@@ -62,14 +62,14 @@
                         {
                             <a href="/careers/search/?role=@role"
                                class="ml-1 text-secondary hover:text-gray-800 font-medium font-bold">
-                                Search Careers
+                                Search
                             </a>
                         }
                         else
                         {
                             <a href="/careers/search"
                                class="ml-1 text-secondary hover:text-gray-800 font-medium font-bold">
-                                Search Careers
+                                Search
                             </a>
                         }
                     </div>
@@ -86,16 +86,10 @@
         <div class="absolute inset-0">
             <!-- Gradient blob -->
             <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-tr from-green-300 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-            @* <!-- Accent circle -->
-            <div class="absolute bottom-10 right-10 w-48 h-48 bg-green-200 rounded-full opacity-30 animate-pulse"></div>
-
-            <!-- Diagonal rectangle -->
-            <div class="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-200 opacity-40 transform rotate-12"></div> *@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <img src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1764053404132-QYCN6NRDWJ5KU4BC7EFC/unsplash-image-F2WX4BTIkpQ.jpg?format=500w"
+            <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1764053404132-QYCN6NRDWJ5KU4BC7EFC/unsplash-image-F2WX4BTIkpQ.jpg?format=500w"
                  alt="Psychology professionals"
                  class="w-full h-72 object-fit:fill relative z-10 rounded-lg shadow-lg">
         </div>
@@ -118,11 +112,11 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Field</label>
             <InputSelect @bind-Value="selectedField" class="w-full mb-4 px-3 py-2 border rounded-md">
                 <option value="">All</option>
-                @if (AvailableRoles is not null)
+                @if (AvailableFields is not null)
                 {
-                    @foreach (var field in AvailableRoles)
+                    @foreach (var field in AvailableFields)
                     {
-                        <option value="@field">@field</option>
+                        <option value="@field.Name">@field.Name</option>
                     }
                 }
             </InputSelect>
@@ -157,47 +151,65 @@
         <div class="lg:w-3/4 flex flex-col gap-6">
             <!-- Job Cards Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
-                @foreach (var job in FilteredJobs.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage))
+                @foreach (var job in FilteredJobs)
                 {
                     <div class="bg-white shadow-md rounded-lg p-4">
                         <h3 class="text-lg font-semibold text-gray-800">@job.Name</h3>
                         <p class="text-sm text-gray-600">@job.Description</p>
-                        <a href="@job.Link" class="text-blue-500 mt-2 inline-block">View Details →</a>
-                    </div>
+                            @if (job.Expiration > DateTime.UtcNow)
+                            {
+                                <a href="@job.Link?Id=@job.Id" class="text-blue-500 mt-2 inline-block">View Details →</a>
+                            }
+                            else
+                            {
+                                <a href="@job.Link?Id=@job.Id" class="text-red-500 mt-2 inline-block">View Details →</a>
+                            }
+                        </div>
                 }
             </div>
+            @if (totalPages > 0)
+            {
+                <!-- Pagination Controls: Full Width -->
+                <div class="mt-8 w-full flex justify-between items-center gap-2 mb-5">
+                    <!-- Items per page -->
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">Items per page:</label>
+                        <InputSelect @bind-Value="itemsPerPage" class="px-3 py-2 border rounded-md">
+                            @foreach (var size in pageSizeOptions)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </InputSelect>
+                    </div>
 
-            <!-- Pagination Controls: Full Width -->
-            <div class="mt-8 w-full flex justify-between items-center gap-2 mb-5">
-                <!-- Items per page -->
-                <div class="flex items-center gap-2">
-                    <label class="text-sm font-medium text-gray-700">Items per page:</label>
-                    <InputSelect @bind-Value="itemsPerPage" class="px-3 py-2 border rounded-md">
-                        @foreach (var size in pageSizeOptions)
-                        {
-                            <option value="@size">@size</option>
-                        }
-                    </InputSelect>
+                    <!-- Page navigation -->
+                    <div class="flex items-center gap-2">
+                        <button @onclick="PreviousPage" disabled="@((currentPage == 1))"
+                                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
+                            ← Prev
+                        </button>
+
+                        <span class="text-sm text-gray-700">Page @currentPage of @totalPages</span>
+
+                        <button @onclick="NextPage" disabled="@((currentPage == totalPages))"
+                                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
+                            Next →
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Page navigation -->
-                <div class="flex items-center gap-2">
-                    <button @onclick="PreviousPage" disabled="@((currentPage == 1))"
-                            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
-                        ← Prev
-                    </button>
-
-                    <span class="text-sm text-gray-700">Page @currentPage of @totalPages</span>
-
-                    <button @onclick="NextPage" disabled="@((currentPage == totalPages))"
-                            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
-                        Next →
-                    </button>
+            }
+            else
+            {
+                <div class="mt-8 w-full flex justify-center items-center gap-2 mb-5">
+                    <p>
+                        There were no jobs found
+                    </p>
                 </div>
-            </div>
+            }
         </div>
 
     </div>
+</div>
 </div>
 
 @code {
@@ -209,11 +221,12 @@
     private int currentPage = 1;
     private int itemsPerPage = 6;
     private List<int> pageSizeOptions = new() { 6, 12, 24 };
-    private int totalPages => (int)Math.Ceiling((double)FilteredJobs.Count / itemsPerPage);
+    private int totalPages = 1;
 
     private List<string> ExperienceLevels = new() { "Entry", "Mid", "Senior", "Lead" };
     private List<string> AvailableLocations = new() { "Nairobi", "Remote", "London", "New York", "Berlin" };
-    private List<string>? AvailableRoles { get; set; }
+    private List<CareerField>? AvailableFields { get; set; }
+    private List<CareerRole>? AvailableRoles { get; set; }
     private HashSet<string> SelectedFields = new();
     private List<CareerRole> AllJobs = new(); // Populate from DB or API
     private List<CareerRole> FilteredJobs = new();
@@ -223,60 +236,83 @@
     public string role { get; set; }
 
 
-    private ApplicationDbContext context = default!;
-
     protected override async Task OnInitializedAsync()
     {
-        context = await DbFactory.CreateDbContextAsync();
-        AllJobs = context.CareerRole.ToList();
-        AvailableRoles = AllJobs
-        .Select(job => job.CareerField)
-        .Distinct()
-        .OrderBy(field => field)
-        .ToList();
-
-        FilteredJobs = AllJobs;
-
-        if (role is not null)
-        {
-            FilteredJobs = AllJobs.AsEnumerable<CareerRole>().Where(r => r.Name.Equals(role)).ToList();
-        }
+        //Cache available roles for 30 minutes
+        AvailableFields = await (await ApiService.GetClient()).GetFromJsonAsync<List<CareerField>>("api/db/career_fields");
+        AvailableRoles = await (await ApiService.GetClient()).GetFromJsonAsync<List<CareerRole>>("api/db/career_roles");
+        await LoadJobs();
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
-
-    private void ToggleRole(string role)
+    private async Task ToggleRole(string role)
     {
         if (!SelectedFields.Add(role))
             SelectedFields.Remove(role);
 
-        ApplySearch();
-    }
-
-    private void ApplySearch()
-    {
         currentPage = 1;
-        FilteredJobs = AllJobs
-            .Where(job =>
-                (string.IsNullOrWhiteSpace(searchQuery) || job.CareerField.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) &&
-                (SelectedFields.Count == 0 || SelectedFields.Contains(job.Name)) &&
-                (string.IsNullOrWhiteSpace(selectedWorkType) || job.WorkType == selectedWorkType) &&
-                (string.IsNullOrWhiteSpace(selectedField) || job.CareerField == selectedField) &&
-                (string.IsNullOrWhiteSpace(selectedExperienceLevel) || job.ExperienceLevel == selectedExperienceLevel) &&
-                (string.IsNullOrWhiteSpace(selectedLocation) || job.Location == selectedLocation)
-            )
-            .ToList();
+        await LoadJobs();
+    }
+    private async Task LoadJobs()
+    {
+        totalPages = 1;
+        // Work entirely from cached jobs
+        var query = AvailableRoles?.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+            query = query?.Where(job => job != null && !string.IsNullOrWhiteSpace(job.Name) && job.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+
+        if (SelectedFields.Count > 0)
+            query = query?.Where(job => job != null && !string.IsNullOrWhiteSpace(job.Name) && SelectedFields.Contains(job.Name));
+
+        if (!string.IsNullOrWhiteSpace(selectedWorkType))
+            query = query?.Where(job => job.WorkType == selectedWorkType);
+
+        if (!string.IsNullOrWhiteSpace(selectedField))
+            query = query?.Where(job => job.CareerField == selectedField);
+
+        if (!string.IsNullOrWhiteSpace(selectedExperienceLevel))
+            query = query?.Where(job => job.ExperienceLevel == selectedExperienceLevel);
+
+        if (!string.IsNullOrWhiteSpace(selectedLocation))
+            query = query?.Where(job => job.Location == selectedLocation);
+
+        if (!string.IsNullOrWhiteSpace(role))
+            query = query?.Where(r => r.Name == role);
+
+        if (query is not null){
+            var count = query.Count();
+            totalPages = (int)Math.Ceiling(count / (double)itemsPerPage);
+
+            FilteredJobs = query
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+        }
     }
 
-    private void PreviousPage()
+    private async Task ApplySearch()
+    {
+        role = "";
+        currentPage = 1;
+        await LoadJobs();
+        StateHasChanged();
+    }
+
+    private async Task PreviousPage()
     {
         if (currentPage > 1)
+        {
             currentPage--;
+            await LoadJobs();
+        }
     }
 
-    private void NextPage()
+    private async Task NextPage()
     {
         if (currentPage < totalPages)
+        {
             currentPage++;
+            await LoadJobs();
+        }
     }
 }

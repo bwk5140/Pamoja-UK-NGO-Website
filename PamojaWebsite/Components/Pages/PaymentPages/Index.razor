@@ -1,0 +1,47 @@
+﻿@page "/payments"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="payments/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.Payment">
+        <PropertyColumn Property="payment => payment.InvoiceNumber" />
+        <PropertyColumn Property="payment => payment.Name" />
+        <PropertyColumn Property="payment => payment.PaymentMethod" />
+        <PropertyColumn Property="payment => payment.Email" />
+        <PropertyColumn Property="payment => payment.Currency" />
+        <PropertyColumn Property="payment => payment.Amount" />
+        <PropertyColumn Property="payment => payment.CentsAmount" />
+        <PropertyColumn Property="payment => payment.ProcessingFee" />
+        <PropertyColumn Property="payment => payment.Total" />
+
+        <TemplateColumn Context="payment">
+            <a href="@($"payments/edit?id={payment.Id}")">Edit</a> |
+            <a href="@($"payments/details?id={payment.Id}")">Details</a> |
+            <a href="@($"payments/delete?id={payment.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -1,0 +1,129 @@
+﻿.document-content {
+    line-height: 1.8;
+    font-size: 1.125rem;
+    height: 100vh;
+    width: 100vw;
+}
+
+    .document-content h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .document-content h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .document-content h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .document-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    .document-content ul, .document-content ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .document-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    .document-content blockquote {
+        border-left: 4px solid #cbd5e1;
+        padding-left: 1.5rem;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+        color: #475569;
+    }
+
+    .document-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+    }
+
+    .document-content th, .document-content td {
+        border: 1px solid #cbd5e1;
+        padding: 0.75rem;
+        text-align: left;
+    }
+
+    .document-content th {
+        background-color: #f1f5f9;
+        font-weight: 600;
+    }
+
+    .document-content pre {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 0.875rem;
+    }
+
+    .document-content code {
+        background-color: #f1f5f9;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 0.875rem;
+    }
+
+    .document-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 1.5rem 0;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+.highlight {
+    background-color: rgba(251, 191, 36, 0.2);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.page-transition {
+    transition: transform 0.3s ease-in-out;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .document-content {
+        font-size: 12pt;
+        line-height: 1.6;
+        width: 100vw;
+    }
+
+        .document-content h1 {
+            font-size: 24pt;
+        }
+
+        .document-content h2 {
+            font-size: 18pt;
+        }
+
+        .document-content h3 {
+            font-size: 14pt;
+        }

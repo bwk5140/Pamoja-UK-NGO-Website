@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Blazor.Analytics;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -9,14 +13,180 @@ using PamojaWebsite.Components.Account;
 using PamojaWebsite.Data;
 using PamojaWebsite.Data.Contexts;
 using PamojaWebsite.Services;
-using System.Configuration;
+using Stripe;
 using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
+
 
 var builder = WebApplication.CreateBuilder(args);
+bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+SecretClient client = null;
+
+
+if (isLinux)
+{
+    builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"/var/www/PamojaWebsite/keys"))
+    .SetApplicationName("PamojaWebsite");
+
+
+    var credential = new ClientCertificateCredential(
+    tenantId: "cbe773e0-1982-4f06-a69a-8fa5df2e58ba",
+    clientId: "69f0d61e-7599-44e1-b87c-9d7b4a27f14d",
+    new X509Certificate2("/etc/ssl/pamoja/PamojaWebsite.pfx", Environment.GetEnvironmentVariable("PFX_PASSWORD")));
+    client = new SecretClient(
+    new Uri("https://pamojakeyvault.vault.azure.net/"),
+    credential);
+    KeyVaultSecret connectionstring_secret = client.GetSecret("Remote-DefaultConnection");
+
+    var connectionString = connectionstring_secret.Value ?? throw new InvalidOperationException("Connection string 'Remote-DefaultConnection' not found.");
+    builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    {
+        options.UseNpgsql(
+            connectionString,
+            npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()
+        );
+    });
+}
+if (isWindows)
+{
+    builder.Configuration.AddAzureKeyVault(
+    new Uri("https://pamojakeyvault.vault.azure.net/"),
+    new DefaultAzureCredential());
+    var credential = new ClientCertificateCredential(
+    tenantId: "cbe773e0-1982-4f06-a69a-8fa5df2e58ba",
+    clientId: "69f0d61e-7599-44e1-b87c-9d7b4a27f14d",
+    new X509Certificate2("/users/brian/Desktop/apps/PamojaWebsiteUK/PamojaWebsite.pfx", Environment.GetEnvironmentVariable("PFX_PASSWORD")));
+
+    if (credential is not null)
+    {
+        client = new SecretClient(
+        new Uri("https://pamojakeyvault.vault.azure.net/"),
+        credential);
+
+        //KeyVaultSecret connectionstring_secret = client.GetSecret("Local-DefaultConnection");
+
+        //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        var connectionString = "Host=192.168.100.39;Port=5432;Database=Pamoja;Username=postgres;Password=0734158857Manyani!;SslMode=Disable;";
+        //var connectionString = connectionstring_secret.Value ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        //builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+        //options.UseSqlServer(connectionString));
+        builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+        {
+            options.UseNpgsql(
+                connectionString,
+                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()
+            );
+        });
+    }
+}
+
+if (client is not null)
+{
+    KeyVaultSecret auth_google_client_id_secret = client.GetSecret("Authentication-Google-ClientId");
+    KeyVaultSecret auth_google_client_secret_secret = client.GetSecret("Authentication-Google-Secret");
+    KeyVaultSecret auth_microsoft_client_id_secret = client.GetSecret("Authentication-Microsoft-ClientId");
+    KeyVaultSecret auth_microsoft_client_secret_secret = client.GetSecret("Authentication-Microsoft-Secret");
+    KeyVaultSecret auth_microsoft_tenant_id_secret = client.GetSecret("Authentication-Microsoft-TenantId");
+    KeyVaultSecret auth_microsoft_secret_id_secret = client.GetSecret("Authentication-Microsoft-SecretId");
+    KeyVaultSecret auth_stripe_secret_id_secret = client.GetSecret("Authentication-Stripe-SecretId");
+    KeyVaultSecret auth_stripe_publishable_key = client.GetSecret("Authentication-Stripe-PublishableKey");
+    KeyVaultSecret auth_paypal_client_id = client.GetSecret("Authentication-PayPal-ClientId");
+    KeyVaultSecret auth_paypal_client_secret = client.GetSecret("Authentication-PayPal-ClientSecret");
+    KeyVaultSecret auth_paypal_environment = client.GetSecret("Authentication-PayPal-Environment");
+    KeyVaultSecret auth_mpesa_consumer_key = client.GetSecret("Authentication-Mpesa-ConsumerKey");
+    KeyVaultSecret auth_mpesa_consumer_secret = client.GetSecret("Authentication-Mpesa-ConsumerSecret");
+    KeyVaultSecret auth_mpesa_shortcode = client.GetSecret("Authentication-Mpesa-Shortcode");
+    KeyVaultSecret auth_mpesa_passkey = client.GetSecret("Authentication-Mpesa-Passkey");
+    KeyVaultSecret auth_mpesa_callbackurl = client.GetSecret("Authentication-Mpesa-CallbackUrl");
+
+    if (auth_stripe_secret_id_secret is not null && auth_stripe_publishable_key is not null)
+    {
+        builder.Services.AddSingleton(new StripeOptions
+        {
+            SecretKey = auth_stripe_secret_id_secret.Value,
+            PublishableKey = auth_stripe_publishable_key.Value
+        });
+    }
+    if (auth_paypal_client_id is not null && auth_paypal_client_secret is not null && auth_paypal_environment is not null)
+    {
+        builder.Services.AddSingleton(new PayPalOptions
+        {
+            ClientId = auth_paypal_client_id.Value,
+            ClientSecret = auth_paypal_client_secret.Value,
+            Environment = auth_paypal_environment.Value
+        });
+    }
+    if (auth_mpesa_consumer_key is not null && auth_mpesa_consumer_secret is not null 
+        && auth_mpesa_shortcode is not null && auth_mpesa_passkey is not null
+        && auth_mpesa_callbackurl is not null)
+    {
+        builder.Services.AddSingleton(new MpesaOptions
+        {
+            ConsumerKey = auth_mpesa_consumer_key.Value,
+            ConsumerSecret = auth_mpesa_consumer_secret.Value,
+            ShortCode = auth_mpesa_shortcode.Value,
+            Passkey = auth_mpesa_passkey.Value,
+            CallbackUrl = auth_mpesa_callbackurl.Value
+        });
+    }
+    if (auth_google_client_id_secret is not null && auth_google_client_secret_secret is not null)
+    {
+        builder.Services.AddAuthentication()
+        .AddCookie()
+        .AddGoogle(options =>
+        {
+            options.ClientId = auth_google_client_id_secret.Value;
+            options.ClientSecret = auth_google_client_secret_secret.Value;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.AdditionalAuthorizationParameters.Add("prompt", "select_account");
+        });
+    }
+    if (auth_microsoft_client_id_secret is not null && auth_microsoft_client_secret_secret is not null)
+    {
+        builder.Services.AddAuthentication()
+        .AddMicrosoftAccount(microsoftOptions =>
+        {
+            microsoftOptions.ClientId = auth_microsoft_client_id_secret.Value;
+            microsoftOptions.ClientSecret = auth_microsoft_client_secret_secret.Value;
+            microsoftOptions.CallbackPath = "/signin-oidc";
+        });
+    }
+}
+
+// Configuration binding
+builder.Services.AddScoped<CountryCodeService>();
+builder.Services.AddScoped<Radzen.DialogService>();
+builder.Services.AddScoped<Radzen.NotificationService>();
+builder.Services.AddScoped<Radzen.TooltipService>();
+builder.Services.AddScoped<Radzen.ContextMenuService>();
+
+
+builder.Services.AddScoped<DocumentConverters>();
+builder.Services.AddSingleton<EmailService>();
+
+// Add Google Analytics with your Measurement ID
+builder.Services.AddGoogleAnalytics("G-XXXXXXXXXX"); // replace with your GA ID
+
+builder.Services.AddControllers();
+
+//Services
+builder.Services.AddHttpClient<MyApiService>();
+builder.Services.AddScoped<StripePaymentService>();
+builder.Services.AddScoped<PayPalService>();
+builder.Services.AddScoped<MpesaService>();
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN"; // optional, for AJAX
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -24,7 +194,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddSingleton<EmailEncryptor>();
-builder.Services.AddScoped<ApplicationUserService>();
+builder.Services.AddSingleton<ApplicationUserService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -33,51 +203,35 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-//options.UseSqlServer(connectionString));
-options.UseMySql(
-    connectionString,
-    new MySqlServerVersion(new Version(11, 8, 3)) // adjust to your MariaDB version
-));
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
-builder.Services.AddAuthentication()
-   .AddCookie()
-   .AddGoogle(options =>
-   {
-       IConfigurationSection googleAuthNSection =
-       builder.Configuration.GetSection("Authentication:Google");
-       options.ClientId = googleAuthNSection["ClientId"];
-       options.ClientSecret = googleAuthNSection["ClientSecret"];
-       options.SignInScheme = IdentityConstants.ExternalScheme;
-       options.AdditionalAuthorizationParameters.Add("prompt", "select_account");
-   })
-    .AddMicrosoftAccount(microsoftOptions =>
-    {
-        IConfigurationSection microsoftAuthNSection =
-        builder.Configuration.GetSection("Authentication:Microsoft");
-        microsoftOptions.ClientId = microsoftAuthNSection["ClientId"];
-        microsoftOptions.ClientSecret = microsoftAuthNSection["ClientSecret"];
-        microsoftOptions.CallbackPath = "/signin-oidc";
-    });
-
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 builder.Services.AddLocalization();
 
 builder.Services.Configure<CircuitOptions>(
     builder.Configuration.GetSection("CircuitOptions"));
 
 var app = builder.Build();
+
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -91,10 +245,9 @@ else
     app.UseHsts();
     app.UseMigrationsEndPoint();
 }
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+
+//app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
 app.UseHttpsRedirection();
 
 var supportedCultures = new[] { "en-KE", "en-US", "en-GB", "es-US", "es-ES", "fr-FR", "fr-CA", "ar-SA", "zh-Hant", "de-DE", "ja-JP", "it-IT", "sw-KE" };
@@ -105,8 +258,20 @@ var localizationOptions = new RequestLocalizationOptions
     SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList()
 };
 
+app.UseStaticFiles();
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.None,
+    Secure = CookieSecurePolicy.Always
+});
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
+app.MapControllers();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
@@ -115,3 +280,22 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();
+
+// Options classes
+public class StripeOptions { public string SecretKey { get; set; } = ""; public string PublishableKey { get; set; } = ""; }
+public class PayPalOptions
+{
+    public string ClientId { get; set; } = "";
+    public string ClientSecret { get; set; } = "";
+    public string Environment { get; set; } = "sandbox";
+}
+
+public class MpesaOptions
+{
+    public string ConsumerKey { get; set; } = "";
+    public string ConsumerSecret { get; set; } = "";
+    public string ShortCode { get; set; } = "";
+    public string Passkey { get; set; } = "";
+    public string CallbackUrl { get; set; } = "";
+}
+

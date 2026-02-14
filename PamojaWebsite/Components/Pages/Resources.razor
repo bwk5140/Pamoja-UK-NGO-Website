@@ -1,0 +1,1564 @@
+﻿@page "/resources"
+@using System.Text
+@using System.Threading.Tasks
+@using PamojaWebsite.Data.Contexts
+@using Markdig
+@using Radzen.Blazor
+@using System
+@using System.Text.RegularExpressions;
+@using Word = Microsoft.Office.Interop.Word;
+
+<PageTitle>Resources | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@inject IJSRuntime JS
+@inject MyApiService ApiService
+@inject NavigationManager NavigationManager
+@inject ApplicationUserService ApplicationUserService
+@inject UserManager<ApplicationUser> UserManager
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+@implements IDisposable
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="min-h-screen bg-gray-50 font-sans">
+        <!-- Header & Navigation -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-4 py-10">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-32">
+                    <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                        <div class="w-10 h-10 bg-green-900-900 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-book-open text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-dark">Resources</h1>
+                    </div>
+
+                    <div class="flex-1 max-w-12xl md:max-w-6xl mx-4">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+
+                            <InputText @bind-Value="SearchTerm" @bind-Value:after="Search" type="text"
+                                       id="searchInput"
+                                       placeholder="Search..."
+                                       class="w-full px-12 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent">
+                            </InputText>
+
+                            <button @onclick="Search" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-900 text-white px-4 py-1.5 rounded-md hover:bg-secondary transition">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 nav-links flex flex-wrap justify-center space-x-6 text-gray-600">
+                    @if (SearchFilters is not null && SearchFilters.Any())
+                    {
+                        <a href="/resources?RedirectQuery=All%20Resources" class="@NavClasses["All Resources"]" @onclick="(() => GetNavClass(page, SearchFilters[0]))">
+                            All Resources
+                        </a>
+                        <a href="/resources?RedirectQuery=Research" class="@NavClasses["Research"]" @onclick="(() => GetNavClass(page, SearchFilters[1]))">
+                            Research
+                        </a>
+                        <a href="/resources?RedirectQuery=Blog%20Posts" class="@NavClasses["Blog Posts"]" @onclick="(() => GetNavClass(page, SearchFilters[2]))">
+                            Blog Posts
+                        </a>
+                        <a href="/resources?RedirectQuery=Case%20Studies" class="@NavClasses["Case Studies"]" @onclick="(() => GetNavClass(page, SearchFilters[3]))">
+                            Case Studies
+                        </a>
+                        <a href="/resources?RedirectQuery=Templates" class="@NavClasses["Templates"]" @onclick="(() => GetNavClass(page, SearchFilters[4]))">
+                            Templates
+                        </a>
+
+                        @if (User is not null)
+                        {
+                            var userName = User.Name;
+                            <a href="resources?RedirectQuery=My%20Uploads" class="@NavClasses["My Uploads"]" @onclick="(() => GetNavClass(page, SearchFilters[5]))">
+                                My Uploads
+                            </a>
+                        }
+                    }
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left Column: Document Upload & List -->
+                <div class="lg:w-2/3">
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (Authorized){
+                                <!-- Upload Section -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h2 class="text-xl font-bold text-dark">Upload Research Document</h2>
+                                    <button @onclick="ShowSubmissionsGuideline" class="text-green-900 hover:text-secondary font-medium flex items-center space-x-2">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Upload Guidelines</span>
+                                    </button>
+                                    <DocSubmissionGuidelines @ref="DocSubmissionGuidelines"/>
+                                </div>
+                                <EditForm Model="fileUploadDTO" OnValidSubmit="UploadFile" OnInvalidSubmit="HandleInvalidSubmit" FormName="upload" Enhance Context="formContext">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary class="text-sm text-red-600" />
+
+                                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center gradient-bg">
+                                        <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                            <i class="fas fa-cloud-upload-alt text-green-900 text-3xl"></i>
+                                        </div>
+                                        @if (File is null)
+                                        {
+                                            <h3 class="text-lg font-semibold text-dark mb-2">Drag & drop your files here</h3>
+                                            <p class="text-gray-600 mb-6">Supported formats: PDF, DOC, DOCX, PPT, TXT (Max 50MB)</p>
+                                            <label for="fileUpload" class="cursor-pointer">
+                                                <div class="bg-green-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                    <i class="fas fa-folder-open"></i>
+                                                    <span>Browse Files</span>
+                                                </div>
+                                                <InputFile @bind-Value="fileUploadDTO.Data" id="fileUpload" type="file" style="display:none" multiple OnChange="HandleFileSelected" />
+                                            </label>
+                                            <ValidationMessage For="@(() => fileUploadDTO.Data)" class="text-sm text-red-600 mt-1" />
+                                        }
+                                        else
+                                        {
+                                            if (!ProblemWDocument)
+                                            {
+                                                <label class="cursor-pointer">
+                                                    <div class="bg-green-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                        <i class="fas fa-folder-open"></i>
+                                                        <span>@File.Name</span>
+                                                        <div class="md:w-1/4 px-2">
+                                                            <button type="button" class="p-2 rounded hover:bg-gray-500" @onclick="DeleteUpload">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                     fill="none"
+                                                                     viewBox="0 0 24 24"
+                                                                     stroke-width="2"
+                                                                     stroke="white"
+                                                                     class="w-6 h-6 text-gray-700">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                if (UnsupportedDocument)
+                                                {
+                                                    <label class="cursor-pointer">
+                                                        <div class="bg-red-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                            <i class="fas fa-folder-open"></i>
+                                                            <span>Unsupported File Type. Please view our upload guidelines</span>
+                                                            <div class="md:w-1/4 px-2">
+                                                                <button type="button" class="p-2 rounded hover:bg-red-500" @onclick="DeleteProblemFile">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                         fill="none"
+                                                                         viewBox="0 0 24 24"
+                                                                         stroke-width="2"
+                                                                         stroke="white"
+                                                                         class="w-6 h-6 text-white">
+                                                                        <path stroke-linecap="round"
+                                                                              stroke-linejoin="round"
+                                                                              d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                }
+                                                else
+                                                {
+                                                    <label class="cursor-pointer">
+                                                        <div class="bg-red-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                            <i class="fas fa-folder-open"></i>
+                                                            <span>@File.Name is greater than 50MB. Please try a smaller size.</span>
+                                                            <div class="md:w-1/4 px-2">
+                                                                <button type="button" class="p-2 rounded hover:bg-red-500" @onclick="DeleteProblemFile">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                         fill="none"
+                                                                         viewBox="0 0 24 24"
+                                                                         stroke-width="2"
+                                                                         stroke="white"
+                                                                         class="w-6 h-6 text-white">
+                                                                        <path stroke-linecap="round"
+                                                                              stroke-linejoin="round"
+                                                                              d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                }
+                                            }
+
+                                        }
+                                    </div>
+
+                                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-gray-700 text-sm font-medium mb-2">Primary Author</label>
+                                            <InputText @bind-Value="fileUploadDTO.Author" type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent" placeholder="Enter primary document author" />
+                                            <ValidationMessage For="@(() => fileUploadDTO.Author)" class="text-sm text-red-600 mt-1" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700 text-sm font-medium mb-2">Category</label>
+                                            <InputSelect @bind-Value="fileUploadDTO.Category" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent">
+                                                <option>Select category</option>
+                                                <option>Research Paper</option>
+                                                <option>Case Study</option>
+                                                <option>Technical Report</option>
+                                                <option>Literature Review</option>
+                                                <option>Methodology</option>
+                                            </InputSelect>
+                                            <ValidationMessage For="@(() => fileUploadDTO.Category)" class="text-sm text-red-600 mt-1" />
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Document Title</label>
+                                        <InputText @bind-Value="fileUploadDTO.Title" type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent" placeholder="Enter document title" />
+                                        <ValidationMessage For="@(() => fileUploadDTO.Title)" class="text-sm text-red-600 mt-1" />
+                                    </div>
+                                    <div class="mt-4">
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Description</label>
+                                        <InputTextArea @bind-Value="fileUploadDTO.Description" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent h-32" placeholder="Brief description of the document content"></InputTextArea>
+                                        <ValidationMessage For="@(() => fileUploadDTO.Description)" class="text-sm text-red-600 mt-1" />
+                                    </div>
+
+                                    <div class="mt-6 flex justify-end">
+                                        <button type="submit" class="bg-green-900 text-white px-8 py-3 rounded-lg font-medium hover:bg-secondary transition flex items-center space-x-2">
+                                            <i class="fas fa-upload"></i>
+                                            <span>Upload Document</span>
+                                        </button>
+                                    </div>
+                                </EditForm>
+
+                            </div>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                    <!-- Documents Grid -->
+                    <div class="mb-8">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-dark">Recent Document Uploads</h2>
+                            <div class="flex space-x-2">
+                                @if (DocFilters is not null && DocFilters.Any())
+                                {
+                                    foreach (var filter in DocFilters)
+                                    {
+                                        <button @onclick="(() => FilterDocs(filter))" class="@GetFilterClass(filter)">@filter</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @if (Documents is not null && Documents.Any())
+                            {
+                                foreach (var Doc in Documents)
+                                {
+                                    var long_type = Doc.ContentType;
+                                    var type = GetShortExtension(long_type);
+
+                                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 card-hover">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div class="document-icon">
+                                                <img src="@($"/Icons/{type}.png")" height="35%" width="25%" />
+                                            </div>
+                                            <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">@Doc.Category</span>
+                                        </div>
+
+                                        <h3 class="font-bold text-dark text-lg mb-2 line-clamp-2">@Doc.Title</h3>
+                                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 overflow-hidden">
+                                            @Truncate(Doc.Description, 200)
+                                        </p>
+                                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                            <div class="flex items-center space-x-1">
+                                                <i class="fas fa-user"></i>
+                                                <span>@Doc.Author</span>
+                                            </div>
+                                            @{
+                                                var dateString = ((Doc.Date.ToLongDateString()).Split(','))[1].Trim();
+                                                var index = dateString.IndexOf(" ");
+                                                var shortDateString = dateString.Substring(0, index);
+                                            }
+                                            <div>@Doc.Date.DayOfWeek @Doc.Date.Day, @Doc.Date.Year</div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between pt-4 border-t">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex items-center space-x-1">
+                                                    <i class="fas fa-download text-gray-400"></i>
+                                                    <span class="text-sm">@Doc.Downloads</span>
+                                                </div>
+                                                <div class="flex items-center space-x-1">
+                                                    <i class="fas fa-file text-gray-400"></i>
+                                                    <span class="text-sm">@FormatFileSize(Doc.Size)</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" @onclick="(() => GoToDocViewer(Doc))" class="text-green-800 hover:text-secondary font-medium flex items-center space-x-1">
+                                                <i class="fas fa-eye"></i>
+                                                <span>View</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                }
+                            }
+                            else
+                            {
+                                if (loadingDocs)
+                                {
+                                    <div class="center-container">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                            <g class="spinner" transform="translate(60,60)">
+                                                <circle cx="0" cy="-40" r="6" />
+                                                <circle cx="28" cy="-28" r="6" />
+                                                <circle cx="40" cy="0" r="6" />
+                                                <circle cx="28" cy="28" r="6" />
+                                                <circle cx="0" cy="40" r="6" />
+                                                <circle cx="-28" cy="28" r="6" />
+                                                <circle cx="-40" cy="0" r="6" />
+                                                <circle cx="-28" cy="-28" r="6" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="center-container">
+                                        <p class="text-gray-600 mb-4 line-clamp-3">No Documents Found...</p>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Blog Posts & Filters -->
+                <div class="lg:w-1/3">
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (Authorized){
+                                <!-- Create Blog Post -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                                <h2 class="text-xl font-bold text-dark mb-6">Create New Blog Post</h2>
+                                <EditForm Model="blogPostDTO" OnValidSubmit="CreateBlogPost" OnInvalidSubmit="HandleInvalidBlogSubmit" FormName="createblog" Enhance Context="formContext">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary class="text-sm text-red-600" />
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-gray-700 text-sm font-medium mb-2">Post Title</label>
+                                            <InputText @bind-Value="blogPostDTO.Title" type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-transparent" placeholder="Enter blog post title" />
+                                        </div>
+                                        <ValidationMessage For="@(() => blogPostDTO.Title)" class="text-sm text-red-600 mt-1" />
+                                        <div>
+                                            <label class="block text-gray-700 text-sm font-medium mb-2">Category</label>
+                                            <div class="flex flex-wrap gap-2">
+                                                @if (BlogCategories.Any())
+                                                {
+                                                    foreach (var cat in BlogCategories)
+                                                    {
+                                                        @if (!string.IsNullOrWhiteSpace(cat.Name) && !string.IsNullOrWhiteSpace(blogPostDTO.Category) && blogPostDTO.Category.Equals(cat.Name))
+                                                        {
+                                                            <button @onclick="(() => SelectCategory(cat.Name))" type="button" class="px-3 py-1.5 rounded-full bg-blue-200 text-green-900 text-sm hover:bg-blue-300 transition">
+                                                                @cat.Name
+                                                            </button>
+                                                        }
+                                                        else if (!string.IsNullOrWhiteSpace(cat.Name))
+                                                        {
+                                                            <button @onclick="(() => SelectCategory(cat.Name))" type="button" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
+                                                                @cat.Name
+                                                            </button>
+                                                        }
+                                                    }
+                                                }
+                                                <button type="button" @onclick="ShowAddCategoryModal" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
+                                                    + Add
+                                                </button>
+                                                @{
+                                                    var show = showAddCategoryModal ? "display:fixed" : "display:none";
+                                                }
+                                                <ValidationMessage For="@(() => blogPostDTO.Category)" class="text-sm text-red-600 mt-1" />
+                                                <!-- Modal Overlay -->
+                                                <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50" style="@show">
+
+                                                    <!-- Modal Box -->
+                                                    <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+                                                        <h2 class="text-xl font-semibold mb-4">Enter Category Details</h2>
+
+                                                        <!-- Input Field -->
+                                                        <InputText @bind-Value="Category"
+                                                                   type="text"
+                                                                   placeholder="Category Name"
+                                                                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 mb-4" />
+
+                                                        <!-- Action Buttons -->
+                                                        <div class="flex justify-end space-x-2">
+                                                            <button type="button" @onclick="HideAddCategoryModal"
+                                                                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                                                Cancel
+                                                            </button>
+                                                            <button type="button" @onclick="SaveAndHideAddCategoryModal"
+                                                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Tags</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            @if (Tags is not null && Tags.Any())
+                                            {
+                                                foreach (var tag in Tags)
+                                                {
+                                                    if (BlogTags is not null && BlogTags.Contains(tag))
+                                                    {
+                                                        <button @onclick="(() => RemoveTag(tag))" type="button" class=" px-3 py-1.5 rounded-full bg-gray-400 text-white text-sm hover:bg-gray-200 transition">@tag.Name</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button @onclick="(() => AddTag(tag))" type="button" class=" px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">@tag.Name</button>
+                                                    }
+                                                }
+                                            }
+                                            <button type="button" @onclick="ShowAddTagModal" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
+                                                + Add
+                                            </button>
+                                            @{
+                                                var showTag = showAddTagModal ? "display:fixed" : "display:none";
+                                            }
+                                            <!-- Modal Overlay -->
+                                            <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50" style="@showTag">
+
+                                                <!-- Modal Box -->
+                                                <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+                                                    <h2 class="text-xl font-semibold mb-4">Enter Tag Details</h2>
+
+                                                    <!-- Input Field -->
+                                                    <InputText @bind-Value="CurrentTag.Name"
+                                                               type="text"
+                                                               placeholder="Tag Name"
+                                                               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 mb-4" />
+
+                                                    <!-- Action Buttons -->
+                                                    <div class="flex justify-end space-x-2">
+                                                        <button type="button" @onclick="(() => HideAddTagModal(CurrentTag))"
+                                                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="button" @onclick="(() => SaveAndHideAddTagModal(CurrentTag))"
+                                                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @if (ImageFile is null)
+                                        {
+                                            <label for="fileUpload2" class="cursor-pointer text-green-900">
+                                                <div class="bg-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                    <i class="fas fa-folder-open"></i>
+                                                    <span>Upload Image</span>
+                                                </div>
+                                                <InputFile id="fileUpload2" type="file" style="display:none" multiple OnChange="UploadImage" />
+                                            </label>
+                                            <ValidationMessage For="@(() => blogPostDTO.Image)" class="text-sm text-red-600 mt-1" />
+                                        }
+                                        else
+                                        {
+                                            if (!ProblemWBlogImage)
+                                            {
+                                                <label for="fileUpload3" class="cursor-pointer text-green-900">
+                                                    <div class="bg-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                        <i class="fas fa-folder-open"></i>
+                                                        <span>@ImageFile.Name</span>
+                                                        <button type="button" class="p-2 rounded hover:bg-gray-500" @onclick="DeleteImageUpload">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 fill="none"
+                                                                 viewBox="0 0 24 24"
+                                                                 stroke-width="2"
+                                                                 stroke="white"
+                                                                 class="w-6 h-6 text-gray-700">
+                                                                <path stroke-linecap="round"
+                                                                      stroke-linejoin="round"
+                                                                      d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                if (UnsupportedImage)
+                                                {
+                                                    <label for="fileUpload3" class="cursor-pointer text-green-900">
+                                                        <div class="bg-red-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                            <i class="fas fa-folder-open"></i>
+                                                            <span>Unsupported Image Type. Supported image types are PNG, JPG, WEBP, or SVG</span>
+                                                            <button type="button" class="p-2 rounded hover:bg-red-500" @onclick="DeleteProblemImage">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                     fill="none"
+                                                                     viewBox="0 0 24 24"
+                                                                     stroke-width="2"
+                                                                     stroke="white"
+                                                                     class="w-6 h-6 text-gray-700">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </label>
+                                                }
+                                                else
+                                                {
+                                                    <label for="fileUpload3" class="cursor-pointer text-green-900">
+                                                        <div class="bg-red-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                            <i class="fas fa-folder-open"></i>
+                                                            <span>@ImageFile.Name is greater than 5MB, please try a smaller image</span>
+                                                            <button type="button" class="p-2 rounded hover:bg-red-500" @onclick="DeleteProblemImage">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                     fill="none"
+                                                                     viewBox="0 0 24 24"
+                                                                     stroke-width="2"
+                                                                     stroke="white"
+                                                                     class="w-6 h-6 text-gray-700">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </label>
+                                                }
+                                            }
+                                        }
+                                        <div>
+                                            <label class="block text-gray-700 text-sm font-medium mb-2">Content</label>
+                                            <RadzenHtmlEditor @bind-Value="blogPostDTO.Content" Style="height:400px;" />
+                                            <ValidationMessage For="@(() => blogPostDTO.Content)" class="text-sm text-red-600 mt-1" />
+                                        </div>
+
+                                        <div class="pt-4 border-t">
+                                            <button type="submit" class="w-full bg-green-900 text-white py-3 rounded-lg font-medium hover:bg-secondary transition flex items-center justify-center space-x-2">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <span>Publish Blog Post</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </EditForm>
+                            </div>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                    <!-- Recent Blog Posts -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold text-dark mb-6">Recent Blog Posts</h2>
+
+                        <div class="space-y-6" id="blogPostsList">
+                            @if (BlogPosts is not null && BlogPosts.Any())
+                            {
+                                foreach (var Post in BlogPosts)
+                                {
+
+                                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                        <div class="relative">
+                                            @{
+                                                var source = GetImageSrc(Post.PreviewImage, Post.PreviewImageContentType);
+                                            }
+                                            <img src="@source"
+                                                 alt="@Post.Title"
+                                                 class="w-full h-48 object-cover"
+                                                 loading="lazy">
+                                            <span class="absolute top-4 left-4 bg-gray-100 backdrop-blur-sm text-dark px-3 py-1 rounded-full text-sm font-medium">
+                                                @Post.Category
+                                            </span>
+                                        </div>
+
+                                        <div class="p-6">
+                                            <div class="flex items-center text-sm text-gray-500 mb-3">
+                                                <span class="flex items-center mr-4">
+                                                    <i class="far fa-clock mr-1"></i> @Post.ReadTime min
+                                                </span>
+                                                <span class="flex items-center">
+                                                    <i class="far fa-calendar mr-1"></i> @GetTimeAgo(Post.Date)
+                                                </span>
+                                            </div>
+
+                                            <h3 class="text-xl font-bold text-dark mb-3 line-clamp-2">@Post.Title</h3>
+                                            <p class="text-gray-600 mb-4 line-clamp-3">@((MarkupString)Truncate(Post.Content, 200))</p>
+
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <img src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
+                                                         alt="@Post.Author"
+                                                         class="w-8 h-8 rounded-full mr-2"
+                                                         loading="lazy">
+                                                    <span class="text-sm font-medium">@Post.Author</span>
+                                                </div>
+
+                                                <button @onclick="(() => ViewBlogDetail(Post))" class="text-green-800 hover:text-secondary font-medium flex items-center gap-2">
+                                                    Read More <i class="fas fa-arrow-right"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                if (loadingBlogs)
+                                {
+                                    <div class="center-container">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                            <g class="spinner" transform="translate(60,60)">
+                                                <circle cx="0" cy="-40" r="6" />
+                                                <circle cx="28" cy="-28" r="6" />
+                                                <circle cx="40" cy="0" r="6" />
+                                                <circle cx="28" cy="28" r="6" />
+                                                <circle cx="0" cy="40" r="6" />
+                                                <circle cx="-28" cy="28" r="6" />
+                                                <circle cx="-40" cy="0" r="6" />
+                                                <circle cx="-28" cy="-28" r="6" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="center-container">
+                                        <p class="text-gray-600 mb-4 line-clamp-3">No Blogs Found...</p>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t">
+                            <a href="/blog-space" class="text-green-900 hover:text-secondary font-medium flex items-center justify-center space-x-2">
+                                <span>View All Blog Posts</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-dark">Upload Document</h3>
+                        <button id="closeUploadModal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    <!-- Upload form content would go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+    private bool loadingBlogs { get; set; } = false;
+    private bool loadingDocs { get; set; } = false;
+    private List<Tag>? Tags { get; set; }
+    private List<Document>? Documents { get; set; }
+    private List<BlogPost>? BlogPosts { get; set; }
+    private List<Tag>? BlogTags { get; set; } = new();
+    private Document document = new Document();
+    private BlogPost blogPost = new BlogPost();
+    public FileUploadDTO fileUploadDTO { get; set; } = new();
+    public BlogPostDTO blogPostDTO { get; set; } = new();
+    public List<BlogCategory> BlogCategories = new List<BlogCategory>();
+    public Dictionary<string, bool> ActivePAges { get; set; } = new();
+    private IBrowserFile File { get; set; }
+    private IBrowserFile ImageFile { get; set; }
+    string? currentUrl { get; set; }
+    private List<string> DocFilters { get; set; } = new();
+    private string DocFilter { get; set; } = "View All";
+    private DocSubmissionGuidelines DocSubmissionGuidelines { get; set; } = new();
+    private Dictionary<string, string> NavClasses { get; set; } = new();
+    private string page = "/resources";
+    private List<string> SearchFilters {get; set;} = new();
+
+    [Parameter]
+    public ApplicationUser User { get; set; }
+
+    [Parameter]
+    public bool Authorized {get; set;} = false;
+
+    [SupplyParameterFromQuery]
+    public string SearchTerm { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string RedirectQuery { get; set; }
+
+    [Parameter]
+    public string Category { get; set; } = "";
+
+    [Parameter]
+    public Tag CurrentTag { get; set; } = new();
+
+    [Parameter]
+    public bool showAddCategoryModal { get; set; } = false;
+
+    [Parameter]
+    public bool showAddTagModal { get; set; } = false;
+
+    [Parameter]
+    public bool ProblemWDocument { get; set; } = false;
+
+    [Parameter]
+    public bool UnsupportedDocument { get; set; } = false;
+
+    [Parameter]
+    public bool UnsupportedImage { get; set; } = false;
+
+    [Parameter]
+    public bool ProblemWBlogImage { get; set; } = false;
+
+    private Task ItalicClick() => ApplyFormat("_", "_");
+    private Task BoldClick() => ApplyFormat("**", "**");
+    private Task ListClick() => ApplyFormat("\n-", "");
+
+    protected override async Task OnInitializedAsync()
+    {
+        loadingBlogs = true;
+        loadingDocs = true;
+        DocFilters.Add("All");
+        DocFilters.Add("PDF");
+        DocFilters.Add("DOC");
+        // DocFilters.Add("XLS");
+        // DocFilters.Add("CSV");
+        // DocFilters.Add("PPT");
+        DocFilters.Add("View All");
+
+        SearchFilters.Add("All Resources");
+        SearchFilters.Add("Research");
+        SearchFilters.Add("Blog Posts");
+        SearchFilters.Add("Case Studies");
+        SearchFilters.Add("Templates");
+        SearchFilters.Add("My Uploads");
+
+        NavClasses["All Resources"] = "font-medium border-b-2 border-green-900 hover:text-green-900";
+        NavClasses["Research"] = "font-medium hover:text-green-900";
+        NavClasses["Case Studies"] = "font-medium hover:text-green-900";
+        NavClasses["Blog Posts"] = "font-medium hover:text-green-900";
+        NavClasses["Templates"] = "font-medium hover:text-green-900";
+        NavClasses["My Uploads"] = "font-medium hover:text-green-900";
+        using var context = await DbFactory.CreateDbContextAsync();
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+        Tags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
+
+        BlogCategories = await context.BlogCategory.OrderByDescending(bc => bc.Name).ToListAsync();
+        User = await ApplicationUserService.GetApplicationUser();
+        if (User is not null){
+            var AuthUserRoles = await UserManager.GetUsersInRoleAsync("PamojaMember");
+            if (AuthUserRoles is not null && AuthUserRoles.Any()){
+                Authorized = true;
+            }
+            else{
+                Authorized = false;
+            }
+        }
+        StateHasChanged();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        BlogPosts?.Clear();
+        Documents?.Clear();
+        loadingBlogs = true;
+        loadingDocs = true;
+        if (!string.IsNullOrWhiteSpace(RedirectQuery))
+        {
+            await Redirect();
+        }
+        else
+        {
+            using var context = await DbFactory.CreateDbContextAsync();
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+        }
+        StateHasChanged();
+        loadingBlogs = false;
+        loadingDocs = false;
+    }
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+    public static string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = bytes;
+        int order = 0;
+
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+
+        return $"{len:0.##} {sizes[order]}";
+    }
+    private string GetShortExtension(string contentType)
+    {
+        var mapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx" },
+            { "application/msword", "doc" },
+            { "application/pdf", "pdf" },
+            { "text/plain", "txt" },
+            { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xls" },
+            { "application/vnd.ms-excel", "csv" },
+            { "application/vnd.openxmlformats-officedocument.presentationml.presentation", "ppt" }
+        };
+        var shortExtension = mapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
+        return shortExtension;
+    }
+    private string GetShortImageExtension(string contentType)
+    {
+        var mapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "image/jpeg", "jpg" },
+            { "image/webp", "webp" },
+            { "image/svg", "svg" },
+            { "image/png", "png" }
+        };
+        var shortExtension = mapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
+        return shortExtension;
+    }
+    private async Task SetBlogContent()
+    {
+
+    }
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        // Get the first selected file
+        ImageFile = e.File;
+
+        // Limit size (e.g. 5 MB) to avoid exceptions
+        var maxSize = 5 * 1024 * 1024;
+        if (ImageFile.Size > maxSize)
+        {
+            ProblemWBlogImage = true;
+        }
+        else if (GetShortImageExtension(ImageFile.ContentType) == "unknown")
+        {
+            ProblemWBlogImage = true;
+            UnsupportedImage = true;
+        }
+        else
+        {
+            using var stream = ImageFile.OpenReadStream(maxSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            // Store raw bytes in BlogPost.PreviewImage
+            blogPostDTO.Image = ms.ToArray();
+
+            blogPostDTO.ImageContentType = ImageFile.ContentType;
+
+            blogPost.PreviewImage = blogPostDTO.Image;
+            blogPost.PreviewImageContentType = blogPostDTO.ImageContentType;
+        }
+        StateHasChanged();
+    }
+    public static string GetTimeAgo(DateTime dateTime)
+    {
+        TimeSpan timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan <= TimeSpan.FromSeconds(60))
+            return $"{timeSpan.Seconds} seconds ago";
+
+        if (timeSpan <= TimeSpan.FromMinutes(60))
+            return timeSpan.Minutes > 1 ? $"{timeSpan.Minutes} minutes ago" : "1 minute ago";
+
+        if (timeSpan <= TimeSpan.FromHours(24))
+            return timeSpan.Hours > 1 ? $"{timeSpan.Hours} hours ago" : "1 hour ago";
+
+        if (timeSpan <= TimeSpan.FromDays(30))
+            return timeSpan.Days > 1 ? $"{timeSpan.Days} days ago" : "yesterday";
+
+        if (timeSpan <= TimeSpan.FromDays(365))
+            return timeSpan.Days > 30 ? $"{timeSpan.Days / 30} months ago" : "1 month ago";
+
+        return timeSpan.Days > 365 ? $"{timeSpan.Days / 365} years ago" : "1 year ago";
+    }
+    private async Task ApplyFormat(string prefix, string suffix)
+    {
+        // Get selection info from JS
+        var selection = await JS.InvokeAsync<SelectionInfo>("getSelection", "editor");
+
+        if (selection != null)
+        {
+            var before = blogPostDTO.Content.Substring(0, selection.Start);
+            var selected = blogPostDTO.Content.Substring(selection.Start, selection.Length);
+            var after = blogPostDTO.Content.Substring(selection.End);
+
+            blogPostDTO.Content = before + prefix + selected + suffix + after;
+            StateHasChanged();
+        }
+    }
+    private async Task InsertLink()
+    {
+        var url = await JS.InvokeAsync<string>("prompt", "Enter the URL:");
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            await ApplyFormat("[", $"]({url})");
+        }
+    }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        File = e.File; // Get the single file
+        long maxFileSize = 1024 * 1024 * 50; // 5MB limit
+
+        if (File.Size > maxFileSize)
+        {
+            ProblemWDocument = true;
+        }
+        else if (GetShortExtension(File.ContentType) == "unknown")
+        {
+            ProblemWDocument = true;
+            UnsupportedDocument = true;
+        }
+        else
+        {
+            using var stream = File.OpenReadStream(maxFileSize);
+
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            document.Data = ms.ToArray();
+            fileUploadDTO.Data = document.Data;
+            fileUploadDTO.Metadata = new DocumentMetadata();
+            document.Metadata = fileUploadDTO.Metadata;
+
+            if (File.ContentType.Contains("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
+            File.ContentType.Contains("application/msword"))
+            {
+                var tempPath = "wwwroot/Data";
+                using var fs = new FileStream(tempPath, FileMode.Create);
+                await stream.CopyToAsync(fs);
+
+                int pageCount = GetWordPageCount(tempPath);
+                fileUploadDTO.Metadata.PageCount = pageCount;
+                document.Metadata.PageCount = pageCount;
+            }
+            else if (File.ContentType == "application/pdf")
+            {
+                int pageCount = await GetPdfPageCountAsync(ms);
+                fileUploadDTO.Metadata.PageCount = pageCount;
+                document.Metadata.PageCount = pageCount;
+            }
+            else if (File.ContentType == "text/plain")
+            {
+                fileUploadDTO.Metadata.PageCount = 1;
+                document.Metadata.PageCount = 1;
+            }
+            else if (File.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+             File.ContentType == "application/vnd.ms-excel")
+            {
+                int pageCount = await GetSheetCountAsync(ms);
+                fileUploadDTO.Metadata.PageCount = pageCount;
+                document.Metadata.PageCount = pageCount;
+            }
+            else if (File.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.presentation")
+            {
+                int pageCount = await GetSlideCountAsync(ms);
+                fileUploadDTO.Metadata.PageCount = pageCount;
+                document.Metadata.PageCount = pageCount;
+            }
+
+            document.Size = File.Size;
+            document.Downloads = 0;
+            document.ContentType = File.ContentType;
+        }
+
+    }
+    private async Task<int> GetPdfPageCountAsync(MemoryStream stream)
+    {
+        stream.Position = 0; // reset to beginning
+
+        using var reader = new iTextSharp.text.pdf.PdfReader(stream);
+        return reader.NumberOfPages;
+    }
+
+    public int GetWordPageCount(string filePath)
+    {
+        var wordApp = new Word.Application();
+        var doc = wordApp.Documents.Open(filePath);
+
+        if (doc is not null){
+            int pageCount = doc.ComputeStatistics(Word.WdStatistic.wdStatisticPages);
+            doc.Close();
+            wordApp.Quit();
+            return pageCount;
+        }
+        else{
+            return 0;
+        }
+    }
+    public async Task<int> GetSheetCountAsync(MemoryStream stream)
+    {
+        stream.Position = 0; // reset to beginning
+
+        using var package = new ExcelPackage(stream);
+        return package.Workbook.Worksheets.Count;
+    }
+    public async Task<int> GetSlideCountAsync(MemoryStream stream)
+    {
+        stream.Position = 0;
+
+        using var presentationDoc = PresentationDocument.Open(stream, false);
+        var slideCount = presentationDoc.PresentationPart.SlideParts.Count();
+
+        return slideCount;
+    }
+
+    public async Task UploadFile()
+    {
+        if (!ProblemWDocument)
+        {
+            fileUploadDTO.Metadata.Author = fileUploadDTO.Author;
+            fileUploadDTO.Metadata.Title = fileUploadDTO.Title;
+            fileUploadDTO.Metadata.Category = fileUploadDTO.Category;
+            fileUploadDTO.Metadata.LastModified = fileUploadDTO.Date;
+            fileUploadDTO.Metadata.DocumentId = document.Id;
+            document.Metadata = fileUploadDTO.Metadata;
+            document.Metadata.Author = fileUploadDTO.Author;
+            document.Metadata.Category = fileUploadDTO.Category;
+            document.Metadata.LastModified = fileUploadDTO.Date;
+            document.Author = fileUploadDTO.Author;
+            document.Title = fileUploadDTO.Title;
+            document.Description = fileUploadDTO.Description;
+            document.Category = fileUploadDTO.Category;
+            document.UploadedBy = User.Name;
+            using var context = await DbFactory.CreateDbContextAsync();
+            context.Document.Add(document);
+            await context.SaveChangesAsync();
+            fileUploadDTO.Title = "";
+            fileUploadDTO.Description = "";
+            fileUploadDTO.Category = "";
+            File = null;
+            Documents.Add(document);
+            StateHasChanged();
+        }
+    }
+    private string GetImageSrc(byte[] imageBytes, string contentType)
+    {
+        var base64 = Convert.ToBase64String(imageBytes);
+        return $"data:{contentType};base64,{base64}";
+    }
+    public async Task AddTag(Tag tag)
+    {
+        if (!blogPostDTO.TagIds.Contains(tag.Id.ToString()))
+        {
+            blogPostDTO.TagIds.Add(tag.Id.ToString());
+            BlogTags.Add(tag);
+        }
+        StateHasChanged();
+    }
+    public async Task RemoveTag(Tag tag)
+    {
+        if (blogPostDTO.TagIds.Contains(tag.Id.ToString()))
+        {
+            blogPostDTO.TagIds.Remove(tag.Id.ToString());
+            BlogTags.Remove(tag);
+        }
+        StateHasChanged();
+    }
+    private void DeleteProblemImage()
+    {
+        ProblemWBlogImage = false;
+        UnsupportedImage = false;
+        ImageFile = null;
+        StateHasChanged();
+    }
+    private void DeleteProblemFile()
+    {
+        ProblemWDocument = false;
+        UnsupportedDocument = false;
+        File = null;
+        StateHasChanged();
+    }
+    public async Task HandleInvalidSubmit()
+    {
+
+    }
+    public void ShowAddCategoryModal(){
+        showAddCategoryModal = true;
+        StateHasChanged();
+    }
+    public void HideAddCategoryModal(){
+        Category = "";
+        showAddCategoryModal = false;
+        StateHasChanged();
+    }
+    public async Task SaveAndHideAddCategoryModal()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        if (context.BlogCategory.FirstOrDefault(c => c.Name == Category) == null)
+        {
+            var category = new BlogCategory();
+            category.Name = Category;
+            BlogCategories.Add(category);
+
+            context.BlogCategory.Add(category);
+            await context.SaveChangesAsync();
+        }
+
+        blogPostDTO.Category = Category;
+        showAddCategoryModal = false;
+        StateHasChanged();
+    }
+    public void ShowAddTagModal()
+    {
+        showAddTagModal = true;
+        StateHasChanged();
+    }
+    public void HideAddTagModal(Tag tag)
+    {
+        if (Tags is not null)
+        {
+            var tag_no_longer_wanted = Tags.FirstOrDefault(t => t.Name == tag.Name);
+            if ( tag_no_longer_wanted != null)
+            {
+                RemoveTag(tag_no_longer_wanted);
+            }
+        }
+        CurrentTag.Name = "";
+        showAddTagModal = false;
+        StateHasChanged();
+    }
+    public async Task SaveAndHideAddTagModal(Tag tag)
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Tag.FirstOrDefault(t => t.Name == tag.Name) == null)
+        {
+            var new_tag = new Tag();
+            new_tag.Name = tag.Name;
+            Tags.Add(new_tag);
+            AddTag(new_tag);
+            new_tag.BlogPostIds.Add(blogPost.Id);
+            context.Tag.Add(new_tag);
+            context.SaveChangesAsync();
+        }
+        CurrentTag.Name = "";
+        showAddTagModal = false;
+        StateHasChanged();
+    }
+    public void GoToDocViewer(PamojaWebsite.Data.Document Doc)
+    {
+        NavigationManager.NavigateTo($"/document-viewer?id={Doc.Id}");
+    }
+    public async Task FilterDocs(string filter)
+    {
+        DocFilter = filter;
+        using var context = await DbFactory.CreateDbContextAsync();
+        if (!filter.Equals("All") && !filter.Equals("View All"))
+        {
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            var regexPattern = ".*" + Regex.Escape(filter.ToLower()) + ".*";
+
+            Documents = Documents
+                .Where(d =>
+                    d.ContentType != null &&
+                    Regex.IsMatch(GetShortExtension(d.ContentType).ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)
+                )
+                .ToList();
+        }
+        else
+        {
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+        }
+        StateHasChanged();
+    }
+    public void ViewBlogDetail(BlogPost Post)
+    {
+        NavigationManager.NavigateTo($"/blog-space?Id={Post.Id}");
+    }
+    public int ReadTimeMinutes
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(blogPostDTO.Content)) return 0;
+
+            var wordCount = blogPostDTO.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+            var minutes = (int)Math.Ceiling(wordCount / 200.0); // 200 words/minute
+            return minutes;
+        }
+    }
+    private async Task GetNavClass(string page, string searchTerm)
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var path = uri.AbsolutePath.ToLowerInvariant();
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        NavClasses[searchTerm] = path == page.ToLowerInvariant() &&
+               query["RedirectQuery"]?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true
+            ? "font-medium border-b-2 border-green-900 hover:text-green-900"
+            : "font-medium hover:text-green-900";
+        foreach(var kvp in NavClasses)
+        {
+            if (kvp.Key != searchTerm)
+            {
+                NavClasses[kvp.Key] = "font-medium hover:text-green-900";
+            }
+        }
+        StateHasChanged();
+    }
+    private string GetFilterClass(string filter)
+    {
+        if (DocFilter.Equals(filter))
+        {
+            return "px-4 py-2 rounded-lg border text-white bg-green-900 border-green-800 hover:bg-green-900 transition";
+        }
+        else
+        {
+            return "px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition";
+        }
+    }
+    private void ShowSubmissionsGuideline()
+    {
+        DocSubmissionGuidelines.ShowModal();
+    }
+    public async Task CreateBlogPost()
+    {
+        if (!ProblemWBlogImage)
+        {
+            using var context = await DbFactory.CreateDbContextAsync();
+            blogPost.Title = blogPostDTO.Title;
+            blogPost.Content = blogPostDTO.Content;
+            blogPost.Likes = 0;
+            blogPost.ReadTime = ReadTimeMinutes;
+
+            blogPost.Author = User.Name;
+            var roles = await UserManager.GetRolesAsync(User);
+
+
+            if (roles is not null)
+            {
+                var role = roles.FirstOrDefault(r => r != "PamojaMember");
+                if (role is not null)
+                {
+                    blogPost.AuthorRole = role;
+                }
+            }
+            if (User.Bio is not null)
+            {
+                blogPost.AuthorBio = User.Bio;
+            }
+            if (User.ProfilePicture is not null)
+            {
+                blogPost.AuthorImage = User.ProfilePicture;
+                blogPost.AuthorImageContentType = User.ImageContentType;
+            }
+            if (User.ImageContentType is not null)
+            {
+                blogPost.AuthorImageContentType = User.ImageContentType;
+            }
+            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Facebook");
+            var X = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "X");
+            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Instagram");
+            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "LinkedIn");
+            var Github = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Github");
+
+            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
+            {
+                Facebook.BlogPostIds.Add(blogPost.Id);
+                blogPost.AuthorSocialMediaIds.Add(Facebook.Id);
+            }
+            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
+            {
+                Instagram.BlogPostIds.Add(blogPost.Id); ;
+            }
+            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
+            {
+                X.BlogPostIds.Add(blogPost.Id);
+            }
+            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
+            {
+                Github.BlogPostIds.Add(blogPost.Id);
+            }
+            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
+            {
+                LinkedIn.BlogPostIds.Add(blogPost.Id);
+            }
+
+            var category = BlogCategories.FirstOrDefault(c => c.Name == blogPostDTO.Category);
+
+            if (category is not null)
+            {
+                blogPost.CategoryId = category.Id;
+                blogPost.Category = Category;
+            }
+            if (blogPostDTO.TagIds is not null)
+            {
+                foreach (var tagId in blogPostDTO.TagIds)
+                {
+                    var new_tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tagId);
+                    if (new_tag is not null)
+                    {
+                        new_tag.BlogPostIds.Add(blogPost.Id);
+                        context.Attach(new_tag).State = EntityState.Modified;
+                    }
+                }
+            }
+            blogPost.TagIds = blogPostDTO.TagIds;
+            if (BlogTags is not null)
+            {
+                foreach (var tag in BlogTags)
+                {
+                    blogPost.Tags.Add(tag.Name);
+                }
+            }
+            blogPost.Comments = 0;
+            BlogPosts.Add(blogPost);
+            context.BlogPost.Add(blogPost);
+            await context.SaveChangesAsync();
+            blogPostDTO.Title = "";
+            blogPostDTO.Content = "";
+            blogPostDTO.Category = "";
+            ImageFile = null;
+            blogPostDTO.Image = null;
+            blogPostDTO.ImageContentType = null;
+            blogPostDTO.TagIds.Clear();
+            BlogTags.Clear();
+
+            StateHasChanged();
+        }
+    }
+    public string Truncate(string value, int maxChars)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+        return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
+    }
+    public async Task SelectCategory(string Category)
+    {
+        blogPostDTO.Category = Category;
+        this.Category = Category;
+    }
+    public async Task HandleInvalidBlogSubmit()
+    {
+
+    }
+    public async Task Redirect()
+    {
+        RedirectQuery = RedirectQuery.Trim();
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        if (RedirectQuery.Equals("All Resources"))
+        {
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+
+        }
+        else if (RedirectQuery.Equals("Blog Posts"))
+        {
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+
+            if (Documents is not null && Documents.Any())
+            {
+                Documents.Clear();
+            }
+        }
+        else if (RedirectQuery.Equals("My Uploads"))
+        {
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            var regexPattern = ".*" + Regex.Escape(User.Name.ToLower()) + ".*";
+            if (!string.IsNullOrEmpty(User.Name))
+            {
+                BlogPosts = BlogPosts
+                    .Where(bp =>
+                        bp.Author != null &&
+                        Regex.IsMatch(bp.Author.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)
+                    )
+                    .ToList();
+            }
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            if (!string.IsNullOrEmpty(User.Name))
+            {
+                Documents = Documents
+                    .Where(d =>
+                        d.ContentType != null &&
+                        Regex.IsMatch(d.UploadedBy.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)
+                    )
+                    .ToList();
+            }
+        }
+        else
+        {
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            var regexPattern = ".*" + Regex.Escape(RedirectQuery.ToLower()) + ".*";
+
+            if (!string.IsNullOrEmpty(regexPattern))
+            {
+                BlogPosts = BlogPosts
+                    .Where(bp =>
+                string.IsNullOrEmpty(RedirectQuery) ||
+                (bp.Category != null && Regex.IsMatch(bp.Category.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase) ||
+                bp.Tags.Any(t => Regex.IsMatch(t.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)))
+            )
+            .ToList();
+
+            }
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            if (!string.IsNullOrEmpty(RedirectQuery))
+            {
+                Documents = Documents
+                    .Where(d =>
+                        string.IsNullOrEmpty(RedirectQuery) ||
+                        (d.Category != null && Regex.IsMatch(d.Category.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase))
+                    )
+                    .ToList();
+            }
+        }
+        RedirectQuery = "";
+        StateHasChanged();
+    }
+    public async Task Search()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            SearchTerm = SearchTerm.Trim();
+            using var context = await DbFactory.CreateDbContextAsync();
+            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            var regexPattern = ".*" + Regex.Escape(SearchTerm.ToLower()) + ".*";
+
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                BlogPosts = BlogPosts
+                    .Where(bp =>
+                        string.IsNullOrEmpty(SearchTerm) ||
+                        (bp.Author != null && Regex.IsMatch(bp.Author.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (bp.Title != null && Regex.IsMatch(bp.Title.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (bp.Category != null && Regex.IsMatch(bp.Category.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        bp.Tags.Any(t => t != null && Regex.IsMatch(t.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase))
+                    )
+                    .ToList();
+            }
+
+            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                Documents = Documents
+                    .Where(d =>
+                        string.IsNullOrEmpty(SearchTerm) ||
+                        (d.Author != null && Regex.IsMatch(d.Author.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (d.Title != null && Regex.IsMatch(d.Title.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase)) ||
+                        (d.Category != null && Regex.IsMatch(d.Category.ToLowerInvariant(), regexPattern, RegexOptions.IgnoreCase))
+                    )
+                    .ToList();
+            }
+
+            SearchTerm = "";
+            StateHasChanged();
+        }
+
+    }
+    public void DeleteUpload()
+    {
+        File = null;
+        StateHasChanged();
+    }
+    public void DeleteImageUpload()
+    {
+        ImageFile = null;
+        blogPostDTO.Image = null;
+        StateHasChanged();
+    }
+    public class SelectionInfo
+    {
+        public int Start { get; set; }
+        public int End { get; set; }
+        public int Length => End - Start;
+    }
+    public class FileUploadDTO
+    {
+        [Required(ErrorMessage = "Document Title is required")]
+        [StringLength(100, ErrorMessage = "Document Title must be 500 characters or fewer")]
+        public string Title { get; set; }
+
+        [Required(ErrorMessage = "Document Description is required")]
+        [StringLength(5000, ErrorMessage = "Document Description must be 5000 characters or fewer")]
+        public string Description { get; set; }
+
+        [Required(ErrorMessage = "Primary Document Author is required")]
+        [StringLength(100, ErrorMessage = "Primary Document Author must be 500 characters or fewer")]
+        public string Author { get; set; }
+
+        public long Size { get; set; }
+        public int Downloads { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
+
+        [Required(ErrorMessage = "Document Category is required")]
+        public string Category { get; set; }
+
+        public string ContentType { get; set; } // e.g., "application/pdf"
+
+        [Required(ErrorMessage = "File is required")]
+        public byte[] Data { get; set; }
+
+        public DocumentMetadata Metadata { get; set; }
+        public PamojaWebsite.Data.TableOfContents TableOfContents { get; set; }
+        public List<RelatedDocument> RelatedDocuments { get; set; }
+    }
+    public class BlogPostDTO
+    {
+        [Required(ErrorMessage = "Blog Title is required")]
+        [StringLength(100, ErrorMessage = "Blog Title must be 500 characters or fewer")]
+        public string Title { get; set; }
+
+        public string Author { get; set; }
+
+        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public TimeOnly ReadTime { get; set; }
+
+        [Required(ErrorMessage = "Blog Content is required")]
+        [StringLength(50000, ErrorMessage = "Blog Content must be 50000 characters or fewer")]
+        public string Content { get; set; } = "";
+
+        [Required(ErrorMessage = "Blog Preview Image is required")]
+        public byte[] Image { get; set; }
+
+        public string ImageContentType { get; set; }
+        public int Likes { get; set; }
+        public int Comments { get; set; }
+
+        [Required(ErrorMessage = "Blog Category is required")]
+        public string Category { get; set; }
+
+        public ICollection<string> TagIds { get; set; } = new List<string>();
+    }
+}

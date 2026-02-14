@@ -1,0 +1,55 @@
+﻿.gradient-bg {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+}
+
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+.document-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+    .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 400;
+        transition: color 0.3s ease;
+    }
+
+        .nav-links a:hover {
+            color: #14523d;
+        }
+.pdf-icon {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.doc-icon {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.ppt-icon {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.txt-icon {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}

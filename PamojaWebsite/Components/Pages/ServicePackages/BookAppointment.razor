@@ -1,0 +1,268 @@
+﻿@page "/services/book-appointment"
+
+<PageTitle>Book Appointment | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@using RestSharp
+@inject HttpClient httpClient
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+@rendermode InteractiveServer
+
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-xxxl">
+        <!-- Banner Section -->
+        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+            <div class="absolute inset-0">
+                <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
+            </div>
+
+            <!-- Content -->
+            <div class="relative max-w-7xl mx-auto">
+                <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                    <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Custom Package Solutions</h1>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breadcrumb Section-->
+        <div class="py-10">
+            <section class="py-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <!-- About Us -->
+                            <li class="inline-flex items-center">
+                                <a href="/services"
+                                   class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                                    Services
+                                </a>
+                            </li>
+
+                            <!-- Separator -->
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                    <a href="/services/book-appointment"
+                                       class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
+                                        Book an Appointment
+                                    </a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </section>
+
+            <section class="bg-white py-12 px-6 max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Book an Appointment</h1>
+                <p class="text-center font-bold text-lg text-gray-600 mb-3">Limited 1-Hour Consultations Now Available</p>
+                <p class="text-center text-lg text-gray-600 mb-6">
+                    Please book your 1 hour consultation (2900KSH) designed to assess your needs and determine the most appropriate service package for your objectives.
+                    This consultation provides an opportunity for an open and thoughtful discussion about your goals and how we can best support them.
+                    Availability is limited, and appointments are scheduled on a first-come, first-served basis.
+                </p>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Book an Appointment</h1>
+                    <div class="bg-white p-6 rounded-lg shadow-md w-88">
+                        <div class="flex flex-row md: flex-col">
+                            <div class="mb-3 mt-3">
+                                <img src="Images/PamojaLogo.png"
+                                     width="200"
+                                     height="200" />
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <p class="font-bold text-lg text-gray-800 mb-6">
+                                    Consultation with Pamoja Mental Health and Safeguarding Team
+                                </p>
+                                <p class="text-lg text-gray-600 mb-6">
+                                    1 hour
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88">
+                        <div class="flex flex-col md:flex-row gap-16">
+                            <div class="w-full">
+                                @if (SelectedDay is not null)
+                                {
+                                    <Calendar>
+                                        <DayTemplate Context="day">
+                                            @{
+                                                bool isSelected = SelectedDay.Date == day.Date;
+                                                bool isToday = day.Date.Date == DateTime.Today;
+                                            }
+                                            @if (day.IsInThisMonth && day.Date.DayOfWeek != DayOfWeek.Saturday && day.Date.DayOfWeek != DayOfWeek.Sunday)
+                                            {
+                                                if (day.Date > DateTime.UtcNow && day.Date.Month >= DateTime.UtcNow.Month && day.Date.Year >= DateTime.UtcNow.Year)
+                                                {
+                                                    <button class="day p-2 md:p-8 cursor-pointer text-center
+                                                        @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-white" : "")
+                                                        @(isToday ? "bg-gradient-to-b from-green-100 to-green-200 text-gray-800" : "")"
+                                                            @onclick="(() => SelectDate(day, currentDay))">
+                                                        @day.Day
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="day p-2 md:p-8" style="background-color: transparent; color:darkgrey;">
+                                                        @day.Day
+                                                    </button>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <button class="day p-2 md:p-8" style="background-color: transparent; color:darkgrey;">
+                                                    @day.Day
+                                                </button>
+                                            }
+                                        </DayTemplate>
+                                    </Calendar>
+
+                                }
+                            </div>
+                            <div class="md:w-1/2 flex flex-col mx-auto">
+                                <p class="font-bold text-lg text-gray-800 mb-3">
+                                    @SelectedDay.Date.DayOfWeek, @getMonth(SelectedDay.Date.Month) @SelectedDay.Date.Day
+                                </p>
+                                <div class="grid grid-cols-2 gap-6">
+                                    @foreach (var time in TimeSlots)
+                                    {
+                                        bool isSelected = SelectedTime == time;
+                                        @* <button type="button" class="time-slot-btn p-2 @(SelectedTime == time ? "selected" : "")"
+                                                @onclick="(() => SelectTime(time))">
+                                            @time.ToString("hh:mm tt")
+                                        </button> *@
+                                        <div class="">
+                                            <button class="px-4 py-1 border border-gray-300 rounded-md bg-[#14532d] text-nowrap text-gray-800 cursor-pointer hover:bg-[#58cca5]
+                                                        disabled:bg-gray-300 disabled:cursor-default
+                                                    @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-nowrap text-white border-blue-600" : "")"
+                                                    @onclick="(() => SelectTime(time))">
+                                                @time.ToString("hh:mm tt")
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<DateTime> TimeSlots = new();
+    private DateTime SelectedTime;
+
+    [Parameter]
+    public string currentDay { get; set; }
+
+    [Parameter]
+    public CalendarDay SelectedDay { get; set; }
+
+    [Parameter]
+    public string? Month { get; set; }
+    private DateTime dateToday = DateTime.UtcNow.Date;
+
+    protected override void OnInitialized()
+    {
+        currentDay = "today";
+        SelectedDay = new CalendarDay();
+        SelectedDay.Date = DateTime.UtcNow.AddDays(1);
+        var start = DateTime.Today.AddDays(1).AddHours(9);   // 9 AM
+        var end = DateTime.Today.AddDays(1).AddHours(16);    // 5 PM
+        for (var t = start; t <= end; t = t.AddHours(1))
+        {
+            TimeSlots.Add(t);
+        }
+    }
+    private string getMonth(int month)
+    {
+        switch (month)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+        return Month;
+    }
+    private async void SelectTime(DateTime time)
+    {
+        SelectedTime = time;
+        Appointment appointment= new Appointment();
+        appointment.Date = time;
+        using var context = await DbFactory.CreateDbContextAsync();
+        appointment.Amount = 2900;
+        appointment.FirstName = "";
+        appointment.Date = SelectedDay.Date.ToUniversalTime();
+        appointment.Time = TimeOnly.FromDateTime(SelectedTime);
+        appointment.LastName = "";
+        appointment.Phone = "";
+        appointment.Email = "";
+        appointment.Message = "";
+        appointment.Calendar = "";
+        context.Appointment.Add(appointment);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo($"/services/book-appointment/details?Id={appointment.Id}");
+    }
+    private async Task SelectDate(CalendarDay selectedDate, String CurrentDay)
+    {
+        SelectedDay = selectedDate;
+        CurrentDay = "";
+        StateHasChanged();
+    }
+}

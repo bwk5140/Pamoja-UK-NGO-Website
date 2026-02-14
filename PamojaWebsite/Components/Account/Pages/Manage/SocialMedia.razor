@@ -1,0 +1,252 @@
+﻿@page "/Account/Manage/SocialMedia"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject MyApiService ApiService
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Set Social Media</PageTitle>
+
+
+<div class="pt-[5%] mb-5 py-20">
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">Set your social media links</h3>
+    <StatusMessage Message="@message" />
+
+    <div class="row">
+        <div class="col-xl-6">
+            <EditForm Model="Input" FormName="set-social-media" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText type="text" @bind-Value="Input.Facebook" id="Input.Facebook" class="form-control" autocomplete="new-facebook-link" />
+                    <label for="Input.Facebook" class="form-label">Facebook</label>
+                    <ValidationMessage For="() => Input.Facebook" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="text" @bind-Value="Input.Instagram" id="Input.Instagram" class="form-control" autocomplete="new-instagram-link" />
+                    <label for="Input.Instagram" class="form-label">Instagram</label>
+                    <ValidationMessage For="() => Input.Instagram" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="text" @bind-Value="Input.X" id="Input.X" class="form-control" autocomplete="new-x-link" />
+                    <label for="Input.X" class="form-label">X</label>
+                    <ValidationMessage For="() => Input.X" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="text" @bind-Value="Input.LinkedIn" id="Input.LinkedIn" class="form-control" autocomplete="new-linkedIn-link" />
+                    <label for="Input.LinkedIn" class="form-label">LinkedIn</label>
+                    <ValidationMessage For="() => Input.LinkedIn" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="text" @bind-Value="Input.Github" id="Input.Github" class="form-control" autocomplete="new-github-link" />
+                    <label for="Input.Github" class="form-label">Github</label>
+                    <ValidationMessage For="() => Input.Github" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+                    border-color:transparent; border-radius: 5px;">
+                    Save
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? message;
+    private ApplicationUser user = default!;
+    private SocialMediaLink Facebook { get; set; }
+    private SocialMediaLink Instagram { get; set; }
+    private SocialMediaLink X { get; set; }
+    private SocialMediaLink LinkedIn { get; set; }
+    private SocialMediaLink Github { get; set; }
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (user is null)
+            return;
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        Facebook = context.SocialMediaLink.FirstOrDefault(s => s.UserId == user.Id && s.Platform == "Facebook");
+        X = context.SocialMediaLink.FirstOrDefault(s => s.UserId == user.Id && s.Platform == "X");
+        Instagram = context.SocialMediaLink.FirstOrDefault(s => s.UserId == user.Id && s.Platform == "Instagram");
+        LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.UserId == user.Id && s.Platform == "LinkedIn");
+        Github = context.SocialMediaLink.FirstOrDefault(s => s.UserId == user.Id && s.Platform == "Github");
+
+        if (Facebook is not null && string.IsNullOrWhiteSpace(Input.Facebook))
+        {
+            Input.Facebook = Facebook.Url;
+        }
+        if (Instagram is not null && string.IsNullOrWhiteSpace(Input.Instagram))
+        {
+            Input.Instagram = Instagram.Url;
+        }
+        if (X is not null && string.IsNullOrWhiteSpace(Input.X))
+        {
+            Input.X = X.Url;
+        }
+        if (Github is not null && string.IsNullOrWhiteSpace(Input.Github))
+        {
+            Input.Github = Github.Url;
+        }
+        if (LinkedIn is not null && string.IsNullOrWhiteSpace(Input.LinkedIn))
+        {
+            Input.LinkedIn = LinkedIn.Url;
+        }
+        StateHasChanged();        
+    }
+    private async Task OnValidSubmitAsync()
+    {
+        if (user is null)
+            return;
+        using var context = await DbFactory.CreateDbContextAsync();
+        if (Facebook is not null)
+        {
+            if (Facebook.Url != Input.Facebook)
+            {
+                Facebook.Url = Input.Facebook;
+            }    
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(Input.Facebook))
+            {
+                Facebook = new SocialMediaLink();
+                Facebook.Url = Input.Facebook;
+                Facebook.Platform = "Facebook";
+                Facebook.UserId = user.Id;
+                context.SocialMediaLink.Add(Facebook);
+            }
+        }
+        if (Instagram is not null)
+        {
+            if (Instagram.Url != Input.Instagram)
+            {
+                Instagram.Url = Input.Instagram;
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(Input.Instagram))
+            {
+                Instagram = new SocialMediaLink();
+                Instagram.Url = Input.Instagram;
+                Instagram.Platform = "Instagram";
+                Instagram.UserId = user.Id;
+                context.SocialMediaLink.Add(Instagram);
+            }
+        }
+
+        if (X is not null)
+        {
+            if (X.Url != Input.X)
+            {
+                X.Url = Input.X;
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(Input.X))
+            {
+                X = new SocialMediaLink();
+                X.Url = Input.X;
+                X.Platform = "X";
+                X.UserId = user.Id;
+                context.SocialMediaLink.Add(X);
+            }
+        }
+        if (LinkedIn is not null)
+        {
+            if (LinkedIn.Url != Input.LinkedIn)
+            {
+                LinkedIn.Url = Input.LinkedIn;
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(Input.LinkedIn))
+            {
+                LinkedIn = new SocialMediaLink();
+                LinkedIn.Url = Input.LinkedIn;
+                LinkedIn.Platform = "LinkedIn";
+                LinkedIn.UserId = user.Id;
+                context.SocialMediaLink.Add(LinkedIn);
+            }
+        }
+        if (Github is not null)
+        {
+            if (Github.Url != Input.Github)
+            {
+                Github.Url = Input.Github;
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(Input.Github))
+            {
+                Github = new SocialMediaLink();
+                Github.Url = Input.Github;
+                Github.Platform = "Github";
+                Github.UserId = user.Id;
+                context.SocialMediaLink.Add(Github);
+            }
+        }
+        context.Attach(user!).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UserExists(user!.Id))
+            {
+                NavigationManager.NavigateTo("/Account/NotFound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+    }
+    bool UserExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Users.Any(e => e.Id == id);
+    }
+    private sealed class InputModel
+    {
+        [Display(Name = "Facebook")]
+        public string? Facebook { get; set; }
+
+        [Display(Name = "Instagram")]
+        public string? Instagram { get; set; }
+
+        [Display(Name = "X")]
+        public string? X { get; set; }
+
+        [Display(Name = "LinkedIn")]
+        public string? LinkedIn { get; set; }
+
+        [Display(Name = "Github")]
+        public string? Github { get; set; }
+    }
+}

@@ -1,0 +1,112 @@
+﻿@page "/Account/Manage/Bio"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Set Bio</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20">
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">Write your bio as you would like it to appear within your blogs</h3>
+    <StatusMessage Message="@message" />
+
+    <div class="row">
+        <div class="col-xl-6">
+            <EditForm Model="Input" FormName="set-bio" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputTextArea @bind-Value="Input.Bio" id="Input.Bio" class="@($"{InputClass(() => Input.Bio)} h-28")" autocomplete="new-bio" />
+                    <ValidationMessage For="() => Input.Bio" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+                        border-color:transparent; border-radius: 5px;">
+                    Save
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+@code {
+    private string? message;
+    private ApplicationUser user = default!;
+    private EditContext editContext;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (user is not null && !string.IsNullOrEmpty(user.Bio))
+        {
+            Input.Bio = user.Bio;
+        }
+    }
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+            ? $"{baseClasses} border-red-500 focus:border-red-500"
+            : $"{baseClasses} border-gray-300";
+    }
+
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
+    private async Task OnValidSubmitAsync()
+    {
+        if (user is not null){
+            user.Bio = Input.Bio;
+            using var context = DbFactory.CreateDbContext();
+            context.Attach(user!).State = EntityState.Modified;
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(user!.Id))
+                {
+                    NavigationManager.NavigateTo("/Account/NotFound");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        
+
+        
+        
+    }
+    bool UserExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Users.Any(e => e.Id == id);
+    }
+    private sealed class InputModel
+    {
+        [Required]
+        [StringLength(500, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [Display(Name = "Bio")]
+        public string? Bio { get; set; } = "";
+    }
+}

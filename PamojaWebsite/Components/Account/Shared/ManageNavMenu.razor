@@ -5,35 +5,43 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">@Loc["Username"]</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Name">@Loc["Name"]</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Email">@Loc["Email"]</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Mobile">@Loc["Mobile"]</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/ChangePassword">@Loc["Password"]</NavLink>
-    </li>
-    @if (hasExternalLogins)
-    {
+<div class="pt-[5%] mb-5 py-20">
+    <ul class="nav nav-pills flex-column">
         <li class="nav-item">
-            <NavLink class="nav-link" href="Account/Manage/ExternalLogins">External logins</NavLink>
+            <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">@Loc["Username"]</NavLink>
         </li>
-    }
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/TwoFactorAuthentication">Two-factor authentication</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/PersonalData">Personal data</NavLink>
-    </li>
-</ul>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/Name">@Loc["Name"]</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/Email">@Loc["Email"]</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/Bio">@Loc["Bio"]</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/Mobile">@Loc["Mobile"]</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/SocialMedia">@Loc["SocialMedia"]</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/ChangePassword">@Loc["Password"]</NavLink>
+        </li>
+        @if (hasExternalLogins)
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link" href="Account/Manage/ExternalLogins">External logins</NavLink>
+            </li>
+        }
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/TwoFactorAuthentication">Two-factor authentication</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Account/Manage/PersonalData">Personal data</NavLink>
+        </li>
+    </ul>
+</div>
 
 @code {
     private bool hasExternalLogins;

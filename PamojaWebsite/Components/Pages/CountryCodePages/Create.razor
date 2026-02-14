@@ -1,0 +1,47 @@
+﻿@page "/countrycodes/create"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject CountryCodeService CountryCodeService
+
+<PageTitle>Create</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Create</h1>
+
+    <h2>CountryCode</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="CountryCode" OnValidSubmit="AddCountryCode" FormName="create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="mb-3">
+                    <label for="code" class="form-label">Code:</label>
+                    <InputText id="code" @bind-Value="CountryCode.Code" class="form-control" />
+                    <ValidationMessage For="() => CountryCode.Code" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div>
+        <a href="/countrycodes">Back to List</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private CountryCode CountryCode { get; set; } = default!;
+
+    protected override void OnInitialized() => CountryCode ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddCountryCode()
+    {
+        //await CountryCodeService.ImportCountryCodesAsync("C:/Users/brian/Desktop/Apps/PamojaWebsiteUK/PamojaWebsite/Components/Pages/CountryCodePages/CountryCodes.txt");
+        NavigationManager.NavigateTo("/countrycodes");
+    }
+}

@@ -1,9 +1,4 @@
-﻿window.featherInit = () => {
-    if (window.feather) {
-        window.feather.replace();
-    }
-};
-module.exports = {
+﻿module.exports = {
     theme: {
         extend: {
             keyframes: {
@@ -43,6 +38,14 @@ module.exports = {
                     900: '#7c2d12',
                 },
                 accent: '#FF9800',
+                fontFamily: {
+                    'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    'serif': ['Source Serif Pro', 'Georgia', 'serif']
+                },
+                spacing: {
+                    '128': '32rem',
+                    '144': '36rem'
+                }
             },
         },
     },

@@ -11,48 +11,60 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 
-<PageTitle>Two-factor authentication</PageTitle>
+<PageTitle>Two-factor authentication | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<div class="container-sm" style="max-width: 400px;">
-    <div style="display: flex; justify-content: center;">
-        <a href="/" style="text-decoration: none;"><img class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <h4 class="header">@Loc["2FA"]</h4>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-sm" style="max-width: 400px;">
+        <div style="display: flex; justify-content: center;">
+            <a href="/" style="text-decoration: none;"><img loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
         </div>
-        <div class="card-body">
-            <StatusMessage Message="@message" />
-            <p>@Loc["ProtectedWith2FA"]</p>
-            <EditForm Model="Input" FormName="login-with-2fa" OnValidSubmit="OnValidSubmitAsync" method="post">
-                <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
-                <input type="hidden" name="RememberMe" value="@RememberMe" />
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form form-floating mb-3">
-                    <InputText @bind-Value="Input.TwoFactorCode" id="Input.TwoFactorCode" class="form-control" autocomplete="off" placeholder="" />
-                    <label for="Input.TwoFactorCode" class="form-label">@Loc["AuthCode"]</label>
-                    <ValidationMessage For="() => Input.TwoFactorCode" class="text-danger" />
-                </div>
-                <div class="checkbox mb-3">
-                    <label for="remember-machine" class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMachine" />
-                        @Loc["RememberThisMachine"]
-                    </label>
-                </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+        <div class="card">
+            <div class="card-header">
+                <h4 class="header">@Loc["2FA"]</h4>
+            </div>
+            <div class="card-body">
+                <StatusMessage Message="@message" />
+                <p>@Loc["ProtectedWith2FA"]</p>
+                <EditForm Model="Input" FormName="login-with-2fa" OnValidSubmit="OnValidSubmitAsync" method="post">
+                    <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
+                    <input type="hidden" name="RememberMe" value="@RememberMe" />
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
+                    <div class="form form-floating mb-3">
+                        <InputText @bind-Value="Input.TwoFactorCode" id="Input.TwoFactorCode" class="form-control" autocomplete="off" placeholder="" />
+                        <label for="Input.TwoFactorCode" class="form-label">@Loc["AuthCode"]</label>
+                        <ValidationMessage For="() => Input.TwoFactorCode" class="text-danger" />
+                    </div>
+                    <div class="checkbox mb-3">
+                        <label for="remember-machine" class="form-label">
+                            <InputCheckbox @bind-Value="Input.RememberMachine" />
+                            @Loc["RememberThisMachine"]
+                        </label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                     border-color:transparent; border-radius: 5px;">
-                        @Loc["Login"]
-                    </button>
-                </div>
-            </EditForm>
-        </div>
-        <div class="card-footer">
-            <p>
-                @Loc["DontHaveAccessToAuthDevice"]
-                <a href="Account/LoginWithRecoveryCode?ReturnUrl=@ReturnUrl">@Loc["LoginWithRecoveryCode"]</a>.
-            </p>
+                            @Loc["Login"]
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+            <div class="card-footer">
+                <p>
+                    @Loc["DontHaveAccessToAuthDevice"]
+                    <a href="Account/LoginWithRecoveryCode?ReturnUrl=@ReturnUrl">@Loc["LoginWithRecoveryCode"]</a>.
+                </p>
+            </div>
         </div>
     </div>
 </div>
@@ -79,8 +91,11 @@
 
     private async Task OnValidSubmitAsync()
     {
+        if (user is null)
+            return;
         var authenticatorCode = Input.TwoFactorCode!.Replace(" ", string.Empty).Replace("-", string.Empty);
         var result = await SignInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, RememberMe, Input.RememberMachine);
+        
         var userId = await UserManager.GetUserIdAsync(user);
 
         if (result.Succeeded)

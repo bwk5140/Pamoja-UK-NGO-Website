@@ -1,4 +1,4 @@
-﻿@page "/Career-Fields/edit"
+﻿@page "/career-fields/edit"
 @using Microsoft.EntityFrameworkCore
 @using PamojaWebsite.Data
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
@@ -9,73 +9,71 @@
 
 <PageTitle>Edit</PageTitle>
 
-<div class="container mx-auto px-4 py-12">
-    <section class="text-green-900 rounded-xl p-2">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl md:text-5xl font-bold mb-4">Edit</h1>
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container mx-auto px-4 py-12 max-w-7xl">
+        <section class="text-green-900 rounded-xl p-2">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-2xl md:text-5xl font-bold mb-4">Edit</h1>
+            </div>
+        </section>
+        <div class="space-y-8">
+            <div class="p-8 text-end">
+                <a href="/career-fields" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                    Back to List
+                </a>
+            </div>
         </div>
-    </section>
-    <div class="space-y-8">
-        <div class="p-8 text-end">
-            <a href="/Career-Fields" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
-                Back to List
-            </a>
-        </div>
-    </div>
-    <div class="row mx-auto px-20">
-        <div class="col-md-8">
-            @if (CareerField is null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                    <div class="bg-white p-8 rounded-xl shadow-lg">
-                        <EditForm method="post" Model="careerFieldDTO" OnValidSubmit="UpdateCareerField" FormName="edit" Enhance>
-                            <DataAnnotationsValidator />
-                            <ValidationSummary role="alert" />
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Field</label>
-                                <InputText id="name" @bind-Value="careerFieldDTO.Name" class="form-control" />
-                                <ValidationMessage For="() => careerFieldDTO.Name" class="text-danger" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description:</label>
-                                <InputTextArea rows="6" id="description" @bind-Value="careerFieldDTO.Description" class="form-control" />
-                                <ValidationMessage For="() => careerFieldDTO.Description" class="text-danger" />
-                            </div>
-                            @if (careerFieldDTO.ImagePreviewUrl != null)
-                            {
-                                <div class="max-w-sm mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                                    <img src="data:@careerFieldDTO.ImagePreviewUrl;base64,@Convert.ToBase64String(careerFieldDTO.ImageFile)" />
-                                    <div class="p-4 flex justify-between items-center">
-                                        <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded"
-                                                @onclick="TriggerReplace">
-                                            Replace
-                                        </button>
+        @if (CareerField is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 place-content-center">
+                <div class="bg-white p-8 rounded-xl shadow-lg w-full">
+                    <EditForm method="post" Model="careerFieldDTO" OnValidSubmit="UpdateCareerField" FormName="edit" Enhance>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary role="alert" />
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Field</label>
+                            <InputText id="name" @bind-Value="careerFieldDTO.Name" class="form-control" />
+                            <ValidationMessage For="() => careerFieldDTO.Name" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <InputTextArea rows="6" id="description" @bind-Value="careerFieldDTO.Description" class="form-control" />
+                            <ValidationMessage For="() => careerFieldDTO.Description" class="text-danger" />
+                        </div>
+                        @if (careerFieldDTO.ImagePreviewUrl != null)
+                        {
+                            <div class="max-w-sm mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                                <img loading="lazy" src="data:@careerFieldDTO.ImagePreviewUrl;base64,@Convert.ToBase64String(careerFieldDTO.Image)" />
+                                <div class="p-4 flex justify-between items-center">
+                                    <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded"
+                                            @onclick="TriggerReplace">
+                                        Replace
+                                    </button>
 
-                                        <button type="button" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
-                                                @onclick="DeleteImage">
-                                            Delete
-                                        </button>
-                                    </div>
+                                    <button type="button" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                                            @onclick="DeleteImage">
+                                        Delete
+                                    </button>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="mb-3">
-                                    <label for="imageUpload" class="form-label">Upload Image:</label>
-                                    <InputFile id="imageUpload" OnChange="HandleImageUpload" class="form-control" />
-                                    <ValidationMessage For="() => careerFieldDTO.ImageFile" class="text-danger" />
-                                </div>
-                            }
-                            <button type="submit" class="btn btn-primary mt-3">Save</button>
-                        </EditForm>
-                    </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <label for="imageUpload" class="form-label">Upload Image:</label>
+                                <InputFile id="imageUpload" OnChange="HandleImageUpload" class="form-control" />
+                                <ValidationMessage For="() => careerFieldDTO.Image" class="text-danger" />
+                            </div>
+                        }
+                        <button type="submit" class="btn btn-primary mt-3">Save</button>
+                    </EditForm>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -92,7 +90,7 @@
 
     private string? ImagePreviewUrl { get; set; }
 
-    public byte[]? ImageFile { get; set; }
+    public byte[]? Image { get; set; }
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
@@ -100,7 +98,7 @@
         using var stream = file.OpenReadStream(maxAllowedSize: 10_000_000);
         using var ms = new MemoryStream();
         await stream.CopyToAsync(ms);
-        careerFieldDTO.ImageFile = ms.ToArray();
+        careerFieldDTO.Image = ms.ToArray();
         careerFieldDTO.ImagePreviewUrl = file.ContentType;
     }
 
@@ -111,7 +109,7 @@
 
     private void DeleteImage()
     {
-        careerFieldDTO.ImageFile = null;
+        careerFieldDTO.Image = null;
         careerFieldDTO.ImagePreviewUrl = null;
     }
 
@@ -126,7 +124,7 @@
         }
         careerFieldDTO.Name = CareerField.Name;
         careerFieldDTO.Description = CareerField.Description;
-        careerFieldDTO.ImageFile = CareerField.ImageFile;
+        careerFieldDTO.Image = CareerField.Image;
         careerFieldDTO.ImagePreviewUrl = CareerField.ImagePreviewUrl;
     }
 
@@ -139,7 +137,7 @@
             using var context = DbFactory.CreateDbContext();
             CareerField.Name = careerFieldDTO.Name;
             CareerField.Description = careerFieldDTO.Description;
-            CareerField.ImageFile = careerFieldDTO.ImageFile;
+            CareerField.Image = careerFieldDTO.Image;
             CareerField.ImagePreviewUrl = careerFieldDTO.ImagePreviewUrl;
             context.Attach(CareerField!).State = EntityState.Modified;
             await context.SaveChangesAsync();
@@ -155,7 +153,7 @@
                 throw;
             }
         }
-        NavigationManager.NavigateTo("/Career-Fields");
+        NavigationManager.NavigateTo("/career-fields");
     }
 
     private bool CareerFieldExists(string id)
@@ -167,7 +165,7 @@
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public byte[]? ImageFile { get; set; }
+        public byte[]? Image { get; set; }
         public string? ImagePreviewUrl { get; set; }
     }
 }

@@ -10,42 +10,55 @@
 @inject ILogger<ExternalLogin> Logger
 @inject IStringLocalizer<SharedResource> Loc
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Register | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<StatusMessage Message="@message" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-<div class="container-sm" style="text-align: center; color: #2f4f4f;">
-    <div class="alert alert-info">
-        @Loc["SuccessfulAuthentication"] <strong>@ProviderDisplayName</strong>.
-        @Loc["PleaseEnterEmailToCompleteSignIn"]
-    </div>
-    <div class="flex justify-center w-full">
-        <a href="/" style="text-decoration: none;"><img class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
-    </div>
-    <div class="center-container">
-        <div class="card" style="border-radius: 15px; width: 400px;">
-            <div class="card-header">
-                <h4>@Loc["LinkYourAccount"] @ProviderDisplayName</h4>
-            </div>
-            <div class="card-body">
-                <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" role="alert" />
-                    <div class="form form-floating mb-3">
-                        <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" placeholder="@Loc["EnterEmail"]" />
-                        <label for="Input.Email" class="form-label">@Loc["Email"]</label>
-                        <ValidationMessage For="() => Input.Email" />
-                    </div>
-                    <div class="form form-floating mb-3">
-                        <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
-                        <label for="Input.FullName">@Loc["FullName"]</label>
-                        <ValidationMessage For="() => Input.FullName" class="text-danger" />
-                    </div>
-                    <button type="submit" style="border: unset; background-color: #2f4f4f; color: white;"
-                            class="w-100 btn btn-lg btn-primary mb-3">
-                        @Loc["Register"]
-                    </button>
-                </EditForm>
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <StatusMessage Message="@message" />
+
+    <div class="container-sm" style="text-align: center; color: #2f4f4f;">
+        <div class="alert alert-info">
+            @Loc["SuccessfulAuthentication"] <strong>@ProviderDisplayName</strong>.
+            @Loc["PleaseEnterEmailToCompleteSignIn"]
+        </div>
+        <div class="flex justify-center w-full">
+            <a href="/" style="text-decoration: none;"><img loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
+        </div>
+        <div class="center-container">
+            <div class="card" style="border-radius: 15px; width: 400px;">
+                <div class="card-header">
+                    <h4>@Loc["LinkYourAccount"] @ProviderDisplayName</h4>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" role="alert" />
+                        <div class="form form-floating mb-3">
+                            <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" placeholder="@Loc["EnterEmail"]" />
+                            <label for="Input.Email" class="form-label">@Loc["Email"]</label>
+                            <ValidationMessage For="() => Input.Email" />
+                        </div>
+                        <div class="form form-floating mb-3">
+                            <InputText @bind-Value="Input.FullName" id="Input.FullName" class="form-control" autocomplete="name" aria-required="true" placeholder="" />
+                            <label for="Input.FullName">@Loc["FullName"]</label>
+                            <ValidationMessage For="() => Input.FullName" class="text-danger" />
+                        </div>
+                        <button type="submit" style="border: unset; background-color: #2f4f4f; color: white;"
+                                class="w-100 btn btn-lg btn-primary mb-3">
+                            @Loc["Register"]
+                        </button>
+                    </EditForm>
+                </div>
             </div>
         </div>
     </div>
@@ -146,7 +159,9 @@
 
         var emailStore = GetEmailStore();
         var user = CreateUser();
-
+        if (user is null){
+            return;
+        }
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         user.Name = Input.FullName;

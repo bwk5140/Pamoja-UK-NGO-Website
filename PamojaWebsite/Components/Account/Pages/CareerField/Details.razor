@@ -1,4 +1,4 @@
-﻿@page "/Career-Fields/details"
+﻿@page "/career-fields/details"
 @using Microsoft.EntityFrameworkCore
 @using PamojaWebsite.Data
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
@@ -9,58 +9,56 @@
 
 <PageTitle>Details</PageTitle>
 
-<div class="container mx-auto px-4 py-12">
-    <section class="text-green-900 rounded-xl p-2">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-2xl md:text-5xl font-bold mb-4">Details</h1>
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container mx-auto px-4 py-12 max-w-7xl">
+        <section class="text-green-900 rounded-xl p-2">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-2xl md:text-5xl font-bold mb-4">Details</h1>
+            </div>
+        </section>
+        <div class="space-y-8">
+            <div class="p-8 text-end">
+                <a href="/career-fields" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
+                    Back to List
+                </a>
+            </div>
         </div>
-    </section>
-    <div class="space-y-8">
-        <div class="p-8 text-end">
-            <a href="/Career-Fields" class="bg-gray-100 text-green-900 p-3 rounded-full hover:bg-gray-200 transition">
-                Back to List
-            </a>
-        </div>
-    </div>
-    <div class="row mx-auto px-20">
-        <div class="col-md-8">
-            @if (careerfield is null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                    <div class="bg-white p-8 rounded-xl shadow-lg">
-                            <form class="space-y-6">
-                                <div>
-                                    <label for="name" class="block text-gray-700 mb-2">Field</label>
-                                    <input type="text" id="name" disabled value="@careerfield.Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg 
-                                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label for="description" class="block text-gray-700 mb-2">Description</label>
-                                    <textarea rows="6" type="text" id="description" disabled class="w-full px-4 py-3 border border-gray-300 rounded-lg
+        @if (careerfield is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 place-content-center">
+                <div class="bg-white p-8 rounded-xl shadow-lg w-full">
+                    <form class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-gray-700 mb-2">Field</label>
+                            <input type="text" id="name" disabled value="@careerfield.Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg
+                                                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="description" class="block text-gray-700 mb-2">Description</label>
+                            <textarea rows="6" type="text" id="description" disabled class="w-full px-4 py-3 border border-gray-300 rounded-lg
                                                     focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     @careerfield.Description
                                     </textarea>
-                                </div>
-                                @if (careerfield.ImagePreviewUrl != null)
-                                {
-                                    <div class="max-w-sm mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                                        <img src="data:@careerfield.ImagePreviewUrl;base64,@Convert.ToBase64String(careerfield.ImageFile)" />
-                                    </div>
-                                }
-                                <div class="py-1">
-                                    <a href="@($"Career-Fields/edit?id={careerfield.Id}")" class="bg-gray-200 text-green-900 p-2 rounded hover:bg-gray-300 transition">
-                                        Edit
-                                    </a>
-                                </div>
-                            </form>
-                    </div>
+                        </div>
+                        @if (careerfield.ImagePreviewUrl != null)
+                        {
+                            <div class="max-w-sm mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                                <img loading="lazy" src="data:@careerfield.ImagePreviewUrl;base64,@Convert.ToBase64String(careerfield.Image)" />
+                            </div>
+                        }
+                        <div class="py-1">
+                            <a href="@($"Career-Fields/edit?id={careerfield.Id}")" class="bg-gray-200 text-green-900 p-2 rounded hover:bg-gray-300 transition">
+                                Edit
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -90,7 +88,7 @@
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public byte[]? ImageFile { get; set; }
+        public byte[]? Image { get; set; }
         public string? ImagePreviewUrl { get; set; }
     }
 }

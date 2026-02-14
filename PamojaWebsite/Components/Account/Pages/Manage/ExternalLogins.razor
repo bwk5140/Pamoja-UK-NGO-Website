@@ -12,56 +12,58 @@
 
 <PageTitle>Manage your external logins</PageTitle>
 
-<StatusMessage />
-@if (currentLogins?.Count > 0)
-{
-    <h3 class="font-bold text-gray-500 mb-2">Registered Logins</h3>
-    <table class="table">
-        <tbody>
-            @foreach (var login in currentLogins)
-            {
-                <tr>
-                    <td>@login.ProviderDisplayName</td>
-                    <td>
-                        @if (showRemoveButton)
-                        {
-                            <form @formname="@($"remove-login-{login.LoginProvider}")" @onsubmit="OnSubmitAsync" method="post">
-                                <AntiforgeryToken />
-                                <div>
-                                    <input type="hidden" name="@nameof(LoginProvider)" value="@login.LoginProvider" />
-                                    <input type="hidden" name="@nameof(ProviderKey)" value="@login.ProviderKey" />
-                                    <button type="submit" class="btn btn-primary me-2 mt-3" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            @: &nbsp;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-@if (otherLogins?.Count > 0)
-{
-    <h4 class="font-bold text-gray-500 mb-2">Add another service to log in.</h4>
-    <hr />
-    <form class="form-horizontal" action="Account/Manage/LinkExternalLogin" method="post">
-        <AntiforgeryToken />
-        <div>
-            <p>
-                @foreach (var provider in otherLogins)
+<div class="pt-[5%] mb-5 py-20">
+    <StatusMessage />
+    @if (currentLogins?.Count > 0)
+    {
+        <h3 class="font-bold text-gray-500 mb-2 mt-5">Registered Logins</h3>
+        <table class="table">
+            <tbody>
+                @foreach (var login in currentLogins)
                 {
-                    <button type="submit" class="btn btn-primary me-2 mt-3"  name="Provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
-                        @provider.DisplayName
-                    </button>
+                    <tr>
+                        <td>@login.ProviderDisplayName</td>
+                        <td>
+                            @if (showRemoveButton)
+                            {
+                                <form @formname="@($"remove-login-{login.LoginProvider}")" @onsubmit="OnSubmitAsync" method="post">
+                                    <AntiforgeryToken />
+                                    <div>
+                                        <input type="hidden" name="@nameof(LoginProvider)" value="@login.LoginProvider" />
+                                        <input type="hidden" name="@nameof(ProviderKey)" value="@login.ProviderKey" />
+                                        <button type="submit" class="btn btn-primary me-2 mt-3" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
+                                    </div>
+                                </form>
+                            }
+                            else
+                            {
+                                @: &nbsp;
+                            }
+                        </td>
+                    </tr>
                 }
-            </p>
-        </div>
-    </form>
-}
+            </tbody>
+        </table>
+    }
+    @if (otherLogins?.Count > 0)
+    {
+        <h4 class="font-bold text-gray-500 mb-2 mt-5">Add another service to log in.</h4>
+        <hr />
+        <form class="form-horizontal" action="Account/Manage/LinkExternalLogin" method="post">
+            <AntiforgeryToken />
+            <div>
+                <p>
+                    @foreach (var provider in otherLogins)
+                    {
+                        <button type="submit" class="btn btn-primary me-2 mt-3" name="Provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                            @provider.DisplayName
+                        </button>
+                    }
+                </p>
+            </div>
+        </form>
+    }
+</div>
 
 @code {
     public const string LinkLoginCallbackAction = "LinkLoginCallback";
@@ -86,6 +88,9 @@
     protected override async Task OnInitializedAsync()
     {
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (user is null){
+            return;
+        }
         currentLogins = await UserManager.GetLoginsAsync(user);
         otherLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync())
             .Where(auth => currentLogins.All(ul => auth.Name != ul.LoginProvider))
@@ -107,6 +112,9 @@
 
     private async Task OnSubmitAsync()
     {
+        if (user is null)
+            return;
+
         var result = await UserManager.RemoveLoginAsync(user, LoginProvider!, ProviderKey!);
         if (!result.Succeeded)
         {
@@ -119,6 +127,9 @@
 
     private async Task OnGetLinkLoginCallbackAsync()
     {
+        if (user is null)
+            return;
+            
         var userId = await UserManager.GetUserIdAsync(user);
         var info = await SignInManager.GetExternalLoginInfoAsync(userId);
         if (info is null)

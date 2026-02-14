@@ -1,0 +1,45 @@
+﻿@page "/contactforms"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="contactforms/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.ContactForm">
+        <PropertyColumn Property="contactform => contactform.Name" />
+        <PropertyColumn Property="contactform => contactform.Organization" />
+        <PropertyColumn Property="contactform => contactform.Email" />
+        <PropertyColumn Property="contactform => contactform.Phone" />
+        <PropertyColumn Property="contactform => contactform.SelectedService" />
+        <PropertyColumn Property="contactform => contactform.Message" />
+        <PropertyColumn Property="contactform => contactform.Package" />
+        <PropertyColumn Property="contactform => contactform.ReceivedAt" />
+
+        <TemplateColumn Context="contactform">
+            <a href="@($"contactforms/edit?id={contactform.Id}")">Edit</a> |
+            <a href="@($"contactforms/details?id={contactform.Id}")">Details</a> |
+            <a href="@($"contactforms/delete?id={contactform.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

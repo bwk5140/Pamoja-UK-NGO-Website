@@ -1,0 +1,181 @@
+﻿@using System.Text
+
+@inject IJSRuntime JS
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+    @rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<aside id="sidebar" class="w-doc-sidebar bg-white border-r border-gray-200 overflow-y-auto no-print transition-all duration-300 h-[100vh]">
+    <div class="p-6">
+        <!-- Document Info -->
+        <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Document Information</h2>
+            <div class="space-y-3">
+                <div>
+                    <div class="text-sm text-gray-500">Title</div>
+                    <div class="font-medium text-gray-800">@Metadata?.Title</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500">Author</div>
+                    <div class="font-medium text-gray-800">@Metadata?.Author</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500">Last Modified</div>
+                    <div class="font-medium text-gray-800">@Metadata?.LastModified?.ToString("MMMM dd, yyyy")</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500">Category</div>
+                    <div class="font-medium text-gray-800">@Metadata?.Category</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500">Pages</div>
+                    <div class="font-medium text-gray-800">@Metadata?.PageCount</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table of Contents -->
+        @if (Metadata?.TableOfContents?.Any() == true)
+        {
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Table of Contents</h2>
+                <nav class="space-y-2">
+                    @foreach (var item in Metadata.TableOfContents)
+                    {
+                        <a href="@item.Anchor" class="block py-2 px-3 text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg transition-colors">
+                            <i class="fas fa-bookmark mr-2 text-sm"></i>@item.Title
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+
+        <!-- Document Tools -->
+        @* <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Tools</h2>
+            <div class="space-y-3">
+                <button @onclick="() => ApplyAction(DocActions[0])" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                    <span class="text-gray-700">Highlight Text</span>
+                    <i class="fas fa-highlighter text-accent"></i>
+                </button>
+                <button @onclick="ShowAddCommentModal" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                    <span class="text-gray-700">Add Bookmark</span>
+                    <i class="far fa-bookmark text-gray-500"></i>
+                </button>
+                <button @onclick="() => ApplyAction(DocActions[2])" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                    <span class="text-gray-700">Add Comment</span>
+                    <i class="far fa-comment text-gray-500"></i>
+                </button>
+                @{
+                    var show = showAddCommentModal ? "display:fixed" : "display:none";
+                }
+                <!-- Modal Overlay -->
+                <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50" style="@show">
+
+                    <!-- Modal Box -->
+                    <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+                        <h2 class="text-xl font-semibold mb-4">Create Comment</h2>
+
+                        <!-- Input Field -->
+                        <InputText @bind-Value="comment"
+                                   type="text"
+                                   placeholder="Type your comment here"
+                                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 mb-4" />
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" @onclick="HideAddCommentModal"
+                                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                Cancel
+                            </button>
+                            <button type="button" @onclick="SaveAndHideAddCommentModal"
+                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button @onclick="SearchInDocument" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                    <span class="text-gray-700">Search in Document</span>
+                    <i class="fas fa-search text-gray-500"></i>
+                </button>
+            </div>
+        </div> *@
+
+        <!-- Related Documents -->
+        @if (Metadata?.RelatedDocuments?.Any() == true)
+        {
+            <div>
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Related Documents</h2>
+                <div class="space-y-3">
+                    @foreach (var doc in Metadata.RelatedDocuments)
+                    {
+                        <div class="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
+                            <div class="font-medium text-gray-800 text-sm">@doc.Title</div>
+                            <div class="text-xs text-gray-500 mt-1">Updated: @doc.LastUpdated.ToString("MMM dd, yyyy")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</aside>
+
+@code {
+    [Parameter] 
+    public DocumentMetadata? Metadata { get; set; }
+
+    // [CascadingParameter]
+    // private Document CurrentDoc { get; set; }
+
+    // [CascadingParameter]
+    // private string comment { get; set; } = "";
+
+    // [Parameter]
+    // public bool showAddCommentModal { get; set; } = false;
+
+    // private void ToggleHighlight() { /* implement */ }
+    // private void AddBookmark() { /* implement */ }
+    // private void AddComment() { /* implement */ }
+    // private void SearchInDocument() { /* implement */ }
+
+    // private List<string> DocActions { get; set; } = new();
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     DocActions.Add("highlight");
+    //     DocActions.Add("comment");
+    //     DocActions.Add("bookmark");
+    // }
+    // private async Task ApplyAction(string action)
+    // {
+    //     var updatedHtml = await JS.InvokeAsync<string>("wrapSelectionInIframe", "docFrame", action, comment);
+
+    //     if (!string.IsNullOrEmpty(updatedHtml) && CurrentDoc is not null)
+    //     {
+    //         CurrentDoc.Data = Encoding.UTF8.GetBytes(updatedHtml);
+    //         using var context = await DbFactory.CreateDbContextAsync();
+    //         context.Attach(CurrentDoc).State = EntityState.Modified;
+    //         await context.SaveChangesAsync();
+    //         StateHasChanged();
+    //     }
+    // }
+    // public void ShowAddCommentModal()
+    // {
+    //     showAddCommentModal = true;
+    //     StateHasChanged();
+    // }
+    // public async Task HideAddCommentModal()
+    // {
+    //     comment = "";
+    //     showAddCommentModal = false;
+    //     StateHasChanged();
+    // }
+    // public async Task SaveAndHideAddCommentModal()
+    // {
+    //     comment = "";
+    //     await ApplyAction("comment");
+    //     showAddCommentModal = false;
+    //     StateHasChanged();
+    // }
+}

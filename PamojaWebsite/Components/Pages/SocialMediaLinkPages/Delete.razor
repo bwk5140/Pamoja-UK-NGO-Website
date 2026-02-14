@@ -1,0 +1,63 @@
+﻿@page "/socialmedialinks/delete"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Delete</h1>
+
+    <p>Are you sure you want to delete this?</p>
+    <div>
+        <h2>SocialMediaLink</h2>
+        <hr />
+        @if (socialmedialink is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <dl class="row">
+                <dt class="col-sm-2">Platform</dt>
+                <dd class="col-sm-10">@socialmedialink.Platform</dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-sm-2">Url</dt>
+                <dd class="col-sm-10">@socialmedialink.Url</dd>
+            </dl>
+            <EditForm method="post" Model="socialmedialink" OnValidSubmit="DeleteSocialMediaLink" FormName="delete" Enhance>
+                <button type="submit" class="btn btn-danger" disabled="@(socialmedialink is null)">Delete</button> |
+                <a href="/socialmedialinks">Back to List</a>
+            </EditForm>
+        }
+    </div>
+</div>
+
+
+@code {
+    private SocialMediaLink? socialmedialink;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        socialmedialink = await context.SocialMediaLink.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (socialmedialink is null)
+        {
+            NavigationManager.NavigateTo("/not-found");
+        }
+    }
+
+    private async Task DeleteSocialMediaLink()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.SocialMediaLink.Remove(socialmedialink!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/socialmedialinks");
+    }
+}

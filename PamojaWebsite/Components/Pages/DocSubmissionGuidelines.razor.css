@@ -1,0 +1,22 @@
+﻿.modal-box {
+    display: block;
+    line-height: 1.8;
+    font-size: 1.125rem;
+    background: rgb(255, 255, 255);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Source Serif Pro', 'Georgia', 'serif', monospace;
+}
+    .modal-box modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    .modal-box ul, .modal-box ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+        .modal-box li {
+            margin-bottom: 0.5rem;
+        }

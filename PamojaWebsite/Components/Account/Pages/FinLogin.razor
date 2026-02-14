@@ -9,62 +9,75 @@
 @inject IdentityRedirectManager RedirectManager
 @inject UserManager<ApplicationUser> UserManager
 
-<PageTitle>Log in</PageTitle>
-<div class="container-sm" style="text-align: center;">
-    <div class="flex justify-center w-full">
-        <a href="/" style="text-decoration: none;"><img class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
-    </div>
-    <div class="center-container">
-        <div class="card" style="border-radius: 15px; width: 400px;">
-            <div class="card-header">
-                <h4 class="header mb-3">@Loc["Login"]</h4>
-            </div>
+<PageTitle>Log in | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-            <div class="card-body">
-                <StatusMessage Message="@errorMessage" />
-                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" role="alert" />
-                    @if (Email is not null)
-                    {
-                        <div class="row mb-3">
-                            <div class="col-sm-9" style="text-align: left;">
-                                <strong>@Email</strong>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <div class="container-sm" style="text-align: center;">
+        <div class="flex justify-center w-full">
+            <a href="/" style="text-decoration: none;"><img loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
+        </div>
+        <div class="center-container">
+            <div class="card" style="border-radius: 15px; width: 400px;">
+                <div class="card-header">
+                    <h4 class="header mb-3">@Loc["Login"]</h4>
+                </div>
+
+                <div class="card-body">
+                    <StatusMessage Message="@errorMessage" />
+                    <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" role="alert" />
+                        @if (Email is not null)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-sm-9" style="text-align: left;">
+                                    <strong>@Email</strong>
+                                </div>
+                                <div class="col-sm-3" style="text-align: right;">
+                                    <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?>
+                                       { ["ReturnUrl"] = ReturnUrl, ["Id"] = EmailEncryptor.EncryptEmail(Email) }))" style="text-decoration: none;">
+                                        @Loc["Change"]
+                                    </a>
+                                </div>
                             </div>
-                            <div class="col-sm-3" style="text-align: right;">
-                                <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?>
-                                   { ["ReturnUrl"] = ReturnUrl, ["Id"] = EmailEncryptor.EncryptEmail(Email) }))" style="text-decoration: none;">
-                                @Loc["Change"]
-                            </a>
+                        }
+                        <div class="form form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true"
+                                       placeholder="" />
+                            <label for="Input.Password">@Loc["Password"]</label>
+                            <ValidationMessage For="() => Input.Password" class="text-danger" />
                         </div>
-                    </div>
-                                        }
-                    <div class="form form-floating mb-3">
-                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true"
-                                   placeholder="" />
-                        <label for="Input.Password">@Loc["Password"]</label>
-                        <ValidationMessage For="() => Input.Password" class="text-danger" />
-                    </div>
-                    <div class="checkbox mb-3" style="text-align:left;">
-                        <label class="form-label">
-                            <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                            @Loc["RememberMe"]
-                        </label>
-                    </div>
-                    <button type="submit" style="background-color: #2f4f4f; color: white;"
-                            class="w-100 btn btn-lg btn-primary mb-3">
-                        @Loc["Login"]
-                    </button>
-                    <div>
-                        <p>
-                            <a style="color: darkslategray;" href="Account/ForgotPassword">@Loc["ForgotPassword"]</a>
-                        </p>
-                        <p>
-                            <a style="color: darkslategray;" href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?>
-                                                             { ["ReturnUrl"] = ReturnUrl }))">@Loc["Registration"]</a>
-                        </p>
-                    </div>
-                </EditForm>
+                        <div class="checkbox mb-3" style="text-align:left;">
+                            <label class="form-label">
+                                <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                                @Loc["RememberMe"]
+                            </label>
+                        </div>
+                        <button type="submit" style="background-color: #2f4f4f; color: white;"
+                                class="w-100 btn btn-lg btn-primary mb-3">
+                            @Loc["Login"]
+                        </button>
+                        <div>
+                            <p>
+                                <a style="color: darkslategray;" href="Account/ForgotPassword">@Loc["ForgotPassword"]</a>
+                            </p>
+                            <p>
+                                <a style="color: darkslategray;" href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?>
+                                                                 { ["ReturnUrl"] = ReturnUrl }))">@Loc["Registration"]</a>
+                            </p>
+                        </div>
+                    </EditForm>
+                </div>
             </div>
         </div>
     </div>
@@ -130,28 +143,7 @@
         }
         else
         {
-            var user = await UserManager.FindByEmailAsync(Email);
-            result = await SignInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded)
-            {
-                Logger.LogInformation("User logged in.");
-                RedirectManager.RedirectTo(ReturnUrl);
-            }
-            else if (result.RequiresTwoFactor)
-            {
-                RedirectManager.RedirectTo(
-                    "Account/LoginWith2fa",
-                    new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-            }
-            else if (result.IsLockedOut)
-            {
-                Logger.LogWarning("User account locked out.");
-                RedirectManager.RedirectTo("Account/Lockout");
-            }
-            else
-            {
-                errorMessage = Loc["InvalidLogin"];
-            }
+            errorMessage = Loc["Invalid Login"];
         }
     }
     private sealed class InputModel

@@ -1,0 +1,40 @@
+﻿@page "/tableofcontents"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PamojaWebsite.Data
+@using PamojaWebsite.Data.Contexts
+@implements IAsyncDisposable
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Index</h1>
+
+    <p>
+        <a href="tableofcontents/create">Create New</a>
+    </p>
+
+    <QuickGrid Class="table" Items="context.TableOfContents">
+        <PropertyColumn Property="tableofcontents => tableofcontents.Title" />
+        <PropertyColumn Property="tableofcontents => tableofcontents.Anchor" />
+
+        <TemplateColumn Context="tableofcontents">
+            <a href="@($"tableofcontents/edit?id={tableofcontents.Id}")">Edit</a> |
+            <a href="@($"tableofcontents/details?id={tableofcontents.Id}")">Details</a> |
+            <a href="@($"tableofcontents/delete?id={tableofcontents.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

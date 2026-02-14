@@ -8,23 +8,26 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<h3 class="font-bold text-gray-500 mb-2">@Loc["Mobile"]</h3>
-<StatusMessage />
-<div class="row">
-    <div class="col-xl-6">
-        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" placeholder=@Loc["EnterPhoneNumber"] />
-                <label for="Input.PhoneNumber" class="form-label">@Loc["EnterPhoneNumber"]</label>
-                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+
+<div class="pt-[5%] mb-5 py-20">
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">@Loc["Mobile"]</h3>
+    <StatusMessage />
+    <div class="row">
+        <div class="col-xl-6">
+            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" />
+                    <label for="Input.PhoneNumber" class="form-label">@Loc["EnterPhoneNumber"]</label>
+                    <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                @Loc["Save"]
-            </button>
-        </EditForm>
+                    @Loc["Save"]
+                </button>
+            </EditForm>
+        </div>
     </div>
 </div>
 
@@ -43,8 +46,9 @@
     protected override async Task OnInitializedAsync()
     {
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        phoneNumber = await UserManager.GetPhoneNumberAsync(user);
-
+        if (user is not null){
+            phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+        }
         Input.PhoneNumber ??= phoneNumber;
     }
 
@@ -58,13 +62,18 @@
                 RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set phone number.", HttpContext);
             }
         }
-
-        await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+        if (user is not null){
+            await SignInManager.RefreshSignInAsync(user);
+            RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+        }
+        else{
+            return;
+        }
     }
 
     private sealed class InputModel
     {
+        [Required]
         [Phone]
         [Display(Name = "Phone number")]
         public string? PhoneNumber { get; set; }

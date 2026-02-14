@@ -1,0 +1,97 @@
+﻿@page "/socialmedialinks/edit"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Edit</h1>
+
+    <h2>SocialMediaLink</h2>
+    <hr />
+    @if (SocialMediaLink is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="SocialMediaLink" OnValidSubmit="UpdateSocialMediaLink" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" />
+                    <input type="hidden" name="SocialMediaLink.Id" value="@SocialMediaLink.Id" />
+                    <div class="mb-3">
+                        <label for="platform" class="form-label">Platform:</label>
+                        <InputText id="platform" @bind-Value="SocialMediaLink.Platform" class="form-control" />
+                        <ValidationMessage For="() => SocialMediaLink.Platform" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Url:</label>
+                        <InputText id="url" @bind-Value="SocialMediaLink.Url" class="form-control" />
+                        <ValidationMessage For="() => SocialMediaLink.Url" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    <div>
+        <a href="/socialmedialinks">Back to List</a>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private SocialMediaLink? SocialMediaLink { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        SocialMediaLink ??= await context.SocialMediaLink.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (SocialMediaLink is null)
+        {
+            NavigationManager.NavigateTo("/not-found");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSocialMediaLink()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(SocialMediaLink!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SocialMediaLinkExists(SocialMediaLink!.Id))
+            {
+                NavigationManager.NavigateTo("/not-found");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/socialmedialinks");
+    }
+
+    private bool SocialMediaLinkExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.SocialMediaLink.Any(e => e.Id == id);
+    }
+}

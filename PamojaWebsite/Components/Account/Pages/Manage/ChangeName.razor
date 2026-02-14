@@ -9,27 +9,30 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <PageTitle>Profile</PageTitle>
-<h3 class="font-bold text-gray-500 mb-2">@Loc["Name"]</h3>
-<StatusMessage />
-<div class="row">
-    <div class="col-xl-6">
-        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <input type="text" value="@name" id="name" class="form-control" placeholder=@Loc["EnterName"] disabled />
-                <label for="name" class="form-label">@Loc["EnterName"]</label>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" placeholder=@Loc["ChangeName"] />
-                <label for="Input.Name" class="form-label">@Loc["ChangeName"]</label>
-                <ValidationMessage For="() => Input.Name" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
+
+<div class="pt-[5%] mb-5 py-20">
+    <h3 class="font-bold text-gray-500 mb-2 mt-5">@Loc["Name"]</h3>
+    <StatusMessage />
+    <div class="row">
+        <div class="col-xl-6">
+            <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <input type="text" value="@name" id="name" class="form-control" placeholder=@Loc["EnterName"] disabled />
+                    <label for="name" class="form-label">@Loc["EnterName"]</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" />
+                    <label for="Input.Name" class="form-label">@Loc["ChangeName"]</label>
+                    <ValidationMessage For="() => Input.Name" class="text-danger" />
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
                         border-color:transparent; border-radius: 5px;">
-                @Loc["Save"]
-            </button>
-        </EditForm>
+                    @Loc["Save"]
+                </button>
+            </EditForm>
+        </div>
     </div>
 </div>
 
@@ -54,18 +57,22 @@
     {
         if (Input.Name != name)
         {
-            user.Name = Input.Name;
-            using var context = DbFactory.CreateDbContext();
-            context.Attach(user!).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-            if (user.Name is null)
-            {
-                RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set name.", HttpContext);
+            if (user is not null){
+                user.Name = Input.Name;
+                using var context = DbFactory.CreateDbContext();
+                context.Attach(user!).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                if (user.Name is null)
+                {
+                    RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set name.", HttpContext);
+                }
+                await SignInManager.RefreshSignInAsync(user);
+                RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
             }
-        }
-
-        await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+            else{
+                return;
+            }
+        } 
     }
 
     private sealed class InputModel

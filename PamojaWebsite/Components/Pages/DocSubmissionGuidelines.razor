@@ -1,0 +1,77 @@
+﻿@inject IJSRuntime JS
+
+@if (showModal)
+{
+    <!-- Fullscreen backdrop -->
+    <div class="backdrop"
+         @onclick="HideModal">
+        <!-- Modal box -->
+        <div class="modal-box text-green-900"
+             @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h5 class="modal-title p-2 font-bold">Submission Guidelines</h5>
+                <button type="button" class="btn-close p-2" aria-label="Close"
+                        @onclick="HideModal"></button>
+            </div>
+            <div class="modal-body">
+                <h3 class="font-bold p-4">All Documents Must Follow The Following Guidelines:</h3>
+                <ul>
+                    <li class="flex items-start">
+                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                        Document size should be no more than 50MB.
+                    </li>
+                    <li class="flex items-start">
+                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                        Supported document types are PDF, DOC, DOCX, PPT, TXT, CSV or XLS.
+                    </li>
+                    <li class="flex items-start">
+                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                        Click browse and upload a document.
+                    </li>
+                    <li class="flex items-start">
+                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
+                        Successful uploads will appear in the recent documents section.
+                    </li>                  
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private bool showModal = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("featherInit");
+        }
+    }
+    public async Task ShowModal()
+    {
+        // Show modal immediately
+        showModal = true;
+
+        // Trigger UI refresh
+        StateHasChanged();
+
+        // Wait for 30 seconds
+        await Task.Delay(TimeSpan.FromSeconds(30));
+
+        // Close modal
+        showModal = false;
+
+        // Trigger UI refresh
+        StateHasChanged();
+    }
+    public void HideModal()
+    {
+        // Close modal
+        showModal = false;
+
+        // Trigger UI refresh
+        StateHasChanged();
+    }
+}

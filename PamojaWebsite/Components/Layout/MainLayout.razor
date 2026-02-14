@@ -1,13 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager NavigationManager
+
 <div class="w-full min-h-screen flex flex-col">
     <NavBar />
-    <main class="flex-grow pt-[5%] w-full">
-        <article class="mt-5 w-full">
+    <main class="flex-grow w-full">
+        <article class="w-full">
             @Body
         </article>
     </main>
-    <Footer />
+    @if (!NavigationManager.Uri.Contains("document-viewer"))
+    {
+        <Footer />
+    }
 </div>
 
 

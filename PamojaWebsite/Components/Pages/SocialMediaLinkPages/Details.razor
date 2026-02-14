@@ -1,0 +1,52 @@
+﻿@page "/socialmedialinks/details"
+@using Microsoft.EntityFrameworkCore
+@using PamojaWebsite.Data
+@inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <h1>Details</h1>
+
+    <div>
+        <h2>SocialMediaLink</h2>
+        <hr />
+        @if (socialmedialink is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <dl class="row">
+                <dt class="col-sm-2">Platform</dt>
+                <dd class="col-sm-10">@socialmedialink.Platform</dd>
+                <dt class="col-sm-2">Url</dt>
+                <dd class="col-sm-10">@socialmedialink.Url</dd>
+            </dl>
+            <div>
+                <a href="@($"/socialmedialinks/edit?id={socialmedialink.Id}")">Edit</a> |
+                <a href="@($"/socialmedialinks")">Back to List</a>
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    private SocialMediaLink? socialmedialink;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        socialmedialink = await context.SocialMediaLink.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (socialmedialink is null)
+        {
+            NavigationManager.NavigateTo("/not-found");
+        }
+    }
+}

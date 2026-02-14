@@ -1,36 +1,34 @@
 ﻿@page "/about-us"
 
-<PageTitle>About Us</PageTitle>
+<PageTitle>About Us | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+</script>
 
 @inject IStringLocalizer<SharedResource> Loc
 
 @rendermode InteractiveServer
 
 <!-- Hero Section -->
-    <section class="relative bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <!-- Decorative background shapes -->
+<div class="pt-[5%] mb-5 py-20 mt-5">
+    <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
         <div class="absolute inset-0">
-            <!-- Large blurred gradient blob -->
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-green-600 to-blue-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-
-            <!-- Smaller accent circle -->
-            <div class="absolute top-20 right-20 w-40 h-40 bg-green-700 rounded-full opacity-30 animate-bounce"></div>
-
-            <!-- Diagonal rectangle -->
-            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-green-800 opacity-40 transform rotate-12"></div>
-
-            <!-- Triangle using clip-path -->
-            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
-                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
-            </div>
+            <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
         </div>
 
         <!-- Content -->
-    <div class="relative max-w-7xl mx-auto">
-        <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-            <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">About Us</h1>
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">About Us</h1>
+            </div>
         </div>
-    </div>
     </section>
 
     <!-- About Section -->
@@ -39,7 +37,7 @@
             <div class="max-w-4xl mx-auto">
                 <div class="prose prose-lg max-w-none">
                     <p class="text-xl md:text-2xl opacity-90 leading-relaxed">
-                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services strives to contribute to the gap within mental health services in the UK.
+                        Pamoja Counselling, Mental Wellbeing and Safeguarding Services strives to contribute to the gap within mental health services in Kenya.
                     </p>
                     <p class="text-gray-700 text-lg leading-relaxed mt-4 mb-8">
                         We facilitate Mental Health & Safeguarding training to build mental resilience at the individual level
@@ -67,19 +65,19 @@
         <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
             <!-- Image overlay -->
             <div class="relative">
-                <img src="/Images/Art/business-people-with-startup-rocket.jpg"
+                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764622754/business-people-with-startup-rocket_tsxfyp.jpg"
                      alt="Business People with Startup Rocket"
                      class="relative z-10 rounded-lg shadow-lg" />
             </div>
             <div class="relative">
-                <img src="/Images/Art/adorable-couple-having-great-time-together.jpg"
-                     alt="Business People with Startup Rocket"
+                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764623209/adorable-couple-having-great-time-together_kbtn4o.jpg"
+                     alt="Adorable Couple Having Fun Together"
                      class="relative z-10 rounded-lg shadow-lg" />
             </div>
-            
+
             <div class="relative">
-                <img src="/Images/Art/young-man-his-son-with-curly-hair.jpg"
-                     alt="Business Hands Joined Together"
+                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764623653/young-man-his-son-with-curly-hair_tvbbfx.jpg"
+                     alt="Young Man With Their Child"
                      class="relative z-10 rounded-lg shadow-lg" />
             </div>
         </div>
@@ -120,56 +118,67 @@
             </div>
         </div>
     </section>
-    
+
     <!-- Team Section -->
     <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-12">Meet The Pamoja Team</h2>
-                <div class="max-w-4xl mx-auto bg-gray-100 text-white p-6">
-                    <!-- Top green horizontal rule -->
-                    <hr class="border-t-2 border-blue-800 my-4" />
-                    <!-- Faith Mbula -->
-                    <a href="/about-us/faith-mbula" class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
-                        Faith Mbula
-                    </a>
-                    <p class="text-black mt-3 mb-2">Chief Executive Officer</p>
-                    
-                    <!-- Bottom green horizontal rule -->
-                    <hr class="border-t-2 border-blue-800 my-4" />
-                </div>
+                
                 <div class="max-w-4xl mt-5 mx-auto bg-gray-100 text-white p-6">
-                    <h2 class="text-3xl md:text-xl font-bold text-gray-800">Kenya</h2>
                     <!-- Top horizontal rule -->
                     <hr class="border-t-2 border-blue-800 my-4" />
 
                     <!-- Grid for names + titles -->
                     <div class="grid grid-cols-2 gap-x-9 gap-y-6">
+                        <!-- Faith Mbula -->
+                        <div class="ms-2">
+                            <a href="/about-us/faith-mbula" class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
+                                Faith Mbula
+                            </a>
+                            <p class="text-black mt-3 mb-2">CEO, Counsellor, Mental Health Nurse & Safeguarding Specialist</p>
+                        </div>
                         <!-- Claire Fuller -->
                         <div class="ms-2">
                             <a href="/about-us/claire-fuller"
                                class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
                                 Claire Fuller
                             </a>
-                            <p class="text-black mt-2">Head of Therapies & Wellbeing</p>
+                            <p class="text-black mt-2">Lead Consultant for Therapies & Training</p>
                         </div>
-                        <!-- Raphael Imanyara -->
+                        <!-- Rony Okoth -->
                         <div class="ms-2">
-                            <a href="/about-us/raphael-imanyara"
+                            <a href="/about-us/rony-okoth"
                                class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
-                                Raphael Imanyara
+                                Rony Okoth Ochieng
                             </a>
-                            <p class="text-black mt-2">Head of HR and Operations</p>
+                            <p class="text-black mt-2">Psychologist</p>
                         </div>
-
-                        <!-- Brian Mahinda -->
+                        <!-- Benjamin Wafula -->
                         <div class="ms-2">
-                            <a href="/about-us/brian-mahinda"
+                            <a href="/about-us/benjamin-wafula"
                                class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
-                                Brian Mahinda
+                                Benjamin Sifuna Wafula
                             </a>
-                            <p class="text-black mt-2">Head of Strategy and Communication</p>
+                            <p class="text-black mt-2">Occupational Therapist</p>
                         </div>
+                    </div>
+                </div>
+                <!-- Bank of Therapists -->
+                <div class="container mx-auto mt-5 px-6">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="prose prose-lg max-w-none text-center" style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+                            <h4 class="text-2xl md:text-2xl text-red-700 text-yellow-600 mb-5">
+                                We work with a bank of therapists. Reach out to us should you require specific assistance.
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-w-4xl mt-5 mx-auto bg-gray-100 text-white p-6">
+                    <!-- Top horizontal rule -->
+                    <hr class="border-t-2 border-blue-800 my-4" />
+                    <!-- Grid for names + titles -->
+                    <div class="grid grid-cols-2 gap-x-9 gap-y-6">
                         <!-- Caroline Nduta -->
                         <div class="ms-2">
                             <a href="/about-us/caroline-nduta"
@@ -186,22 +195,13 @@
                             </a>
                             <p class="text-black mt-2">IT Support Specialist</p>
                         </div>
-                    </div>
-                </div>
-                <div class="max-w-4xl mt-5 mx-auto bg-gray-100 text-white p-6">
-                    <h2 class="text-3xl md:text-xl font-bold text-gray-800">United Kingdom</h2>
-                    <!-- Top horizontal rule -->
-                    <hr class="border-t-2 border-blue-800 my-4" />
-
-                    <!-- Grid for names + titles -->
-                    <div class="grid grid-cols-2 gap-x-9 gap-y-6">
-                        <!-- Claire Fuller -->
+                        <!-- Billy Mukabana -->
                         <div class="ms-2">
-                            <a href="/about-us/claire-fuller"
+                            <a href="/about-us/billy-mukabana"
                                class="border-b border-green-700 hover:border-green-800 pb-1 mb-2 font-semibold text-green-700 hover:text-green-800">
-                                Claire Fuller
+                                Billy Mukabana
                             </a>
-                            <p class="text-black mt-2">Head of Therapies & Wellbeing</p>
+                            <p class="text-black mt-2">Volunteer</p>
                         </div>
                     </div>
                 </div>
@@ -221,5 +221,6 @@
             </div>
         </div>
     </section>
+</div>
 
 

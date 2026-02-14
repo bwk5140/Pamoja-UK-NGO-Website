@@ -1,0 +1,313 @@
+﻿
+<div>
+    <div class="flex items-center mx-auto justify-between py-2 w-full">
+        <!-- Back -->
+        <button class="px-3 py-2 border rounded hover:bg-gray-100" @onclick="LoadPreviousCalendarMonth">
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Month & Year -->
+        <div class="flex-grow text-center">
+            <p class="font-bold">@Month @Year</p>
+        </div>
+
+        <!-- Next -->
+        <button class="px-3 py-2 border rounded hover:bg-gray-100" @onclick="LoadNextCalendarMonth">
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+    <div class="flex items-center mx-auto justify-between py-2 w-full">
+        <table class="calendar mx-auto">
+            <thead>
+                <tr class="font-bold mb-3">
+                    <td>S</td>
+                    <td>M</td>
+                    <td>T</td>
+                    <td>W</td>
+                    <td>T</td>
+                    <td>F</td>
+                    <td>S</td>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int r = 0; r < CalendarMonthRows; r++)
+                {
+                    <tr>
+                        @foreach (var cell in CalendarDays.Skip(r * 7).Take(7))
+                        {
+                            <td>@DayTemplate(cell)</td>
+                        }
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment<CalendarDay> DayTemplate { get; set; }
+
+    [Parameter]
+    public string? Month { get; set; }
+
+    [Parameter]
+    public string? Year { get; set; }
+
+    [Parameter]
+    public List<CalendarDay>? CalendarDays { get; set; }
+
+    public DateOnly? DateToday = DateOnly.FromDateTime(DateTime.UtcNow.ToUniversalTime());
+    public string? Date = DateOnly.FromDateTime(DateTime.UtcNow.ToUniversalTime()).ToLongDateString();
+    public string? date;
+    private int currentMonth, currentYear;
+    int CalendarMonthRows;
+
+    protected override void OnInitialized()
+    {
+        var length = Date.LastIndexOf(',');
+        var month = DateToday.GetValueOrDefault().Month;
+        currentMonth = month;
+        currentYear = DateToday.Value.Year;
+
+        switch (month)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+        Year = DateToday.Value.Year.ToString();
+        UpdateCalendar(month, DateToday!.Value.Year);
+    }
+
+    private void UpdateCalendar(int month, int year)
+    {
+        CalendarDays = new List<CalendarDay>();
+        var firstDateOfMonth = new DateTime(year, month, 1);
+        var dayOfWeek = (int)firstDateOfMonth.DayOfWeek;
+        int numOfDaysNotInThisMonth = 0;
+
+        if (dayOfWeek == 7)
+        {
+            numOfDaysNotInThisMonth = 0;
+        }
+        else
+        {
+            numOfDaysNotInThisMonth = dayOfWeek;
+        }
+        //Display the days from the previous month
+        int daysInLastMonth, previousMonth;
+        if (month == 1)
+        {
+            previousMonth = 12;
+            daysInLastMonth = DateTime.DaysInMonth(year - 1, previousMonth);
+        }
+        else
+        {
+            previousMonth = month - 1;
+            daysInLastMonth = DateTime.DaysInMonth(year, previousMonth);
+        }
+
+        for (int i = 0, j = daysInLastMonth - (numOfDaysNotInThisMonth - 1); i < numOfDaysNotInThisMonth; i++, j++)
+        {
+            CalendarDays.Add(new CalendarDay
+            {
+                Day = j,
+                IsInThisMonth = false,
+                    Date = new DateTime(year, previousMonth, j)
+            });
+        }
+
+        int daysInThisMonth = DateTime.DaysInMonth(year, month);
+
+        for (int i = 0; i < daysInThisMonth; i++)
+        {
+            CalendarDays.Add(new CalendarDay
+            {
+                Day = i + 1,
+                IsInThisMonth = true,
+                Date = new DateTime(year, month, i + 1)
+            });
+        }
+
+        //Get the number of rows in the Calendar month
+        CalendarMonthRows = CalendarDays.Count / 7;
+
+        int remainingCalendarDays = CalendarDays.Count % 7;
+
+        if (remainingCalendarDays != 0)
+        {
+            CalendarMonthRows += 1;
+        }
+
+        //Display the days from the following month
+        int nextMonth;
+        if (month == 12)
+        {
+            nextMonth = 1;
+        }
+        else
+        {
+            nextMonth = month + 1;
+        }
+        for (int i = 0; i < (7 - remainingCalendarDays); i++)
+        {
+            CalendarDays.Add(new CalendarDay
+                {
+                    Day = i + 1,
+                    IsInThisMonth = false,
+                    Date = new DateTime(year, nextMonth, i + 1)
+                });
+        }
+    }
+    private void LoadNextCalendarMonth()
+    {
+        if (currentMonth == 12)
+        {
+            currentMonth = 1;
+            currentYear += 1;
+            Year = currentYear.ToString();
+        }
+        else
+        {
+            currentMonth += 1;
+        }
+
+        switch (currentMonth)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+
+        UpdateCalendar(currentMonth, currentYear);
+    }
+    private void LoadPreviousCalendarMonth()
+    {
+        if (currentMonth == 1)
+        {
+            currentMonth = 12;
+            currentYear -= 1;
+            Year = currentYear.ToString();
+        }
+        else
+        {
+            currentMonth -=  1;
+        }
+
+        switch (currentMonth)
+        {
+            case 1:
+                Month = "January";
+                break;
+            case 2:
+                Month = "February";
+                break;
+            case 3:
+                Month = "March";
+                break;
+            case 4:
+                Month = "April";
+                break;
+            case 5:
+                Month = "May";
+                break;
+            case 6:
+                Month = "June";
+                break;
+            case 7:
+                Month = "July";
+                break;
+            case 8:
+                Month = "August";
+                break;
+            case 9:
+                Month = "September";
+                break;
+            case 10:
+                Month = "October";
+                break;
+            case 11:
+                Month = "November";
+                break;
+            case 12:
+                Month = "December";
+                break;
+        }
+
+        UpdateCalendar(currentMonth, currentYear);
+    }
+}
