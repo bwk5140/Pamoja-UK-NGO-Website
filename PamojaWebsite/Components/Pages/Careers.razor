@@ -4,6 +4,7 @@
 <PageTitle>Careers | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
 <!-- Google tag (gtag.js) -->
+<script src="SideScrollHelper.min.js" defer></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
@@ -24,9 +25,9 @@
 
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <!-- Hero Section -->
-<section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+    <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
     <div class="absolute inset-0">
-        <img class="relative object-cover object-top md:w-full md:h-48" src="Images/Art/tree.jpg" />
+            <img alt="Banner image" class="relative object-cover object-top md:w-full md:h-64 sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
     </div>
 
     <!-- Content -->
@@ -75,8 +76,8 @@
             </div>
             <div class="md:w-1/2">
                 <p class="text-xl text-gray-700 max-w-4xl mx-auto mb-8">We value empathy and care in everything that we do. We reward and encourage positive outcomes. Join us in shaping the future of mental health.</p>
-                <a href="/careers/search"
-                   class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-secondary hover:bg-secondary-700 transition-colors">
+                <a href="/careers/search" aria-label="View all jobs"
+                       class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-gray-500 hover:bg-gray-700 transition-colors">
                     View all jobs
                     <i data-feather="briefcase" class="ml-2"></i>
                 </a>
@@ -131,7 +132,7 @@
                     </p>
                 </div>
                 <div class="md:w-1/2 mt-4">
-                    <img loading="lazy" src="data:@SelectedCareerField.ImagePreviewUrl;base64,@Convert.ToBase64String(SelectedCareerField.Image)" />
+                    <img loading="lazy" alt=@($"{SelectedCareerField.Name} field image") src="data:@SelectedCareerField.ImagePreviewUrl;base64,@Convert.ToBase64String(SelectedCareerField.Image)" />
                 </div>
             </div>
         }
@@ -155,7 +156,7 @@
 
                             @if(role.Expiration > DateTime.UtcNow){
                                 <!-- Anchor pushed to bottom -->
-                                <a href="/careers/search/?role=@role.Name" class="p-2 mt-auto">
+                                <a href="/careers/search/?role=@role.Name" aria-label="View available jobs" class="p-2 mt-auto">
                                     <div class="text-blue-500 inline-flex gap-2">
                                         <span>Available Jobs</span>
                                         <img loading="lazy" src="Icons/arrow-right.svg" alt="right arrow icon" />
@@ -165,7 +166,7 @@
                                 else
                                 {
                                     <!-- Anchor pushed to bottom -->
-                                    <a href="/careers/search/?role=@role.Name" class="p-2 mt-auto">
+                                    <a href="/careers/search/?role=@role.Name" aria-label="View previously available jobs" class="p-2 mt-auto">
                                         <div class="text-red-500 inline-flex gap-2">
                                             <span>Previously Available Jobs</span>
                                             <img loading="lazy" src="Icons/arrow-right-red.svg" alt="right arrow icon" />
@@ -259,10 +260,6 @@
     {
         SelectedField = field;
         await LoadCareerData(SelectedField);
-    }
-    private async Task ScrollToTarget()
-    {
-        await JS.InvokeVoidAsync("scrollToSection", "contact");
     }
     private string GetNavClass(string href)
     {

@@ -42,7 +42,7 @@
                 <nav class="space-y-2">
                     @foreach (var item in Metadata.TableOfContents)
                     {
-                        <a href="@item.Anchor" class="block py-2 px-3 text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg transition-colors">
+                        <a href="@item.Anchor" aria-label="@item.Anchor" class="block py-2 px-3 text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg transition-colors">
                             <i class="fas fa-bookmark mr-2 text-sm"></i>@item.Title
                         </a>
                     }

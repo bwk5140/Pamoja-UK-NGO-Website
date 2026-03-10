@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://www.pamojasafeguardingnetwork.co.uk/sitemap.xml

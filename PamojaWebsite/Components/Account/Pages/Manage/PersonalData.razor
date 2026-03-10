@@ -13,18 +13,23 @@
     <div class="row">
         <div class="col-md-6">
             <p class="mt-2 mb-2">Your account contains personal data that you have given us. You can download or delete that data.</p>
-            <p>
+            <p class="mt-3 mb-2">
                 <strong class="mt-3 mb-3">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
             </p>
-            <div class="btn-group">
-                <form action="Account/Manage/DownloadPersonalData" method="post">
-                    <AntiforgeryToken />
-                    <button class="btn btn-primary me-3 mt-3" style="background-color: #2f4f4f;
+            <hr/>
+            <div class="flex flex-col gap-8">
+                <div>
+                    <form action="Account/Manage/DownloadPersonalData" method="post">
+                        <AntiforgeryToken />
+                        <button class="w-sm p-2 btn btn-primary me-3 mt-3 text-white rounded" style="background-color: #2f4f4f;
                         border-color:transparent;" type="submit">
-                        Download
-                    </button>
-                </form>
-                <a href="Account/Manage/DeletePersonalData" class="btn btn-danger mt-3">Delete</a>
+                            Download
+                        </button>
+                    </form>
+                </div>
+                <div>
+                    <a href="Account/Manage/DeletePersonalData" class="w-full p-2 btn btn-danger bg-red-600 text-white rounded mt-3">Delete</a>
+                </div>
             </div>
 
         </div>

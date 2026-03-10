@@ -27,24 +27,24 @@
             <button class="mobile-menu-btn" style="padding: 20px;" @onclick="ToggleMobileMenu">☰</button>
 
             <ul class="nav-links @(isMobileMenuOpen ? "active" : "")">
-                <li><a href="/" class="@GetNavClass("/")">Home</a></li>
-                <li><a href="/about-us" class="@GetNavClass("/about-us")">About Us</a></li>
-                <li><a href="/services" class="@GetNavClass("/services")">Services</a></li>
-                <li><a href="/careers" class="@GetNavClass("/careers")">Careers</a></li>
-                <li><a href="/events" class="@GetNavClass("/events")">Events</a></li>
-                <li><a href="/contact-us" class="@GetNavClass("/contact-us")">Contact</a></li>
-                <li><a href="/resources?RedirectQuery=All%20Resources" class="@GetNavClass("/resources?RedirectQuery=All%20Resources")">Resources</a></li>
+                <li><a href="/" aria-label="Navigate to home page" class="@GetNavClass("/")">Home</a></li>
+                <li><a href="/about-us" aria-label="Navigate to about-us" class="@GetNavClass("/about-us")">About Us</a></li>
+                <li><a href="/services" aria-label="Navigate to services" class="@GetNavClass("/services")">Services</a></li>
+                <li><a href="/careers" aria-label="Navigate to careers" class="@GetNavClass("/careers")">Careers</a></li>
+                <li><a href="/events" aria-label="Navigate to events" class="@GetNavClass("/events")">Events</a></li>
+                <li><a href="/contact-us" aria-label="Navigate to contact-us" class="@GetNavClass("/contact-us")">Contact</a></li>
+                <li><a href="/resources" aria-label="Navigate to resources" class="@GetNavClass("/resources")">Resources</a></li>
                 @* <li><a href="/donate" class="@GetNavClass("/donate")">Donate</a></li> *@
                 <li>
                     <AuthorizeView>
                         <NotAuthorized>
-                            <a href="/Account/Login" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["Login"]>
+                            <a href="/Account/Login"aria-label="Navigate to log in page" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["Login"]>
                                 <i class="text-gray-550 hover:text-primary" data-feather="user"></i>
                                 <span class="text-md text-gray-600 hover:text-primary">@Loc["Login"]</span>
                             </a>
                         </NotAuthorized>
                         <Authorized>
-                            <a href="/Account/Manage" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["YourAccount"]>
+                            <a href="/Account/Manage" aria-label="Navigate to manage user page" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["YourAccount"]>
                                 <i class="text-gray-550 hover:text-primary" data-feather="user"></i>
                                 <span class="text-md text-gray-500 hover:text-primary">
                                     @if (ApplicationUser is not null)
@@ -69,7 +69,7 @@
                         </Authorized>
                     </AuthorizeView>
                 </li>
-                <li><a href="/services/book-appointment" class="border-2 border-green-700 rounded-lg" style="padding: 5px;">Book an Appointment</a></li>
+                <li><a href="/services/book-appointment" aria-label="Navigate to book appointment page" class="border-2 border-green-700 rounded-lg" style="padding: 5px;">Book an Appointment</a></li>
             </ul>
         </div>
     </nav>
@@ -113,7 +113,6 @@
             }
             Username = ApplicationUser.Name.Substring(0, index);
         }
-        StateHasChanged();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

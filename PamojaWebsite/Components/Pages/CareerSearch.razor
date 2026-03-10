@@ -24,9 +24,9 @@
 
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <!-- Hero Section -->
-<section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+    <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
     <div class="absolute inset-0">
-        <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
+        <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
     </div>
 
     <!-- Content -->
@@ -45,6 +45,7 @@
                 <!-- About Us -->
                 <li class="inline-flex items-center">
                     <a href="/careers"
+                        aria-label="Navigate to careers"
                        class="inline-flex items-center text-secondary hover:text-gray-800 font-medium">
                         Careers
                     </a>
@@ -61,6 +62,7 @@
                         @if (!string.IsNullOrWhiteSpace(role))
                         {
                             <a href="/careers/search/?role=@role"
+                                aria-label="Navigate to search careers"
                                class="ml-1 text-secondary hover:text-gray-800 font-medium font-bold">
                                 Search
                             </a>
@@ -68,6 +70,7 @@
                         else
                         {
                             <a href="/careers/search"
+                                aria-label="Navigate to search careers"
                                class="ml-1 text-secondary hover:text-gray-800 font-medium font-bold">
                                 Search
                             </a>
@@ -158,11 +161,11 @@
                         <p class="text-sm text-gray-600">@job.Description</p>
                             @if (job.Expiration > DateTime.UtcNow)
                             {
-                                <a href="@job.Link?Id=@job.Id" class="text-blue-500 mt-2 inline-block">View Details →</a>
+                                <a href="@job.Link?Id=@job.Id" aria-label="View job details" class="text-blue-500 mt-2 inline-block">View Details →</a>
                             }
                             else
                             {
-                                <a href="@job.Link?Id=@job.Id" class="text-red-500 mt-2 inline-block">View Details →</a>
+                                <a href="@job.Link?Id=@job.Id" aria-label="View job details" class="text-red-500 mt-2 inline-block">View Details →</a>
                             }
                         </div>
                 }

@@ -6,16 +6,11 @@
 
 .footer-content {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 0 20px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
-}
-
-.footer-section h3 {
-    margin-bottom: 1rem;
-    color: #667eea;
 }
 
 .footer-section p {
@@ -23,27 +18,10 @@
     color: #cbd5e0;
 }
 
-.footer-links {
-    list-style: none;
-}
-
-    .footer-links li {
-        margin-bottom: 0.5rem;
-    }
-
-    .footer-links a {
-        color: #cbd5e0;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-        .footer-links a:hover {
-            color: #667eea;
-        }
-
 .footer-bottom {
     text-align: center;
     margin-top: 2rem;
+    margin-bottom: 2rem;
     padding-top: 1rem;
     border-top: 1px solid #4a5568;
     color: #cbd5e0;

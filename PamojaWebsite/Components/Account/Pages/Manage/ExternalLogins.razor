@@ -16,7 +16,7 @@
     <StatusMessage />
     @if (currentLogins?.Count > 0)
     {
-        <h3 class="font-bold text-gray-500 mb-2 mt-5">Registered Logins</h3>
+        <h3 class="font-bold mb-2 mt-5">Registered Logins</h3>
         <table class="table">
             <tbody>
                 @foreach (var login in currentLogins)
@@ -31,7 +31,7 @@
                                     <div>
                                         <input type="hidden" name="@nameof(LoginProvider)" value="@login.LoginProvider" />
                                         <input type="hidden" name="@nameof(ProviderKey)" value="@login.ProviderKey" />
-                                        <button type="submit" class="btn btn-primary me-2 mt-3" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
+                                        <button type="submit" class="w-full p-2 btn btn-primary me-2 mt-3 text-white rounded" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
                                     </div>
                                 </form>
                             }
@@ -55,7 +55,7 @@
                 <p>
                     @foreach (var provider in otherLogins)
                     {
-                        <button type="submit" class="btn btn-primary me-2 mt-3" name="Provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                        <button type="submit" class="w-full p-2 btn btn-primary me-2 mt-3 text-white rounded" name="Provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
                             @provider.DisplayName
                         </button>
                     }

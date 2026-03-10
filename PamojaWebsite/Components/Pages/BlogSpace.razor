@@ -24,17 +24,19 @@
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
-
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
 
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <body class="min-h-screen bg-gray-50 font-sans">
     <!-- Navigation -->
-    <header class="bg-white shadow-sm sticky z-50 text-green-900">
+    <header class="bg-white shadow-sm sticky z-50 text-green-900 py-10">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="flex md:items-center space-x-2 mb-4 md:mb-0 mt-4">
                     <div class="w-8 h-8 bg-green-900 rounded-lg"></div>
-                    <a href="/blog-space" @onclick="BackToBlogSpace" class="text-2xl font-bold text-dark hover:text-green-900 transition-colors">Blog Space</a>
+                    <a href="/blog-space" aria-label="View all blogs" @onclick="BackToBlogSpace" class="text-2xl font-bold text-dark hover:text-green-900 transition-colors">Blog Space</a>
                 </div>
             </div>
         </nav>
@@ -209,9 +211,7 @@
                             <i class="fas fa-arrow-left"></i> Back to Blogs
                         </button>
                         @{
-                            var dateString = ((CurrentBlogPost.Date.ToLongDateString()).Split(','))[1].Trim();
-                            var index = dateString.IndexOf(" ");
-                            var shortDateString = dateString.Substring(0, index);
+                            var shortDateString = CurrentBlogPost.Date.ToString("MMMM dd, yyyy");
                         }
                         <!-- Blog Content -->
                         <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -220,7 +220,7 @@
                                 <div class="flex flex-wrap items-center gap-4 mb-6">
                                     <span class="bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-medium">@CurrentBlogPost.Category</span>
                                     <span class="text-gray-500"><i class="far fa-clock mr-1"></i> <span id="blog-read-time">@CurrentBlogPost.ReadTime min read</span></span>
-                                    <span class="text-gray-500"><i class="far fa-calendar mr-1"></i> <span id="blog-date">@shortDateString @CurrentBlogPost.Date.Day, @CurrentBlogPost.Date.Year</span></span>
+                                    <span class="text-gray-500"><i class="far fa-calendar mr-1"></i> <span id="blog-date">@shortDateString</span></span>
                                 </div>
 
                                 <h1 id="blog-title" class="text-3xl md:text-4xl lg:text-5xl font-bold text-dark mb-6 font-serif">@CurrentBlogPost.Title</h1>
@@ -253,15 +253,23 @@
                                     <div id="blog-content" class="blog-content text-gray-700">
                                         @((MarkupString)RenderedHtml)
                                     </div>
-                                    @if (BlogTags is not null && BlogTags.Any())
+                                    @if (Tags is not null && Tags.Any())
                                     {
                                         <!-- Tags -->
                                         <div class="mt-12 pt-8 border-t">
                                             <h3 class="text-lg font-semibold mb-4">Tags</h3>
                                             <div id="blog-tags" class="flex flex-wrap gap-2">
-                                                @foreach (var tag in BlogTags)
+                                                @foreach (var Tag in Tags)
                                                 {
-                                                    <button @onclick="(() => SearchBlogsByTag(tag.Name))" type="button" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">@tag.Name</button>
+                                                    foreach (KeyValuePair<string, Tag> keyValuePair in Tag)
+                                                    {
+                                                        if (CurrentBlogPost.Id == keyValuePair.Key)
+                                                        {
+                                                            <button @onclick="(()=>SearchBlogsByTag(Tag[CurrentBlogPost.Id].Name))" type = "button" class= "px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
+                                                                @Tag[CurrentBlogPost.Id].Name
+                                                            </button>
+                                                        }
+                                                    }
                                                 }
                                             </div>
                                         </div>
@@ -282,7 +290,15 @@
                                                     <div class="flex gap-4 mt-4">
                                                         @foreach (var social_link in AuthorSocialMedia)
                                                         {
-                                                            <a href="@social_link.Url" class="text-gray-500 hover:text-primary"><i class="@SocialMediaLinkCSS_Classes[social_link.Platform]"></i></a>
+                                                            foreach (KeyValuePair<string, SocialMediaLink> keyValuePair in social_link)
+                                                            {
+                                                                if (CurrentBlogPost.Id == keyValuePair.Key)
+                                                                {
+                                                                    <a href="@social_link[CurrentBlogPost.Id].Url" aria-label="@($"Visit {CurrentBlogPost.Author}'s {social_link[CurrentBlogPost.Id].Platform}")">
+                                                                        <img alt="@CurrentBlogPost.Author @social_link[CurrentBlogPost.Id].Platform link" height="25px" width="25px" src="Icons/@($"{social_link[CurrentBlogPost.Id].Platform}.svg")" />
+                                                                    </a>
+                                                                }
+                                                            }
                                                         }
                                                     </div>
                                                 }
@@ -301,7 +317,7 @@
                                                     <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
                                                          @onclick="() => ViewBlogDetail(relatedBlog)">
                                                         <h4 class="font-semibold text-dark mb-2 line-clamp-2">@relatedBlog.Title</h4>
-                                                        <p class="text-gray-600 text-sm line-clamp-2 mb-3">@relatedBlog.Content</p>
+                                                        <p class="text-gray-600 text-sm line-clamp-2 mb-3">@((MarkupString)Truncate(relatedBlog.Content, 200))</p>
                                                         <div class="flex items-center text-sm text-gray-500">
                                                             <span class="flex items-center">
                                                                 <i class="far fa-clock mr-1"></i> @relatedBlog.ReadTime
@@ -335,7 +351,8 @@
     private List<BlogPost>? BlogPosts { get; set; }
     private List<BlogPost>? RelatedBlogPosts { get; set; }
     private List<BlogCategory>? BlogCategories { get; set; }
-    private List<SocialMediaLink>? AuthorSocialMedia { get; set; } = new();
+    private List<Dictionary<string, Tag>> Tags { get; set; } = new();
+    private List<Dictionary<string, SocialMediaLink>> AuthorSocialMedia { get; set; } = new();
     private BlogPost? CurrentBlogPost { get; set; } = null;
     private bool loadingBlogs { get; set; } = false;
     private bool loadingCurrentBlog { get; set; } = false;
@@ -376,45 +393,23 @@
 
         if (CurrentBlogPost is not null)
         {
-            BlogTags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
-            BlogTags = BlogTags.Where(t => t.BlogPostIds.Contains(CurrentBlogPost.Id)).ToList();
+            Tags.Clear();
+            foreach (var tag_id in CurrentBlogPost.TagIds)
+            {
+                var tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tag_id);
+                var tagItem = new Dictionary<string, Tag>();
+                tagItem[CurrentBlogPost.Id] = tag;
+                Tags.Add(tagItem);
+            }
+            AuthorSocialMedia.Clear();
+            foreach (var linkId in CurrentBlogPost.AuthorSocialMediaIds)
+            {
+                var socialMedia = await context.SocialMediaLink.FirstOrDefaultAsync(l => l.Id == linkId);
+                var linkItem = new Dictionary<string, SocialMediaLink>();
+                linkItem[CurrentBlogPost.Id] = socialMedia;
+                AuthorSocialMedia.Add(linkItem);
+            }
             RelatedBlogPosts = BlogPosts.Where(b => b.Category == CurrentBlogPost.Category && b.Id != CurrentBlogPost.Id).Take(2).ToList();
-            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Facebook");
-            var X = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "X");
-            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Instagram");
-            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "LinkedIn");
-            var Github = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Github");
-
-            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Facebook.Id);
-                SocialMediaLinkCSS_Classes["Facebook"] = "fab fa-facebook";
-                AuthorSocialMedia.Add(Facebook);
-            }
-            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Instagram.Id);
-                SocialMediaLinkCSS_Classes["Instagram"] = "fab fa-instagram";
-                AuthorSocialMedia.Add(Instagram);
-            }
-            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(X.Id);
-                SocialMediaLinkCSS_Classes["X"] = "fab fa-twitter";
-                AuthorSocialMedia.Add(X);
-            }
-            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Github.Id);
-                SocialMediaLinkCSS_Classes["Github"] = "fab fa-github";
-                AuthorSocialMedia.Add(Github);
-            }
-            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(LinkedIn.Id);
-                SocialMediaLinkCSS_Classes["LinkedIn"] = "fab fa-linkedin";
-                AuthorSocialMedia.Add(LinkedIn);
-            }
         }
         loadingBlogs = false;
         StateHasChanged();
@@ -433,6 +428,7 @@
     private async Task SearchBlogsByTag(string tag)
     {
         CurrentBlogPost = null;
+        loadingBlogs = true;
         using var context = await DbFactory.CreateDbContextAsync();
         BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
         var regexPattern = ".*" + Regex.Escape(tag) + ".*";
@@ -447,6 +443,7 @@
                 .ToList();
         }
         SearchInput = "";
+        loadingBlogs = false;
         StateHasChanged();
     }
     private async Task SearchBlogs()
@@ -514,45 +511,23 @@
         CurrentBlogPost = Post;
         if (CurrentBlogPost is not null){
             using var context = await DbFactory.CreateDbContextAsync();
-            BlogTags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
-            BlogTags = BlogTags?.Where(t => t.BlogPostIds.Contains(CurrentBlogPost.Id)).ToList();
+            Tags.Clear();
+            foreach (var tag_id in CurrentBlogPost.TagIds)
+            {
+                var tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tag_id);
+                var tagItem = new Dictionary<string, Tag>();
+                tagItem[CurrentBlogPost.Id] = tag;
+                Tags.Add(tagItem);
+            }
+            AuthorSocialMedia.Clear();
+            foreach (var linkId in CurrentBlogPost.AuthorSocialMediaIds)
+            {
+                var socialMedia = await context.SocialMediaLink.FirstOrDefaultAsync(l => l.Id == linkId);
+                var linkItem = new Dictionary<string, SocialMediaLink>();
+                linkItem[CurrentBlogPost.Id] = socialMedia;
+                AuthorSocialMedia.Add(linkItem);
+            }
             RelatedBlogPosts = BlogPosts.Where(b => b.Category == CurrentBlogPost.Category && b.Id != CurrentBlogPost.Id).Take(2).ToList();
-            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Facebook");
-            var X = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "X");
-            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Instagram");
-            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "LinkedIn");
-            var Github = context.SocialMediaLink.FirstOrDefault(s => s.BlogPostIds.Contains(CurrentBlogPost.Id) && s.Platform == "Github");
-
-            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Facebook.Id);
-                SocialMediaLinkCSS_Classes["Facebook"] = "fab fa-facebook";
-                AuthorSocialMedia.Add(Facebook);
-            }
-            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Instagram.Id);
-                SocialMediaLinkCSS_Classes["Instagram"] = "fab fa-instagram";
-                AuthorSocialMedia.Add(Instagram);
-            }
-            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(X.Id);
-                SocialMediaLinkCSS_Classes["X"] = "fab fa-twitter";
-                AuthorSocialMedia.Add(X);
-            }
-            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(Github.Id);
-                SocialMediaLinkCSS_Classes["Github"] = "fab fa-github";
-                AuthorSocialMedia.Add(Github);
-            }
-            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
-            {
-                CurrentBlogPost.AuthorSocialMediaIds.Add(LinkedIn.Id);
-                SocialMediaLinkCSS_Classes["LinkedIn"] = "fab fa-linkedin";
-                AuthorSocialMedia.Add(LinkedIn);
-            }
         }
         loadingCurrentBlog = false;
         currentSearch = "";
