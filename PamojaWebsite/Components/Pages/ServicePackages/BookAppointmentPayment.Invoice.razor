@@ -2,20 +2,26 @@
 
 <PageTitle>Appointment Payment Invoice | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+<!--Scripts-->
+<head>
+    <script src="payment.min.js" defer></script>
+    <script defer src="https://js.stripe.com/v3/"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
-</script>
+        gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+    </script>
+</head>
 
 @inject IJSRuntime JS
 @inject MyApiService ApiService
 @inject IMemoryCache Cache
 @inject PayPalOptions PayPalOpts
+@inject EmailService EmailSender
 @inject NavigationManager NavigationManager
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 
@@ -134,10 +140,10 @@
                 Credit/Debit Card
             </button>
 
-            <button class=@($"px-4 py-2 rounded border-2 {(selected == PaymentMethod.PayPal ? "border-green-600" : "border-gray-300 hover:bg-gray-50")}")
+            @* <button class=@($"px-4 py-2 rounded border-2 {(selected == PaymentMethod.PayPal ? "border-green-600" : "border-gray-300 hover:bg-gray-50")}")
                     @onclick="() => SelectMethod(PaymentMethod.PayPal)">
                 PayPal
-            </button>
+            </button> *@
 
             <button class=@($"px-4 py-2 rounded border-2 {(selected == PaymentMethod.Mpesa ? "border-green-600" : "border-gray-300 hover:bg-gray-50")}")
                     @onclick="() => SelectMethod(PaymentMethod.Mpesa)">
@@ -151,7 +157,7 @@
                 @(isProcessing ? "Processing" + "..." : "Pay")
             </button>
         </div>
-        @if (donation is not null)
+        @* @if (donation is not null)
         {
             <div class="mt-6 mx-auto" style="display:@(selected == PaymentMethod.PayPal ? "block" : "none")">
                 <script src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&currency=@donation.Currency"></script>
@@ -164,7 +170,7 @@
                 <script src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&currency=@currency"></script>
                 <div id="paypal-buttons" class="p-2"></div>
             </div>
-        }
+        } *@
 
         <div class="mt-6 space-y-4" style="display:@(selected == PaymentMethod.Mpesa ? "block" : "none")">
             <EditForm Model="payByMpesaDTO" OnValidSubmit="SendStkPush" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
@@ -209,6 +215,8 @@
 
     [Parameter]
     public Donation? donation { get; set; }
+    [Parameter]
+    public Appointment? appointment { get; set; }
     private Payment? Payment;
     private bool isProcessing = false;
 
@@ -239,10 +247,8 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = await DbFactory.CreateDbContextAsync();
-        var donations = await context.Donation.ToListAsync();
-        if (donations is not null){
-            donation = donations.FirstOrDefault(d => d.Id == Id);
-        }
+        donation = await context.Donation.FirstOrDefaultAsync(d => d.Id == Id);
+        appointment = await context.Appointment.FirstOrDefaultAsync(a => a.Id == AptId);
         if (donation is not null)
         {
             amountCents = (long)(donation.Amount * 100);
@@ -269,7 +275,7 @@
                 amountCents = (long)(donation.Amount * 100);
 
             // Import the module once
-            paymentModule = await JS.InvokeAsync<IJSObjectReference>("import", "/payment.js");
+            paymentModule = await JS.InvokeAsync<IJSObjectReference>("import", "/payment.min.js");
 
             // Initialize Stripe and keep the returned session reference
             if (paymentModule is not null && donation is not null)
@@ -311,7 +317,39 @@
             using var context = DbFactory.CreateDbContext();
             context.Payment.Add(Payment);
             await context.SaveChangesAsync();
-
+            Cache.TryGetValue("ClientAppointmentEmailSent", out var clientAppointmentEmailSent);
+            if (clientAppointmentEmailSent is null)
+            {
+                var EmailSent = await Cache.GetOrCreateAsync("ClientAppointmentEmailSent", async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                    var emailSent = true;
+                    return emailSent;
+                });
+                await EmailSender.SendClientAppointmentEmailAsync(appointment);
+            }
+            Cache.TryGetValue("ManagementAppointmentEmailSent", out var managementAppointmentEmailSent);
+            if (clientAppointmentEmailSent is null)
+            {
+                var EmailSent = await Cache.GetOrCreateAsync("ManagementAppointmentEmailSent", async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                    var emailSent = true;
+                    return emailSent;
+                });
+                await EmailSender.SendManagementEmailAsync(appointment);
+            }
+            Cache.TryGetValue("ClientPaymentEmailSent", out var clientPaymentEmailSent);
+            if (clientPaymentEmailSent is null)
+            {
+                var EmailSent = await Cache.GetOrCreateAsync("ClientPaymentEmailSent", async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                    var emailSent = true;
+                    return emailSent;
+                });
+                await EmailSender.SendClientPaymentEmailAsync(Payment);
+            }
             NavigationManager.NavigateTo($"/payment-confirmation?Id={Payment.Id}&AptId={AptId}");
         }
 

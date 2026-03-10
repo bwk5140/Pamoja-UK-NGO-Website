@@ -18,21 +18,27 @@
             <strong class="mt-2 mb-2">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
         </p>
     </div>
-
-    <div>
-        <EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            @if (requirePassword)
-            {
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
-                    <label for="Input.Password" class="form-label">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+    <div class="flex justify-center max-w-xl mx-auto mt-5">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-96 border border-gray-200">
+            <EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+                @if (requirePassword)
+                {
+                    <div class="form-floating mb-3">
+                        <label for="Input.Password" class="relative text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-gray-500 peer-focus:text-sm">Password</label>
+                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="@($"{InputClass(() => Input.Password)}")" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+                }
+                <div class="py-2">
+                    <button type="submit"
+                            class="w-full btn btn-lg btn-danger bg-red-600 text-white mb-3 p-4 rounded">
+                        Delete data and close my account
+                    </button>
                 </div>
-            }
-            <button class="w-100 btn btn-lg btn-danger mt-2" type="submit">Delete data and close my account</button>
-        </EditForm>
+            </EditForm>
+        </div>
     </div>
 </div>
 
@@ -46,6 +52,8 @@
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
+
+    private EditContext editContext;
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,7 +86,21 @@
         }
         RedirectManager.RedirectToCurrentPage();
     }
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+            ? $"{baseClasses} border-red-500 focus:border-red-500"
+            : $"{baseClasses} border-gray-300";
+    }
 
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
     private sealed class InputModel
     {
         [DataType(DataType.Password)]

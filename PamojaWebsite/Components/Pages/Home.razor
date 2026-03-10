@@ -17,28 +17,31 @@
 @inject NavigationManager NavigationManager
 
 @rendermode InteractiveServer
+
+<head>
+    <link rel="stylesheet" href="tailwind.css" />
+</head>
+
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <div class="container-xxxl" style="font-family: Calibri;">
         <!-- Hero Section -->
         <section class="relative bg-gradient-to-r from-primary to-secondary text-black overflow-hidden">
-            <!-- Dark overlay -->
-            @* <div class="absolute inset-0 bg-black opacity-20"></div> *@
-
             <div class="video-container">
                 <video id="myVideo" autoplay
                        muted
                        loop
                        playsinline
+                       fetchpriority="high"
                        class="background-video"
-                       poster="/Images/Art/Elephant.png">
-                    <source src="/Videos/Art/NewArt.mp4" type="video/mp4">
+                       poster="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132789/Elephant_xh8lbk.png">
+                    <source src="https://res.cloudinary.com/dzmfpxcwu/video/upload/v1771132610/NewArt_pppr3b.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <div class="overlay">
                     <h1>Break the stigma, expand access, transform lives.</h1>
                     <p>Take the first step with Pamoja.</p>
                     <div class="buttons mb-5">
-                        <a href="/about-us" class="btn">Learn More</a>
+                        <a href="/about-us" aria-label="Navigate to about us" class="btn">About Us</a>
                     </div>
                     <div class="mt-5 animate-pulse px-8" style="font-size: xx-large;">
                     <h3>Akili bora, Afya bora</h3>
@@ -51,7 +54,6 @@
             <div class="container mx-auto px-6">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="md:w-1/2 mb-10 md:mb-0">
-                        @* <h2 class="text-4xl font-bold text-green-900 mb-6">Who We Are</h2> *@
                         <p class="text-lg text-gray-700 mb-6 leading-relaxed">
                             Pamoja Counselling, Mental Wellbeing and Safeguarding Services was founded to address the urgent need for mental wellbeing and safeguarding support in communities where stigma, silence, and systemic barriers have long prevented access to care.
                         </p>
@@ -69,7 +71,8 @@
                     </div>
                     <div class="md:w-1/2">
                         <img src="Images/PamojaLogo.png"
-                             class="h-96 w-96" />
+                             class="h-96 w-96" 
+                             alt="Pamoja logo"/>
                     </div>
                 </div>
             </div>
@@ -78,7 +81,7 @@
         <section class="p-20 rounded bg-gradient-to-tr from-red-300 to-yellow-400">
             <div class="center-container flex flex-col md:flex-row">
                 <div class="bg-red-800 bg-yellow-100 p-5 w-104 sm:96 md:96 mt-5 rounded-xl">
-                    <h2 class="mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-50" style="font-size: xx-large;">
+                    <h2 class="py-6 mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-50" style="font-size: xx-large;">
                         Our Mission
                     </h2>
                     <p>
@@ -89,11 +92,12 @@
                     </p>
                 </div>
                 <div>
-                    <img src="Images/Art/diverse-hands.png"
-                         class="h-80 w-full hidden sm:block" />
+                    <img src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132572/diverse-hands_sk2rvw.png"
+                         class="h-80 w-full hidden sm:block" 
+                         alt="Diverse hands"/>
                 </div>
                 <div class="bg-red-800 bg-yellow-100 p-5 w-104 sm:96 md:96 mt-5 rounded-xl">
-                    <h2 class="mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-40" style="font-size: xx-large;">
+                    <h2 class="py-6 mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-40" style="font-size: xx-large;">
                         Our Vision
                     </h2>
                     <p>
@@ -202,7 +206,7 @@
                         <!-- Service 1 -->
                         <section class="relative text-white py-12 px-4 sm:px-6 lg:px-8">
                             <div class="absolute inset-0">
-                                <img loading="lazy" src="Images/Art/Service1.png"
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133072/Service1_cz0qqe.png"
                                      alt="Pamoja Workshops"
                                      class="object-cover object-top w-full h-full" />
                             </div>
@@ -230,7 +234,7 @@
                         <!-- Service 2 -->
                         <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
                             <div class="absolute inset-0">
-                                <img loading="lazy" src="Images/Art/Service2.png"
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133073/Service2_lfjnqs.png"
                                      alt="Well Being"
                                      class="object-cover object-top w-full h-full" />
                             </div>
@@ -260,7 +264,7 @@
                         <!-- Service 3 -->
                         <section class="relative text-white py-6 px-4 sm:px-6 lg:px-8">
                             <div class="absolute inset-0">
-                                <img loading="lazy" src="Images/Art/Service3.png"
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133076/Service3_tjms9b.png"
                                      alt="Awareness & Prevention"
                                      class="object-cover object-top w-full h-full" />
                             </div>
@@ -298,7 +302,6 @@
         if (firstRender)
         {
             await JS.InvokeVoidAsync("featherInit");
-            await JS.InvokeVoidAsync("observeVideoVisibility", "myVideo");
         }
     }
     private async Task ScrollToTarget()

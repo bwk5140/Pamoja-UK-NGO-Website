@@ -66,10 +66,10 @@ if (isWindows)
         new Uri("https://pamojakeyvault.vault.azure.net/"),
         credential);
 
-        //KeyVaultSecret connectionstring_secret = client.GetSecret("Local-DefaultConnection");
+        KeyVaultSecret connectionstring_secret = client.GetSecret("Local-DefaultConnection");
 
-        //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        var connectionString = "Host=192.168.100.39;Port=5432;Database=Pamoja;Username=postgres;Password=0734158857Manyani!;SslMode=Disable;";
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
         //var connectionString = connectionstring_secret.Value ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         //builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
         //options.UseSqlServer(connectionString));

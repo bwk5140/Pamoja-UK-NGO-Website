@@ -1,7 +1,10 @@
 ﻿@page "/services/book-appointment/details"
 
 <PageTitle>Book Appointment Details | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
-
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="DropDownHelper.min.js" defer></script>
+</head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
@@ -22,9 +25,9 @@
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <div class="container-xxxl">
         <!-- Banner Section -->
-        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+        <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div class="absolute inset-0">
-                <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
+                <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
             </div>
 
             <!-- Content -->
@@ -44,7 +47,7 @@
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <!-- About Us -->
                             <li class="inline-flex items-center">
-                                <a href="/services"
+                                <a href="/services" aria-label="Navigate to services"
                                    class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
                                     Services
                                 </a>
@@ -58,7 +61,7 @@
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
                                     </svg>
-                                    <a href="/services/book-appointment"
+                                    <a href="/services/book-appointment" aria-label="Navigate to book appointment page"
                                        class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
                                         Book an Appointment
                                     </a>
@@ -69,59 +72,60 @@
                 </div>
             </section>
 
-            <section class="bg-white py-12 px-6 max-w-4xl mx-auto">
+            <section class="bg-white py-12 px-6 md:max-w-4xl sm:max-w-5xl mx-auto">
                 <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Book an Appointment</h1>
-                <p class="text-center font-bold text-lg text-gray-600 mb-3">Limited 1-Hour Consultations Now Available</p>
+                <p class="text-center font-bold text-lg text-gray-600 mb-3">Limited 20-minute Consultations Now Available</p>
                 <p class="text-center text-lg text-gray-600 mb-6">
-                    Please book your 1 hour consultation (2900KSH) designed to assess your needs and determine the most appropriate service package for your objectives.
+                    Please book your 20 minute consultation designed to assess your needs and determine the most appropriate service package for your objectives.
                     This consultation provides an opportunity for an open and thoughtful discussion about your goals and how we can best support them.
                     Availability is limited, and appointments are scheduled on a first-come, first-served basis.
                 </p>
-                <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Book an Appointment</h1>
                     <div class="bg-white p-6 rounded-lg shadow-md w-88">
-                        <div class="flex flex-col md:flex-row gap-8 justify-between">
-                            <div class="md:w-3/4 flex flex-row md:flex-col gap-8">
+                        <div class="flex flex-row md:flex-col gap-8 justify-between">
+                            <div class="md:w-3/4 flex flex-col md:flex-row gap-8">
                                 <div class="mb-3 mt-3">
                                     <img src="Images/PamojaLogo.png"
                                          width="200"
-                                         height="200" />
+                                         height="200"
+                                         alt="Pamoja logo" />
                                 </div>
                                 <div class="mb-3 mt-3">
                                     <p class="font-bold text-lg text-gray-800 mb-6">
                                         Consultation with Pamoja Mental Health and Safeguarding Team
                                     </p>
                                     <p class="text-lg text-gray-600 mb-6">
-                                        1 hour
+                                        20 minutes
                                     </p>
                                     @if (latestAppointment is not null)
                                     {
                                         <div class="flex flex-col">
                                             <p class="font-bold text-lg text-gray-800 mb-3">
-                                                @latestAppointment.Date.DayOfWeek, @getMonth(latestAppointment.Date.Month) @latestAppointment.Date.Day at @latestAppointment.Time.ToString("hh:mm tt")
+                                                @latestAppointment.Date.ToLocalTime().ToString("MMMM dd, yyyy") at @latestAppointment.Time.ToString("hh:mm tt")
                                             </p>
                                         </div>
                                     }
                                 </div>
-                            </div>
-                            <div class="md:w-1/4 px-2">
-                                <button class="p-2 rounded hover:bg-gray-200" @onclick="BackToAppointmentBooking">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         fill="none"
-                                         viewBox="0 0 24 24"
-                                         stroke-width="2"
-                                         stroke="currentColor"
-                                         class="w-6 h-6 text-gray-700">
-                                        <path stroke-linecap="round"
-                                              stroke-linejoin="round"
-                                              d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
+                                <div class="mb-3 mt-3 ms-5">
+                                    <button class="rounded hover:bg-gray-200" @onclick="BackToAppointmentBooking">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke-width="2"
+                                             stroke="currentColor"
+                                             class="w-6 h-6 text-gray-700">
+                                            <path stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                  d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
 
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88">
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88 border border-gray-200">
                         <EditForm Model="appointmentDetailsDTO" OnValidSubmit="BookAnAppointment" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
                             <DataAnnotationsValidator />
                             <ValidationSummary class="text-sm text-red-600" />
@@ -159,7 +163,7 @@
                                         
                                         <div class="relative">
                                             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                            <InputText id="country" class="w-full h-8 left-4 px-12" @bind-Value="Country" @bind-Value:after="(() => SearchCountry(Country))" @oninput="(() => SearchCountry(Country))" />
+                                            <InputText id="country" class="w-full h-8 left-4 px-12" @bind-Value="@Country" @bind-Value:after="(() => SearchCountry(Country))" @oninput="(() => SearchCountry(Country))" />
                                         </div>
                                         
                                         <ul class="py-1">
@@ -263,7 +267,7 @@
                     Month = getMonth(latestAppointment.Date.Month);
                 }
             }
-            
+
             CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
             if (CountryCodes is not null){
                 CountryCodes = CountryCodes.OrderByDescending(c => c.Country).ToList();
@@ -296,9 +300,27 @@
         }
         else
         {
+            searchterm = searchterm.ToLowerInvariant();
             CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
-            if (CountryCodes is not null){
-                CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Country.StartsWith(searchterm)).ToList();
+            if (searchterm.Contains("+"))
+            {
+                CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+                if (CountryCodes is not null)
+                {
+                    searchterm = searchterm.Substring(1);
+                    CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.ToLower().Contains(searchterm)).ToList();
+                }
+            }
+            else{
+                if (CountryCodes is not null)
+                {
+                    CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Country.ToLower().Contains(searchterm)).ToList();
+
+                    if (CountryCodes.Count == 0)
+                    {
+                        CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.Contains(searchterm)).ToList();
+                    }
+                }
             }
         }
         StateHasChanged();
@@ -358,7 +380,7 @@
             latestAppointment.FirstName = appointmentDetailsDTO.FirstName;
             latestAppointment.LastName = appointmentDetailsDTO.LastName;
             latestAppointment.Email = appointmentDetailsDTO.Email;
-            latestAppointment.Phone = appointmentDetailsDTO.Phone;
+            latestAppointment.Phone = SelectedCountryCode.Code + appointmentDetailsDTO.Phone;
             latestAppointment.Message = appointmentDetailsDTO.Message;
 
             using var context = DbFactory.CreateDbContext();

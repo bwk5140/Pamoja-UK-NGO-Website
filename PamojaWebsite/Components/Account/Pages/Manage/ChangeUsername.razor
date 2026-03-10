@@ -11,24 +11,24 @@
 <PageTitle>Profile</PageTitle>
 
 <div class="pt-[5%] mb-5 py-20">
-    <h3 class="font-bold text-gray-500 mb-2 mt-5">@Loc["Username"]</h3>
-    <StatusMessage />
-    <div class="row">
-        <div class="col-xl-6">
+    <div class="flex justify-center max-w-xl mx-auto">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-96 border border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 text-green-900">@Loc["Username"]</h2>
+            <StatusMessage />
             <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
                 <DataAnnotationsValidator />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
-                    <input type="text" value="@username" id="username" class="form-control" placeholder=@Loc["ChooseUsername"] disabled />
+                    <input type="text" value="@username" id="username" class="@($"{InputClass(() => username)}")" placeholder=@Loc["ChooseUsername"] disabled />
                     <label for="username" class="form-label">@Loc["CurrentUsername"]</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Username" id="Input.Username" class="form-control" />
-                    <label for="Input.Username" class="form-label">@Loc["NewUsername"]</label>
+                    <label for="Input.Username" class="relative text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-gray-500 peer-focus:text-sm">@Loc["NewUsername"]</label>
+                    <InputText @bind-Value="Input.Username" id="Input.Username" class="@($"{InputClass(() => Input.Username)}")" />
                     <ValidationMessage For="() => Input.Username" class="text-danger" />
                 </div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary" style="background-color: #2f4f4f;
-                        border-color:transparent; border-radius: 5px;">
+                <button type="submit" style="background-color: #2f4f4f; color: white;"
+                        class="w-full btn btn-lg btn-primary mb-3 p-2 rounded">
                     @Loc["Save"]
                 </button>
             </EditForm>
@@ -47,6 +47,8 @@
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
+
+    private EditContext editContext;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,7 +72,21 @@
             }
         }        
     }
+    // Helper to compute Tailwind classes and add red border when field has errors
+    private string InputClass<T>(Expression<Func<T>> accessor)
+    {
+        var baseClasses = "w-full px-4 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500";
+        return HasValidationError(accessor)
+            ? $"{baseClasses} border-red-500 focus:border-red-500"
+            : $"{baseClasses} border-gray-300";
+    }
 
+    private bool HasValidationError<T>(Expression<Func<T>> accessor)
+    {
+        if (editContext == null) return false;
+        var field = FieldIdentifier.Create(accessor);
+        return editContext.GetValidationMessages(field).Any();
+    }
     private sealed class InputModel
     {
         [Required]

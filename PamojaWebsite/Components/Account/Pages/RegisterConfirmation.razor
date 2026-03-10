@@ -25,28 +25,23 @@
 
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <StatusMessage Message="@statusMessage" />
-
     <div class="container-sm" style="text-align: center; color: #2f4f4f;">
         <div class="flex justify-center w-full">
-            <a href="/" style="text-decoration: none;"><img loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
+            <a aria-label="Navigate to home page" href="/" style="text-decoration: none;"><img alt="Pamoja logo" loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
         </div>
-        <div class="center-container">
-            <div class="card" style="border-radius: 15px; width: 400px;">
-                <div class="card-header">
-                    <h4>@Loc["RegisterConfirmation"]</h4>
-                </div>
-                <div class="card-body">
-                    @if (emailConfirmationLink is not null)
-                    {
-                        <p>
-                            <a href="@emailConfirmationLink">@Loc["EmailConfirmation"]</a>
-                        </p>
-                    }
-                    else
-                    {
-                        <p role="alert">@Loc["CheckEmailToConfirmAccount"]</p>
-                    }
-                </div>
+        <div class="flex justify-center max-w-xl mx-auto">
+            <div class="bg-white p-8 rounded-xl shadow-lg w-96 border border-gray-200">
+                <h2 class="text-2xl font-bold mb-6 text-green-900">@Loc["RegisterConfirmation"]</h2>
+                @if (emailConfirmationLink is not null)
+                {
+                    <p>
+                        <a href="@emailConfirmationLink" aria-label="Email confirmation link">@Loc["EmailConfirmation"]</a>
+                    </p>
+                }
+                else
+                {
+                    <p role="alert">@Loc["CheckEmailToConfirmAccount"]</p>
+                }
             </div>
         </div>
     </div>

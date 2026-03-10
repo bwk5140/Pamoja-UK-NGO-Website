@@ -49,17 +49,6 @@ h1:focus {
 .heading {
     font-family: 'LTC Bodoni 175 Pro';
 }
-.dropdown-menu {
-    position: absolute;
-    top: 100%; /* Position below the button */
-    left: 50%; /* Start at the horizontal center */
-    transform: translateX(-50%); /* Shift back by half its width */
-    z-index: 1000; /* Ensure it appears above other elements */
-    min-width: 150px; /* Optional: set a minimum width */
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
 html {
     scroll-behavior: smooth;
 }
@@ -88,27 +77,6 @@ html {
     }
 }
 
-.float-animation {
-    animation: float 3s ease-in-out infinite;
-}
-
-/* Custom hover effects */
-.hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-/* Glass morphism effect */
-.glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
 /* Custom button styles */
 .btn-primary {
     background: linear-gradient(135deg, #2E7D32 0%, #1976D2 100%);
@@ -120,16 +88,6 @@ html {
         box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
     }
 
-/* Text shadow for better readability */
-.text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Custom border radius */
-.rounded-custom {
-    border-radius: 20px;
-}
-
 /* Loading animation */
 @keyframes pulse {
     0%, 100% {
@@ -139,85 +97,6 @@ html {
     50% {
         opacity: 0.7;
     }
-}
-
-.pulse-animation {
-    animation: pulse 2s ease-in-out infinite;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-.carousel-item {
-    flex: 0 0 33.33%; /* Show 3 items by default */
-}
-
-@media (max-width: 768px) {
-    .carousel-item {
-        flex: 0 0 100%; /* Show 1 item on mobile */
-    }
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #2E7D32 0%, #1976D2 100%);
-    border-radius: 4px;
-}
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #1976D2 0%, #FF9800 100%);
-    }
-
-/* Responsive typography */
-/*@media (max-width: 768px) {
-    .responsive-text {
-        font-size: 1.5rem;
-    }
-}*/
-/* Desktop: show modal */
-@media (min-width: 768px) {
-    .team-popup {
-        display: block;
-    }
-
-    .team-inline-details {
-        display: none;
-    }
-}
-/* Responsive typography */
-/* Mobile: show inline details */
-@media (max-width: 767px) {
-    .responsive-text {
-        font-size: 1.5rem;
-    }
-    .team-popup {
-        display: none;
-    }
-
-    .team-inline-details {
-        display: block;
-    }
-}
-
-
-/* Image hover effects */
-.image-hover {
-    transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-    .image-hover:hover {
-        transform: scale(1.05);
-        filter: brightness(1.1);
-    }
-
-/* Section spacing */
-.section-spacing {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
 }
 
 .video-container {
@@ -250,7 +129,7 @@ html {
   position: absolute;
   left: 50%;
   z-index: 2;
-  transform: translate(-50%, 80%);
+  transform: translate(-50%, 100%);
   color: #fff;
   text-align: center;
   width: 90%;
@@ -358,6 +237,36 @@ html {
 .ql-editor {
     min-height: 200px;
 }
+.container-sm {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 576px) {
+    .container-sm {
+        max-width: 576px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container-sm {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container-sm {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container-sm {
+        max-width: 1140px;
+    }
+}
 .spinner circle {
     fill: #1f6806;
     animation: pulse 1.2s infinite ease-in-out;
@@ -401,3 +310,4 @@ html {
         r: 10;
         opacity: 1;
     }
+}

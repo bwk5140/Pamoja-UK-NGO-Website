@@ -2,6 +2,11 @@
 
 <PageTitle>Document Viewer | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
+<head>
+    <script src="DownloadFile.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
@@ -55,29 +60,30 @@
         </div>
     </header>
     <div class="flex">
-        <!-- Sidebar -->
-        <DocumentSidebar Metadata="@CurrentDoc?.Metadata" />
-
-        <!-- Main Viewer -->
-        <div class="flex-1 document-content">
-            @if (CurrentDoc is not null)
+        @if (CurrentDoc is not null)
             {
-                @if (CurrentDoc.ContentType.Contains("openxmlformats-officedocument"))
-                {
-                    <iframe id="docFrame" src="@GetViewerUrl(CurrentDoc)"
-                            width="100%" height="100%" style="border:none"></iframe>
-                }
-                else if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType == "text/plain")
-                {
-                    <iframe id="docFrame" src="@($"api/documents/{CurrentDoc.Id}")"
-                            width="100%" height="100%" style="border:none"></iframe>
-                }
-                else
-                {
-                    <a href="@($"api/documents/{CurrentDoc.Id}")" target="_blank">
-                        Download File
-                    </a>
-                }
+                <!-- Sidebar -->
+                <DocumentSidebar Metadata="@CurrentDoc?.Metadata" />
+
+                <!-- Main Viewer -->
+                <div class="flex-1 document-content">
+                    @if (CurrentDoc.ContentType.Contains("openxmlformats-officedocument"))
+                        {
+                            <iframe id="docFrame" src="@GetViewerUrl(CurrentDoc)"
+                                    width="100%" height="100%" style="border:none"></iframe>
+                        }
+                        else if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType == "text/plain")
+                        {
+                            <iframe id="docFrame" src="@($"api/documents/{CurrentDoc.Id}")"
+                                    width="100%" height="100%" style="border:none"></iframe>
+                        }
+                        else
+                        {
+                            <a href="@($"api/documents/{CurrentDoc.Id}")" aria-label="Download file" target="_blank">
+                                Download File
+                            </a>
+                        }
+                </div>
             }
             else
             {
@@ -105,7 +111,6 @@
                     </div>
                 }
             }
-        </div>
     </div>
 </div>
 
@@ -201,6 +206,7 @@
             CurrentDoc.Metadata = await context.DocumentMetadata?.FirstOrDefaultAsync(dm => dm.DocumentId == CurrentDoc.Id);
             StateHasChanged();
         }
+        loadingDoc = false;
     }
 
 }

@@ -17,7 +17,7 @@
 </script>
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <div class="container mx-auto px-6 lg:px-8">
-        <section class="mt-5">
+        <section class="py-20 mt-5">
             <div class="max-w-7xl sm:px-6 lg:px-8">
                 <div style="display: inline-block;">
                     <!-- Breadcrumb -->
@@ -26,6 +26,7 @@
                             <!-- About Us -->
                             <li class="inline-flex items-center">
                                 <a href="/careers"
+                                    alt="Navigate to careers"
                                    class="inline-flex items-center text-secondary hover:text-gray-800 font-medium">
                                     Careers
                                 </a>
@@ -40,6 +41,7 @@
                                               clip-rule="evenodd" />
                                     </svg>
                                     <a href="/careers/search/?role=Psychologist"
+                                        alt="Navigate to search careers"
                                        class="ml-1 text-secondary hover:text-gray-800 font-medium">
                                         Search
                                     </a>
@@ -53,7 +55,7 @@
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
                                     </svg>
-                                    <a href="/careers/search/psychologist" class="inline-flex items-center text-secondary hover:text-gray-800 font-medium font-bold">
+                                    <a href="/careers/search/psychologist" alt="Navigate to current page" class="inline-flex items-center text-secondary hover:text-gray-800 font-medium font-bold">
                                         Psychologist
                                     </a>
                                 </div>
@@ -226,7 +228,7 @@
                         </p>
                         @if (Psychologist is not null && Psychologist.Expiration > DateTime.UtcNow)
                         {
-                            <a href="mailto:jobs@pamojasafeguarding.com">Apply now</a>
+                            <a alt="Email jobs@pamojasafeguarding.com" href="mailto:jobs@pamojasafeguarding.com">Apply now</a>
                         }
                     </div>
                 </div>
@@ -242,7 +244,7 @@
                     <p class="mb-2"><strong>Company:</strong> Pamoja Counselling, Mental Wellbeing and Safeguarding Services</p>
                     @if (Psychologist is not null && Psychologist.Expiration > DateTime.UtcNow)
                     {
-                        <a href="mailto:jobs@pamojasafeguarding.com" style="display: inline-block; margin-top: 16px;
+                        <a href="mailto:jobs@pamojasafeguarding.com" alt="Email jobs@pamojasafeguarding.com" style="display: inline-block; margin-top: 16px;
                             padding: 10px 20px; background-color: #1f4e79; color: #fff; text-decoration: none; border-radius: 4px;">
                             Apply now
                         </a>

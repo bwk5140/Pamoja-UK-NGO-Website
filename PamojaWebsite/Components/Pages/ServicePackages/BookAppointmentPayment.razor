@@ -11,15 +11,18 @@
 
 <PageTitle>Book Appointment Payment | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+<!--Scripts-->
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
-</script>
+        gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+    </script>
+</head>
 
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <main class="container mx-auto px-4 py-12 max-w-7xl">
@@ -45,7 +48,7 @@
                                             <span class="text-gray-500 sm:text-sm me-2">@CurrencySymbols[donateFormDTO.Currency]</span>
                                         </div>
                                         <InputNumber type="number" id="amount" name="amount" disabled
-                                                     class="ms-4 focus:ring-green-500 focus:border-green-500 block w-full pl-7 pr-12 py-3 sm:text-sm border-gray-300 rounded-md"
+                                                     class="ms-4 focus:ring-green-500 focus:border-green-500 block w-full pl-12 pr-12 py-3 sm:text-sm border-gray-300 rounded-md"
                                                      placeholder="0.00" min="1" step="0.01" required @bind-Value="@donateFormDTO.Amount" @bind-Value:after="(() => SetAmount(donateFormDTO.Amount))" />
 
                                         <div class="absolute inset-y-0 right-0 flex items-center">
@@ -66,14 +69,14 @@
 
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                                    <InputText type="text" id="name" name="name" @bind-Value="@donateFormDTO.Name" disabled
+                                    <InputText type="text" id="name" name="name" @bind-Value="@donateFormDTO.Name"
                                                class="focus:ring-green-500 focus:border-green-500 block w-full px-3 py-2 sm:text-sm border border-gray-300 rounded-md"
                                                placeholder="John Doe" required />
                                 </div>
 
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <InputText type="email" id="email" name="email" disabled
+                                    <InputText type="email" id="email" name="email"
                                                class="focus:ring-green-500 focus:border-green-500 block w-full px-3 py-2 sm:text-sm border border-gray-300 rounded-md"
                                                placeholder="your@email.com" required @bind-Value="@donateFormDTO.Email" />
                                 </div>

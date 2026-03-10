@@ -26,9 +26,9 @@
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <div class="container-xxxl">
         <!-- Banner Section -->
-        <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
+        <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div class="absolute inset-0">
-                <img class="relative object-cover object-top md:h-48 md:w-full sm:h-full" src="Images/Art/tree.jpg" />
+                <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
             </div>
 
             <!-- Content -->
@@ -48,7 +48,7 @@
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <!-- About Us -->
                             <li class="inline-flex items-center">
-                                <a href="/services"
+                                <a href="/services"  aria-label="Navigate to services"
                                    class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
                                     Services
                                 </a>
@@ -62,7 +62,7 @@
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
                                     </svg>
-                                    <a href="/services/book-appointment"
+                                    <a href="/services/book-appointment"  aria-label="Navigate to book appointment page"
                                        class="ml-1 text-green-700 hover:text-green-800 font-medium font-bold">
                                         Book an Appointment
                                     </a>
@@ -73,36 +73,37 @@
                 </div>
             </section>
 
-            <section class="bg-white py-12 px-6 max-w-4xl mx-auto">
-                <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Book an Appointment</h1>
-                <p class="text-center font-bold text-lg text-gray-600 mb-3">Limited 1-Hour Consultations Now Available</p>
-                <p class="text-center text-lg text-gray-600 mb-6">
-                    Please book your 1 hour consultation (2900KSH) designed to assess your needs and determine the most appropriate service package for your objectives.
+            <section class="bg-white py-12 px-6 md:max-w-4xl sm:max-w-5xl mx-auto">
+                <h1 class="text-3xl font-bold text-center mb-4">Book an Appointment</h1>
+                <p class="text-center font-bold text-lg mb-3">Limited 20-minute Consultations Now Available</p>
+                <p class="text-center text-lg mb-6">
+                    Please book your 20 minute consultation designed to assess your needs and determine the most appropriate service package for your objectives.
                     This consultation provides an opportunity for an open and thoughtful discussion about your goals and how we can best support them.
                     Availability is limited, and appointments are scheduled on a first-come, first-served basis.
                 </p>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Book an Appointment</h1>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h1 class="text-l font-bold text-center mt-4 mb-4">Book an Appointment</h1>
                     <div class="bg-white p-6 rounded-lg shadow-md w-88">
-                        <div class="flex flex-row md: flex-col">
+                        <div class="flex flex-col md:flex-row">
                             <div class="mb-3 mt-3">
                                 <img src="Images/PamojaLogo.png"
                                      width="200"
-                                     height="200" />
+                                     height="200" 
+                                    alt="Pamoja logo"/>
                             </div>
                             <div class="mb-3 mt-3">
-                                <p class="font-bold text-lg text-gray-800 mb-6">
+                                <p class="font-bold text-lg mb-6">
                                     Consultation with Pamoja Mental Health and Safeguarding Team
                                 </p>
-                                <p class="text-lg text-gray-600 mb-6">
-                                    1 hour
+                                <p class="text-lg mb-6">
+                                    20 minutes
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88">
-                        <div class="flex flex-col md:flex-row gap-16">
-                            <div class="w-full">
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88 border border-gray-200">
+                        <div class="flex flex-col md:flex-row gap-8">
+                            <div class="w-full md:w-1/2 ">
                                 @if (SelectedDay is not null)
                                 {
                                     <Calendar>
@@ -115,7 +116,7 @@
                                             {
                                                 if (day.Date > DateTime.UtcNow && day.Date.Month >= DateTime.UtcNow.Month && day.Date.Year >= DateTime.UtcNow.Year)
                                                 {
-                                                    <button class="day p-2 md:p-8 cursor-pointer text-center
+                                                    <button class="day p-2 md:p-4 cursor-pointer text-center
                                                         @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-white" : "")
                                                         @(isToday ? "bg-gradient-to-b from-green-100 to-green-200 text-gray-800" : "")"
                                                             @onclick="(() => SelectDate(day, currentDay))">
@@ -124,14 +125,14 @@
                                                 }
                                                 else
                                                 {
-                                                    <button class="day p-2 md:p-8" style="background-color: transparent; color:darkgrey;">
+                                                    <button class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
                                                         @day.Day
                                                     </button>
                                                 }
                                             }
                                             else
                                             {
-                                                <button class="day p-2 md:p-8" style="background-color: transparent; color:darkgrey;">
+                                                <button class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
                                                     @day.Day
                                                 </button>
                                             }
@@ -144,7 +145,7 @@
                                 <p class="font-bold text-lg text-gray-800 mb-3">
                                     @SelectedDay.Date.DayOfWeek, @getMonth(SelectedDay.Date.Month) @SelectedDay.Date.Day
                                 </p>
-                                <div class="grid grid-cols-2 gap-6">
+                                <div class="grid grid-cols-3 gap-6">
                                     @foreach (var time in TimeSlots)
                                     {
                                         bool isSelected = SelectedTime == time;
@@ -153,7 +154,7 @@
                                             @time.ToString("hh:mm tt")
                                         </button> *@
                                         <div class="">
-                                            <button class="px-4 py-1 border border-gray-300 rounded-md bg-[#14532d] text-nowrap text-gray-800 cursor-pointer hover:bg-[#58cca5]
+                                            <button class="px-4 py-1 border border-gray-300 rounded-md bg-[#14532d] text-nowrap cursor-pointer hover:bg-[#58cca5]
                                                         disabled:bg-gray-300 disabled:cursor-default
                                                     @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-nowrap text-white border-blue-600" : "")"
                                                     @onclick="(() => SelectTime(time))">
@@ -191,9 +192,11 @@
         SelectedDay = new CalendarDay();
         SelectedDay.Date = DateTime.UtcNow.AddDays(1);
         var start = DateTime.Today.AddDays(1).AddHours(9);   // 9 AM
-        var end = DateTime.Today.AddDays(1).AddHours(16);    // 5 PM
-        for (var t = start; t <= end; t = t.AddHours(1))
+        var end = DateTime.Today.AddDays(1).AddHours(17);    // 5 PM
+        for (var t = start; t <= end; t = t.AddMinutes(20))
         {
+            if (t.Hour == 17)
+                return;
             TimeSlots.Add(t);
         }
     }

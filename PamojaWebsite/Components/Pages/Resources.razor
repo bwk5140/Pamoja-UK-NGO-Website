@@ -8,7 +8,12 @@
 @using System.Text.RegularExpressions;
 @using Word = Microsoft.Office.Interop.Word;
 
-<PageTitle>Resources | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+<head>
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script defer src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+</head>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
@@ -29,6 +34,8 @@
 
 @implements IDisposable
 
+<PageTitle>Resources | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 <div class="pt-[5%] mb-5 py-20 mt-5">
     <div class="min-h-screen bg-gray-50 font-sans">
@@ -44,7 +51,7 @@
                     </div>
 
                     <div class="flex-1 max-w-12xl md:max-w-6xl mx-4">
-                        <div class="relative">
+                        <div class="relative py-10">
                             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
 
                             <InputText @bind-Value="SearchTerm" @bind-Value:after="Search" type="text"
@@ -62,26 +69,26 @@
                 <div class="mt-4 nav-links flex flex-wrap justify-center space-x-6 text-gray-600">
                     @if (SearchFilters is not null && SearchFilters.Any())
                     {
-                        <a href="/resources?RedirectQuery=All%20Resources" class="@NavClasses["All Resources"]" @onclick="(() => GetNavClass(page, SearchFilters[0]))">
+                        <a href="/resources?RedirectQuery=All%20Resources" aria-label="View all resources" class="@NavClasses["All Resources"]" @onclick="(() => GetNavClass(page, SearchFilters[0]))">
                             All Resources
                         </a>
-                        <a href="/resources?RedirectQuery=Research" class="@NavClasses["Research"]" @onclick="(() => GetNavClass(page, SearchFilters[1]))">
+                        <a href="/resources?RedirectQuery=Research" aria-label="View research documents" class="@NavClasses["Research"]" @onclick="(() => GetNavClass(page, SearchFilters[1]))">
                             Research
                         </a>
-                        <a href="/resources?RedirectQuery=Blog%20Posts" class="@NavClasses["Blog Posts"]" @onclick="(() => GetNavClass(page, SearchFilters[2]))">
+                        <a href="/resources?RedirectQuery=Blog%20Posts" aria-label="View blog posts" class="@NavClasses["Blog Posts"]" @onclick="(() => GetNavClass(page, SearchFilters[2]))">
                             Blog Posts
                         </a>
-                        <a href="/resources?RedirectQuery=Case%20Studies" class="@NavClasses["Case Studies"]" @onclick="(() => GetNavClass(page, SearchFilters[3]))">
+                        <a href="/resources?RedirectQuery=Case%20Studies" aria-label="View case studies" class="@NavClasses["Case Studies"]" @onclick="(() => GetNavClass(page, SearchFilters[3]))">
                             Case Studies
                         </a>
-                        <a href="/resources?RedirectQuery=Templates" class="@NavClasses["Templates"]" @onclick="(() => GetNavClass(page, SearchFilters[4]))">
+                        <a href="/resources?RedirectQuery=Templates" aria-label="View template documents" class="@NavClasses["Templates"]" @onclick="(() => GetNavClass(page, SearchFilters[4]))">
                             Templates
                         </a>
 
                         @if (User is not null)
                         {
                             var userName = User.Name;
-                            <a href="resources?RedirectQuery=My%20Uploads" class="@NavClasses["My Uploads"]" @onclick="(() => GetNavClass(page, SearchFilters[5]))">
+                            <a href="resources?RedirectQuery=My%20Uploads" aria-label="View your uploads" class="@NavClasses["My Uploads"]" @onclick="(() => GetNavClass(page, SearchFilters[5]))">
                                 My Uploads
                             </a>
                         }
@@ -275,7 +282,7 @@
                                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 card-hover">
                                         <div class="flex items-start justify-between mb-4">
                                             <div class="document-icon">
-                                                <img src="@($"/Icons/{type}.png")" height="35%" width="25%" />
+                                                <img alt="@type icon" src="@($"/Icons/{type}.png")" height="35%" width="25%" />
                                             </div>
                                             <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">@Doc.Category</span>
                                         </div>
@@ -473,7 +480,7 @@
                                         @if (ImageFile is null)
                                         {
                                             <label for="fileUpload2" class="cursor-pointer text-green-900">
-                                                <div class="bg-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                <div class="bg-gray-300 px-6 mt-3 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
                                                     <i class="fas fa-folder-open"></i>
                                                     <span>Upload Image</span>
                                                 </div>
@@ -486,7 +493,7 @@
                                             if (!ProblemWBlogImage)
                                             {
                                                 <label for="fileUpload3" class="cursor-pointer text-green-900">
-                                                    <div class="bg-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
+                                                    <div class="bg-gray-300 px-6 mt-3 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
                                                         <i class="fas fa-folder-open"></i>
                                                         <span>@ImageFile.Name</span>
                                                         <button type="button" class="p-2 rounded hover:bg-gray-500" @onclick="DeleteImageUpload">
@@ -651,7 +658,7 @@
                         </div>
 
                         <div class="mt-6 pt-6 border-t">
-                            <a href="/blog-space" class="text-green-900 hover:text-secondary font-medium flex items-center justify-center space-x-2">
+                            <a href="/blog-space" aria-label="View all blog posts" class="text-green-900 hover:text-secondary font-medium flex items-center justify-center space-x-2">
                                 <span>View All Blog Posts</span>
                                 <i class="fas fa-arrow-right"></i>
                             </a>
@@ -774,14 +781,15 @@
         BlogCategories = await context.BlogCategory.OrderByDescending(bc => bc.Name).ToListAsync();
         User = await ApplicationUserService.GetApplicationUser();
         if (User is not null){
-            var AuthUserRoles = await UserManager.GetUsersInRoleAsync("PamojaMember");
-            if (AuthUserRoles is not null && AuthUserRoles.Any()){
+            var AuthUsers = await UserManager.GetUsersInRoleAsync("PamojaMember");
+            if (AuthUsers is not null && AuthUsers.Any() && AuthUsers.FirstOrDefault(u => u.Id == User.Id) != null){
                 Authorized = true;
             }
             else{
                 Authorized = false;
             }
         }
+        
         StateHasChanged();
     }
     protected override async Task OnParametersSetAsync()
@@ -790,6 +798,7 @@
         Documents?.Clear();
         loadingBlogs = true;
         loadingDocs = true;
+
         if (!string.IsNullOrWhiteSpace(RedirectQuery))
         {
             await Redirect();
@@ -1287,32 +1296,15 @@
             {
                 blogPost.AuthorImageContentType = User.ImageContentType;
             }
-            var Facebook = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Facebook");
-            var X = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "X");
-            var Instagram = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Instagram");
-            var LinkedIn = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "LinkedIn");
-            var Github = context.SocialMediaLink.FirstOrDefault(s => s.UserId == User.Id && s.Platform == "Github");
-
-            if (Facebook is not null && !string.IsNullOrWhiteSpace(Facebook.Url))
+            var socialMediaLinks = await context.SocialMediaLink.Where(l => l.UserId == User.Id).ToListAsync();
+            var links = new List<string>();
+            if (socialMediaLinks is not null && socialMediaLinks.Any())
             {
-                Facebook.BlogPostIds.Add(blogPost.Id);
-                blogPost.AuthorSocialMediaIds.Add(Facebook.Id);
-            }
-            if (Instagram is not null && !string.IsNullOrWhiteSpace(Instagram.Url))
-            {
-                Instagram.BlogPostIds.Add(blogPost.Id); ;
-            }
-            if (X is not null && !string.IsNullOrWhiteSpace(X.Url))
-            {
-                X.BlogPostIds.Add(blogPost.Id);
-            }
-            if (Github is not null && !string.IsNullOrWhiteSpace(Github.Url))
-            {
-                Github.BlogPostIds.Add(blogPost.Id);
-            }
-            if (LinkedIn is not null && !string.IsNullOrWhiteSpace(LinkedIn.Url))
-            {
-                LinkedIn.BlogPostIds.Add(blogPost.Id);
+                foreach (var link in socialMediaLinks)
+                {
+                    links.Add(link.Id);
+                    blogPost.AuthorSocialMediaIds.Add(link.Id);
+                }
             }
 
             var category = BlogCategories.FirstOrDefault(c => c.Name == blogPostDTO.Category);

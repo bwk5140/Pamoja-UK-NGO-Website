@@ -22,7 +22,14 @@ namespace PamojaWebsite.Services
             using var scope = _serviceProvider.CreateScope();
             UserManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             claimsPrincipal = GetUser();
-            ApplicationUser = await UserManager.GetUserAsync(claimsPrincipal);
+            if (claimsPrincipal is not null)
+            {
+                ApplicationUser = await UserManager.GetUserAsync(claimsPrincipal);
+            }
+            else
+            {
+                ApplicationUser = null;
+            }
         }
         private ClaimsPrincipal GetUser()
         {

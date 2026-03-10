@@ -2,15 +2,20 @@
 
 <PageTitle>Payment | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+<!--Scripts-->
+<head>
+    <script src="payment.min.js" defer></script>
+    <script defer src="https://js.stripe.com/v3/"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
-</script>
+        gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+    </script>
+</head>
 
 @inject IJSRuntime JS
 @inject MyApiService ApiService
@@ -236,7 +241,7 @@
         if (firstRender)
         {
             // Import the module once
-            paymentModule = await JS.InvokeAsync<IJSObjectReference>("import", "/payment.js");
+            paymentModule = await JS.InvokeAsync<IJSObjectReference>("import", "/payment.min.js");
 
             // Initialize Stripe and keep the returned session reference
             stripeSession = await paymentModule.InvokeAsync<IJSObjectReference>(
