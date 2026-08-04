@@ -24,15 +24,31 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @rendermode InteractiveServer
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <div class="max-w-screen-sm mx-auto py-20">
         <div class="mt-5 text-center text-gray-600">
             <div class="mx-auto px-4">
@@ -46,9 +62,10 @@
                     <div class="p-4">
                         <div class="mt-2 mb-2 max-w-[1200px] border-l-8 border-r-2 border-t-2 border-b-2 border-green-600 bg-white rounded">
                             <div class="p-2 flex flex-col items-center gap-16">
-                                <img src="Icons/check-circle-fill.svg" alt="Info check circle icon" />
+                                <img fetchpriority="high"
+                                     loading="eager" src="Icons/check-circle-fill.svg" alt="Info check circle icon" />
                                 <span>Your payment was successful.</span>
-                                <p>Thank you for the donation! Confirmation will be sent to your email.</p>
+                                <p>Thank you! Confirmation will be sent to your email.</p>
 
                                 <!-- Appointment Details Card -->
                                 <div class="bg-white p-6 rounded-lg shadow-md">
@@ -60,7 +77,8 @@
                                         <div class="flex flex-col md:flex-row gap-8 justify-between">
                                             <!-- Logo -->
                                             <div class="mb-3 mt-3">
-                                                <img src="Images/PamojaLogo.png"
+                                                <img fetchpriority="high"
+                                                     loading="eager" src="Images/PamojaLogo.png"
                                                      width="200"
                                                      height="200"
                                                      alt="Pamoja logo" />
@@ -72,7 +90,7 @@
                                                     Consultation with Pamoja Mental Health and Safeguarding Team
                                                 </p>
                                                 <p class="text-lg text-gray-600 mb-6">
-                                                    1 hour
+                                                    20 minutes
                                                 </p>
 
                                                 @if (appointment is not null)

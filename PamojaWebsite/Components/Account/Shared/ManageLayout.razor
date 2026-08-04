@@ -2,14 +2,15 @@
 @layout PamojaWebsite.Components.Layout.MainLayout
 
 <div class="container-sm mx-auto  px-4 sm:px-6 lg:px-8 py-20">
-    <h2 class="text-3xl md:text-4xl font-bold text-green-800 mb-6">Change your account settings</h2>
-    <hr />
-    <div class="flex flex-row gap-16 mt-3">
-        <div>
-            <ManageNavMenu />
-        </div>
-        <div>
-            @Body
+    <div class="py-20">
+        <h2 class="text-3xl md:text-4xl font-bold text-green-800 mb-6">Change your account settings</h2>
+        <div class="flex md:flex-row flex-col md:gap-16 gap-2 mt-3">
+            <div>
+                <ManageNavMenu />
+            </div>
+            <div>
+                @Body
+            </div>
         </div>
     </div>
 </div>

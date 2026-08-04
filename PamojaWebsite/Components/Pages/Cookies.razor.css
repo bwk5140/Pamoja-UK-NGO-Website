@@ -1,0 +1,120 @@
+﻿.cookie-banner {
+    position: fixed;
+    bottom: 24px;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1f2937;
+    z-index: 9999;
+    border: 1px solid #e5e7eb;
+    box-sizing: border-box;
+}
+
+.cookie-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cookie-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4b5563;
+    margin: 0 0 20px 0;
+}
+.cookie-button {
+}
+
+.cookie-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .cookie-link:hover {
+        text-decoration: underline;
+    }
+
+.cookie-actions {
+    padding-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    background-color: #ffffff;
+}
+.btn {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Reject Button - Clean, low emphasis */
+.btn-reject {
+    background-color: transparent;
+    color: #4b5563;
+    border-color: #d1d5db;
+}
+
+    .btn-reject:hover {
+        background-color: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+/* Necessary Button - Medium emphasis */
+.btn-necessary {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+    .btn-necessary:hover {
+        background-color: #e5e7eb;
+    }
+
+/* Accept All Button - High emphasis (Primary) */
+.btn-accept {
+    background-color: #18181b;
+    color: #ffffff;
+    flex-grow: 2; /* Gives it a slight visual priority */
+}
+
+    .btn-accept:hover {
+        background-color: #27272a;
+    }
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .cookie-banner {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        max-width: 100%;
+        border-radius: 16px 16px 0 0;
+    }
+    .cookie-actions {
+        width:90vw;
+    }
+
+    .btn {
+        flex-basis: 45%;
+    }
+
+    .btn-accept {
+        flex-basis: 100%;
+        order: -1; /* Puts primary action on top for mobile thumb reach */
+    }
+}

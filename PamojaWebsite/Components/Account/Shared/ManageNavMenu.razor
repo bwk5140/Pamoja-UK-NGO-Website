@@ -2,62 +2,60 @@
 @using PamojaWebsite.Data
 
 @inject IStringLocalizer<SharedResource> Loc
-
 @inject SignInManager<ApplicationUser> SignInManager
 
-<div class="pt-[5%] mb-5 py-20">
-    <ul class="flex flex-col space-y-2">
-        <li>
-            <NavLink href="Account/Manage" Match="NavLinkMatch.All"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Username"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/Name"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Name"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/Email"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Email"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/Bio"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Bio"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/Mobile"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Mobile"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/SocialMedia"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["SocialMedia"]
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/ChangePassword"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                @Loc["Password"]
-            </NavLink>
-        </li>
-        @if (hasExternalLogins)
-        {
+<div class="py-20">
+    <div class="bg-white p-4 rounded shadow border border-gray-200 py-10">
+        <ul class="flex flex-col space-y-2">
+            <li>
+                <NavLink href="Account/Manage" Match="NavLinkMatch.All"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Username"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/Name"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Name"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/Email"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Email"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/Bio"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Bio"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/Mobile"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Mobile"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/SocialMedia"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["SocialMedia"]
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/ChangePassword"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    @Loc["Password"]
+                </NavLink>
+            </li>
             <li>
                 <NavLink href="Account/Manage/ExternalLogins"
                          class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
@@ -65,22 +63,22 @@
                     External logins
                 </NavLink>
             </li>
-        }
-        <li>
-            <NavLink href="Account/Manage/TwoFactorAuthentication"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                Two-factor authentication
-            </NavLink>
-        </li>
-        <li>
-            <NavLink href="Account/Manage/PersonalData"
-                     class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
-                     activeClass="bg-green-800 text-white">
-                Personal data
-            </NavLink>
-        </li>
-    </ul>
+            <li>
+                <NavLink href="Account/Manage/TwoFactorAuthentication"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    Two-factor authentication
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="Account/Manage/PersonalData"
+                         class="block px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-700"
+                         activeClass="bg-green-800 text-white">
+                    Personal data
+                </NavLink>
+            </li>
+        </ul>
+    </div>
 </div>
 
 @code {

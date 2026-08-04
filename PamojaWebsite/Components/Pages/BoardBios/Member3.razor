@@ -1,0 +1,121 @@
+﻿@page "/about-us/nadine-dennis"
+@rendermode InteractiveServer
+<PageTitle>Nadine Dennis | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+@inject NavigationManager NavigationManager
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
+
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
+</script>
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
+    <!-- Hero Section -->
+    <section class="relative py-20 mt-5 bg-orange-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Large blurred gradient blob -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-orange-600 to-yellow-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Smaller accent circle -->
+            <div class="absolute top-20 right-20 w-40 h-40 bg-orange-700 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-orange-800 opacity-40 transform rotate-12"></div>
+
+            <!-- Triangle using clip-path -->
+            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Nadine Dennis</h1>
+            </div>
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h2 class="text-2xl md:text-3xl mb-2 font-light">Board Member</h2>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Bio Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <nav class="flex items-center text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <!-- About Us -->
+                        <li class="inline-flex items-center">
+                            <a href="/about-us" aria-label="Navigate to about-us"
+                               class="inline-flex items-center text-red-700 hover:text-red-800 font-medium">
+                                About Us
+                            </a>
+                        </li>
+
+                        <!-- Separator -->
+                        <li>
+                            <div class="flex items-center">
+                                <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                                <a href="/about-us/nadine-dennis" aria-label="Navigate to current page"
+                                   class="ml-1 text-red-700 hover:text-red-800 font-medium font-bold">
+                                    Nadine Dennis
+                                </a>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                <!-- Right-aligned image with abstract shapes -->
+                <div class="relative flex justify-end py-20">
+                    <!-- Image itself -->
+                    <img fetchpriority="high"
+                         loading="eager" src="Images/Team/Nadine_Dennis.webp"
+                         alt="Nadine Dennis"
+                         class="relative z-10 w-96 h-96 md:w-72 rounded-lg object-cover object-top shadow-lg rounded-15" />
+                </div>
+                <p class="text-s text-gray-900 mb-3">
+                    Nadine Larissa Dennis is a senior product and operations executive at Netflix, where she serves as Senior Director of Product Discovery & Promotion for the United States and Canada 
+                    (UCAN) region overseeing a department of 100 employees. She leads large-scale initiatives that enhance how members discover content, overseeing cross-functional teams responsible 
+                    for launching and optimizing the presentation of films, series, and live events on one of the world’s largest streaming platforms.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    With more than two decades of experience spanning media, technology, and digital operations, Nadine has built a reputation for driving operational excellence, leading organizational 
+                    transformation, and developing scalable processes that enable innovation at global scale. Her expertise includes product operations, content strategy, workflow optimization, digital 
+                    asset management, and cross-functional leadership.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    Before building her career in the technology and entertainment industry, Nadine attended law school in Cologne, Germany, providing her with a strong analytical and problem-solving 
+                    foundation that continues to influence her strategic approach to leadership.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    Throughout her career, Nadine has been recognized for her collaborative leadership style, ability to lead complex global initiatives, and passion for building high-performing teams 
+                    that deliver exceptional member experiences.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>

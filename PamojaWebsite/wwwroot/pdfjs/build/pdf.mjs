@@ -7124,7 +7124,7 @@ class FontLoader {
     }
     data = spliceString(data, CFF_CHECKSUM_OFFSET, 4, string32(checksum));
     const url = `url(data:font/opentype;base64,${btoa(data)});`;
-    const rule = `@font-face {font-family:"${loadTestFontId}";src:${url}}`;
+      const rule = `@font-face {font-family:"${loadTestFontId}";src:${url};font-display:swap}`;
     this.insertRule(rule);
     const div = this._document.createElement("div");
     div.style.visibility = "hidden";
@@ -7183,13 +7183,13 @@ class FontFaceObject {
     const url = `url(data:${this.mimetype};base64,${toBase64Util(this.data)});`;
     let rule;
     if (!this.cssFontInfo) {
-      rule = `@font-face {font-family:"${this.loadedName}";src:${url}}`;
+        rule = `@font-face {font-family:"${this.loadedName}";src:${url};font-display:swap;font-display:swap}`;
     } else {
       let css = `font-weight: ${this.cssFontInfo.fontWeight};`;
       if (this.cssFontInfo.italicAngle) {
         css += `font-style: oblique ${this.cssFontInfo.italicAngle}deg;`;
       }
-      rule = `@font-face {font-family:"${this.cssFontInfo.fontFamily}";${css}src:${url}}`;
+        rule = `@font-face {font-family:"${this.cssFontInfo.fontFamily}";${css}src:${url};font-display:swap;font-display:swap}`;
     }
     this._inspectFont?.(this, url);
     return rule;

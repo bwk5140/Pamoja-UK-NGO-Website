@@ -5,11 +5,27 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IStringLocalizer<SharedResource> Loc
@@ -22,20 +38,23 @@
     <link rel="stylesheet" href="tailwind.css" />
 </head>
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="pt-[4%] mb-5 py-20 w-full">
     <div class="container-xxxl" style="font-family: Calibri;">
         <!-- Hero Section -->
         <section class="relative bg-gradient-to-r from-primary to-secondary text-black overflow-hidden">
             <div class="video-container">
-                <video id="myVideo" autoplay
+                <video id="myVideo"
+                       autoplay
                        muted
                        loop
                        playsinline
+                       preload="auto"
                        fetchpriority="high"
                        class="background-video"
-                       poster="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132789/Elephant_xh8lbk.png">
-                    <source src="https://res.cloudinary.com/dzmfpxcwu/video/upload/v1771132610/NewArt_pppr3b.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
+                       poster="Images/Art/Elephant.webp">
+
+                    <!-- The actual video file path -->
+                    <source src="https://res.cloudinary.com/dzmfpxcwu/video/upload/v1771132610/NewArt_pppr3b.mp4" type="video/mp4" />
                 </video>
                 <div class="overlay">
                     <h1>Break the stigma, expand access, transform lives.</h1>
@@ -70,7 +89,8 @@
                         </div>
                     </div>
                     <div class="md:w-1/2">
-                        <img src="Images/PamojaLogo.png"
+                        <img fetchpriority="high"
+                             loading="eager" src="Images/PamojaLogo.webp"
                              class="h-96 w-96" 
                              alt="Pamoja logo"/>
                     </div>
@@ -80,8 +100,8 @@
         <!--Mission/Vision Section-->
         <section class="p-20 rounded bg-gradient-to-tr from-red-300 to-yellow-400">
             <div class="center-container flex flex-col md:flex-row">
-                <div class="bg-red-800 bg-yellow-100 p-5 w-104 sm:96 md:96 mt-5 rounded-xl">
-                    <h2 class="py-6 mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-50" style="font-size: xx-large;">
+                <div class="bg-red-800 bg-yellow-100 p-5 sm:max-w-96 md:w-104 sm:80 md:96 mt-5 rounded-xl">
+                    <h2 class="py-6 mb-2 mt-3 text-3xl font-bold text-red-800 text-yellow-600 text-center underline underline-offset-8 decoration-2">
                         Our Mission
                     </h2>
                     <p>
@@ -92,12 +112,13 @@
                     </p>
                 </div>
                 <div>
-                    <img src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132572/diverse-hands_sk2rvw.png"
+                    <img fetchpriority="high"
+                         loading="eager" src="Images/Art/diverse-hands.webp"
                          class="h-80 w-full hidden sm:block" 
                          alt="Diverse hands"/>
                 </div>
-                <div class="bg-red-800 bg-yellow-100 p-5 w-104 sm:96 md:96 mt-5 rounded-xl">
-                    <h2 class="py-6 mb-2 mt-3 text-red-800 text-yellow-600 underline underline-offset-8 text-center decoration-40" style="font-size: xx-large;">
+                <div class="bg-red-800 bg-yellow-100 p-5 sm:max-w-96 md:w-104 sm:80 md:96 mt-5 rounded-xl">
+                    <h2 class="py-6 mb-2 mt-3 text-3xl font-bold text-red-800 text-yellow-600 text-center underline underline-offset-8 decoration-2">
                         Our Vision
                     </h2>
                     <p>
@@ -112,7 +133,7 @@
         <!-- Values Section-->
         <section class="py-20 bg-gray-100">
             <div class="container mx-auto px-6">
-                <div class="max-w-7xl mx-auto">
+                <div class="max-w-7xl mx-auto bg-white rounded py-10">
                     <!-- Header -->
                     <h2 class="text-4xl font-bold text-green-900 text-center mb-2">Our Values</h2>
 
@@ -121,19 +142,19 @@
                         <!-- Integrity -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Integrity icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <circle cx="110" cy="110" r="90" fill="none" stroke="#ff8500" stroke-width="14" opacity="0.65" />
                                     <circle cx="110" cy="110" r="60" fill="#2E7D32" />
                                 </svg>
                                 <figcaption class="font-semibold text-base">Integrity</figcaption>
-                                <p class="mt-1 text-md text-gray-600">Acting with honesty, transparency, and accountability in everything we do</p>
+                                <p class="mt-1 text-md text-gray-600 sm:px-10">Acting with honesty, transparency, and accountability in everything we do</p>
                             </figure>
                         </div>
 
                         <!-- Respect & Dignity -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Respect & Dignity icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <polygon points="110,30 190,180 30,180" fill="#ff8500" />
                                 </svg>
                                 <figcaption class="font-semibold text-base">Respect &amp; Dignity</figcaption>
@@ -144,7 +165,7 @@
                         <!-- Safety & Protection -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Safety & Protection icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <polygon points="110,30 170,65 170,135 110,170 50,135 50,65" fill="#2E7D32" />
                                 </svg>
                                 <figcaption class="font-semibold text-base">Safety &amp; Protection</figcaption>
@@ -155,7 +176,7 @@
                         <!-- Community & Collaboration -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Community & Collaboration icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <path d="M110,40 c-30,0 -55,25 -55,55 c0,35 30,55 55,70 c25,15 55,25 65,45"
                                           fill="none" stroke="#2E7D32" stroke-width="10" />
                                     <path d="M110,40 c30,0 55,25 55,55 c0,35 -30,55 -55,70 c-25,15 -55,25 -65,45"
@@ -169,7 +190,7 @@
                         <!-- Empowerment -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Empowerment & Prevention icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <path d="M110,35 L125,80 L170,85 L135,110 L150,155 L110,130 L70,155 L85,110 L50,85 L95,80 Z"
                                           fill="#2E7D32" />
                                 </svg>
@@ -181,7 +202,7 @@
                         <!-- Empathy & Care -->
                         <div>
                             <figure class="m-0">
-                                <svg viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
+                                <svg aria-label="Empathy & Care icon" viewBox="0 0 220 220" role="img" class="mx-auto transform scale-50">
                                     <path d="M20,130 C60,90 90,170 130,130 C160,100 185,115 200,105 L200,180 L20,180 Z"
                                           fill="#ff8500" />
                                 </svg>
@@ -198,52 +219,23 @@
             <h2 class="text-4xl font-bold text-green-900 text-center mb-5">Our Services</h2>
         </div>
 
-        <div class="py-20 bg-gray-100">
+        <div class="py-20 bg-white">
             <div class="container mx-auto px-4">
                 <div class="mx-auto max-w-screen-xl">
                     <div class="grid grid-rows-3 gap-8">
-
                         <!-- Service 1 -->
-                        <section class="relative text-white py-12 px-4 sm:px-6 lg:px-8">
-                            <div class="absolute inset-0">
-                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133072/Service1_cz0qqe.png"
-                                     alt="Pamoja Workshops"
-                                     class="object-cover object-top w-full h-full" />
-                            </div>
-
-                            <div class="prose prose-lg relative opacity-90 px-4 font-sans max-w-full">
-                                <div class="text-md mt-5 font-bold mb-2 max-w-md bg-white bg-opacity-10 p-4 rounded hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                                    <h3 class="text-l text-black mb-4 font-semibold">Pamoja Workshops</h3>
-                                    <ul class="space-y-2 font-light text-black">
-                                        <li>• First Aid for Mental Health</li>
-                                        <li>• Safeguarding & Policy Integration</li>
-                                        <li>• Trauma Informed Practice</li>
-                                        <li>• Forensic Mental Health Care</li>
-                                        <li>• Neurodiversity and Identity</li>
-                                    </ul>
-                                    <button type="button"
-                                            class="mt-3 btn bg-gray-700 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
-                                            @onclick="ScrollToTarget">
-                                        Get Started
-                                        <i data-feather="arrow-right" class="ml-2"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Service 2 -->
                         <section class="relative bg-green-900 text-white py-6 px-4 sm:px-6 lg:px-8">
                             <div class="absolute inset-0">
-                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133073/Service2_lfjnqs.png"
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771133073/Service2_lfjnqs.png"
                                      alt="Well Being"
                                      class="object-cover object-top w-full h-full" />
                             </div>
 
                             <div class="flex justify-end">
                                 <div class="prose prose-lg relative opacity-90 font-sans max-w-full">
-                                    <div class="text-md mt-5 font-bold mb-2 max-w-md bg-white bg-opacity-10 p-4 rounded shadow hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 text-right">
-                                        <h3 class="text-l text-white font-semibold mb-4">Well Being</h3>
-                                        <ul class="space-y-2 font-light text-white">
+                                    <div class="text-md mt-5 font-bold mb-2 max-w-md bg-gray-600 bg-opacity-90 p-4 rounded shadow shadow-2xl transition-all duration-300 transform hover:-translate-y-2 text-right">
+                                        <h3 class="text-l text-gray-200 text-opacity-90 font-semibold mb-4">Well Being</h3>
+                                        <ul class="space-y-2 font-light text-gray-200 text-opacity-90">
                                             <li>• Burn Out Prevention & Self-care</li>
                                             <li>• Clinical Supervision</li>
                                             <li>• Team Building</li>
@@ -261,30 +253,59 @@
                             </div>
                         </section>
 
-                        <!-- Service 3 -->
-                        <section class="relative text-white py-6 px-4 sm:px-6 lg:px-8">
+                        <!-- Service 2 -->
+                        <section class="relative text-white py-12 px-4 sm:px-6 lg:px-8">
                             <div class="absolute inset-0">
-                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133076/Service3_tjms9b.png"
-                                     alt="Awareness & Prevention"
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771133072/Service1_cz0qqe.png"
+                                     alt="Pamoja Workshops"
                                      class="object-cover object-top w-full h-full" />
                             </div>
 
                             <div class="prose prose-lg relative opacity-90 px-4 font-sans max-w-full">
-                                <div class="text-md mt-5 font-bold mb-2 max-w-md bg-white bg-opacity-10 p-4 rounded shadow hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                                    <h3 class="text-l text-white font-semibold mb-4">Awareness & Prevention</h3>
-                                    <ul class="text-md font-light space-y-2 text-white">
-                                        <li>• Wellbeing Assessment & Tembea Plan</li>
-                                        <li>• Challenging Stigma</li>
-                                        <li>• Suicide Prevention</li>
-                                        <li>• Recognizing Trauma</li>
-                                        <li>• Substance misuse support</li>
+                                <div class="text-md mt-5 font-bold mb-2 max-w-md bg-gray-700 bg-opacity-90 p-4 rounded shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                                    <h3 class="text-l text-gray-300 text-opacity-90 mb-4 font-semibold">Pamoja Workshops</h3>
+                                    <ul class="space-y-2 font-light text-gray-300 text-opacity-90 ">
+                                        <li>• First Aid for Mental Health</li>
+                                        <li>• Safeguarding & Policy Integration</li>
+                                        <li>• Trauma Informed Practice</li>
+                                        <li>• Forensic Mental Health Care</li>
+                                        <li>• Neurodiversity and Identity</li>
                                     </ul>
                                     <button type="button"
-                                            class="mt-3 btn bg-gray-700 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                                            class="mt-3 btn bg-gray-500 hover:bg-green-900 text-white shadow-2xl font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
                                             @onclick="ScrollToTarget">
                                         Get Started
                                         <i data-feather="arrow-right" class="ml-2"></i>
                                     </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Service 3 -->
+                        <section class="relative text-white py-6 px-4 sm:px-6 lg:px-8">
+                            <div class="absolute inset-0">
+                                <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771133076/Service3_tjms9b.png"
+                                     alt="Awareness & Prevention"
+                                     class="object-cover object-top w-full h-full" />
+                            </div>
+                            <div class="flex justify-end">
+                                <div class="prose prose-lg relative opacity-90 px-4 font-sans max-w-full">
+                                    <div class="text-md mt-5 font-bold mb-2 max-w-md bg-gray-600 bg-opacity-90 p-4 rounded shadow shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                                        <h3 class="text-l text-gray-200 text-opacity-90 font-semibold mb-4">Awareness & Prevention</h3>
+                                        <ul class="text-md font-light space-y-2 text-gray-200 text-opacity-90">
+                                            <li>• Wellbeing Assessment & Tembea Plan</li>
+                                            <li>• Challenging Stigma</li>
+                                            <li>• Suicide Prevention</li>
+                                            <li>• Recognizing Trauma</li>
+                                            <li>• Substance misuse support</li>
+                                        </ul>
+                                        <button type="button"
+                                                class="mt-3 btn bg-gray-700 hover:bg-green-900 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-flex items-center"
+                                                @onclick="ScrollToTarget">
+                                            Get Started
+                                            <i data-feather="arrow-right" class="ml-2"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </section>

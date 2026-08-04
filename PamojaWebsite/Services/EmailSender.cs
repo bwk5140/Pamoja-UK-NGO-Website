@@ -11,20 +11,27 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace PamojaWebsite.Services
 {
-    public class EmailSender(ILogger<EmailSender> logger, IConfiguration configuration, IStringLocalizer<SharedResource> Loc) : IEmailSender<ApplicationUser>
+    public class EmailSender : IEmailSender<ApplicationUser>
     {
+        private readonly IConfiguration _configuration;
         private readonly string smtpServer = "smtp.gmail.com";
         private readonly int smtpPort = 587;
+        private readonly IStringLocalizer<SharedResource> _loc;
         bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink)
+        public EmailSender(ILogger<EmailSender> logger, IConfiguration configuration, IStringLocalizer<SharedResource> Loc)
+        {
+            _configuration = configuration;
+            _loc = Loc;
+        }
+        public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink)
         => SendLinkEmailAsync(email, "Confirm your email by ", confirmationLink);
 
-        Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
+        public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
         => SendPasswordResetCodeEmailAsync(email, "pamojamentalhealth@pamojasafeguarding.com", "Reset your password", resetCode);
 
-        Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
+        public Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
         => SendPasswordResetEmailAsync(email, "pamojamentalhealth@pamojasafeguarding.com", "Reset your password",
                resetLink);
 
@@ -61,7 +68,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -77,9 +84,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -90,7 +97,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
 
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", "pamojamentalhealth@pamojasafeguarding.com"));
@@ -155,7 +162,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -171,9 +178,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -184,7 +191,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", "pamojamentalhealth@pamojasafeguarding.com"));
             Message.To.Add(new MailboxAddress("", toEmail));
@@ -248,7 +255,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -264,9 +271,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -277,7 +284,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", fromEmail));
             Message.To.Add(new MailboxAddress("", toEmail));
@@ -342,7 +349,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -358,9 +365,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -371,7 +378,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", "pamojamentalhealth@pamojasafeguarding.com"));
             Message.To.Add(new MailboxAddress("", toEmail));
@@ -435,7 +442,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -451,9 +458,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -464,7 +471,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", fromEmail));
             Message.To.Add(new MailboxAddress("", toEmail));
@@ -529,7 +536,7 @@ namespace PamojaWebsite.Services
                                    style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                     </td>
                                 </tr>
@@ -543,9 +550,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {1}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" 
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" 
                                              width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
@@ -556,7 +563,7 @@ namespace PamojaWebsite.Services
             </body>
             </html>",
             message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
             var Message = new MimeMessage();
             Message.From.Add(new MailboxAddress("Pamoja Counselling, Mental Wellbeing & Safeguarding Services", fromEmail));
             Message.To.Add(new MailboxAddress("", toEmail));

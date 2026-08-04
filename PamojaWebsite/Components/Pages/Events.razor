@@ -5,19 +5,35 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @rendermode InteractiveServer
-<div class="container-xxxl pt-[5%] mb-5 py-20 mt-5">
+<div class="container-xxxl sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <!-- Banner Section -->
     <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="absolute inset-0">
-            <img alt="Banner image" class="relative object-cover object-top md:w-full md:h-64 sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
+            <img loading="lazy" alt="Banner image" class="relative object-cover object-top md:w-full md:h-64 sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
         </div>
 
         <!-- Content -->
@@ -34,8 +50,8 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12" style="justify-content: space-between;">
                 <div class="bg-white shadow">
                     <a href="/events/mental-health-and-suicide-awareness" aria-label="Navigate to mental-health-and-suicide-awareness">
-                        <img class="h-80 w-full"
-                             src="Images/Events/CEO_KTN.png" 
+                        <img fetchpriority="high" loading="eager" class="h-80 w-full"
+                             src="Images/Events/CEO_KTN.webp"
                              alt="mental-health-and-suicide-awareness"/>
                     </a>
                     <a class="center-container py-10" href="/events/mental-health-and-suicide-awareness" aria-label="Navigate to mental-health-and-suicide-awareness" style="font-size: x-large;">
@@ -44,7 +60,7 @@
                 </div>
                 <div class="bg-white shadow">
                     <a href="/events/mental-health-and-safeguarding-webinar" aria-label="Navigate to mental-health-and-safeguarding-webinar">
-                        <img class="h-80 w-full object-cover object-top"
+                        <img loading="lazy" class="h-80 w-full object-cover object-top"
                              src="Images/Events/Webinar.webp" 
                              alt="mental-health-and-safeguarding-webinar"/>
                     </a>
@@ -54,12 +70,22 @@
                 </div>
                 <div class="bg-white shadow">
                     <a href="/events/c-e-o-faith-henton-interview-with-kbc" aria-label="Navigate to c-e-o-faith-henton-interview-with-kbc">
-                        <img class="h-80 w-full"
+                        <img loading="lazy" class="h-80 w-full"
                              src="Images/Events/CEO_KBC.webp" 
                              alt="c-e-o-faith-henton-interview-with-kbc"/>
                     </a>
                     <a class="center-container py-10" aria-label="Navigate to c-e-o-faith-henton-interview-with-kbc" href="/events/c-e-o-faith-henton-interview-with-kbc" style="font-size: x-large;">
                         C.E.O Faith Henton Interview with KBC
+                    </a>
+                </div>
+                <div class="bg-white shadow">
+                    <a href="/events/partnership-with-women-in-pr-and-media" aria-label="Navigate to partnership-with-women-in-pr-and-media">
+                        <img loading="lazy" class="h-80 w-full"
+                             src="Images/Events/WomenInPR&Media.webp"
+                             alt="partnership-with-women-in-pr-and-media"/>
+                    </a>
+                    <a class="center-container py-10" aria-label="Navigate to partnership-with-women-in-pr-and-media" href="/events/partnership-with-women-in-pr-and-media" style="font-size: x-large;">
+                        Partnership with Women In PR & Media
                     </a>
                 </div>
             </div>

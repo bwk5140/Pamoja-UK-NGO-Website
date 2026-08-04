@@ -13,22 +13,38 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @rendermode InteractiveServer
 
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <div class="container-xxxl">
         <!-- Banner Section -->
         <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div class="absolute inset-0">
-                <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
+                <img loading="lazy" alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
             </div>
 
             <!-- Content -->
@@ -57,7 +73,7 @@
                             <!-- Separator -->
                             <li>
                                 <div class="flex items-center">
-                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
@@ -83,10 +99,10 @@
                 </p>
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h1 class="text-l font-bold text-center mt-4 mb-4">Book an Appointment</h1>
-                    <div class="bg-white p-6 rounded-lg shadow-md w-88">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full">
                         <div class="flex flex-col md:flex-row">
                             <div class="mb-3 mt-3">
-                                <img src="Images/PamojaLogo.png"
+                                <img loading="lazy" src="Images/PamojaLogo.webp"
                                      width="200"
                                      height="200" 
                                     alt="Pamoja logo"/>
@@ -101,68 +117,82 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88 border border-gray-200">
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="w-full md:w-1/2 ">
-                                @if (SelectedDay is not null)
-                                {
-                                    <Calendar>
-                                        <DayTemplate Context="day">
-                                            @{
-                                                bool isSelected = SelectedDay.Date == day.Date;
-                                                bool isToday = day.Date.Date == DateTime.Today;
-                                            }
-                                            @if (day.IsInThisMonth && day.Date.DayOfWeek != DayOfWeek.Saturday && day.Date.DayOfWeek != DayOfWeek.Sunday)
+                    @if (dateProblem)
+                    {
+                        <div class="mt-2 mb-2 w-full text-red-700 border-l-4 border-red-700 bg-red-100">
+                            <div class="p-4 flex items-center space-x-2">
+                                <img fetchpriority="high"
+                                     loading="eager" src="icons/info-circle.svg" alt="Info circle icon" class="w-5 h-5" />
+                                <span class="text-sm">Bookings can only be done at least 1 day in advance and they should be for a weekday</span>
+                            </div>
+                        </div>
+                    }
+                    @if (!PaymentImplemented)
+                    {
+                        <div class="mt-2 mb-2 w-full text-green-700 border-l-4 border-green-700 bg-gray-100">
+                            <div class="p-4 flex items-center space-x-2">
+                                <img fetchpriority="high"
+                                     loading="eager" src="icons/info-circle.svg" alt="Info circle icon" class="w-5 h-5" />
+                                <span class="text-sm">Bookings will become available soon. Please bear with us as we work on making these services available.</span>
+                            </div>
+                        </div>
+                    }
+                    <div class="flex flex-col md:flex-row gap-8 py-10">
+                        <div class="w-full md:w-1/2 ">
+                            @if (SelectedDay is not null)
+                            {
+                                <Calendar>
+                                    <DayTemplate Context="day">
+                                        @{
+                                            bool isSelected = SelectedDay.Date == day.Date;
+                                            bool isToday = DateOnly.FromDateTime(day.Date) == DateOnly.FromDateTime(DateTime.Today);
+                                            var SelectedClass = isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-white" : "";
+                                            var TodayClass = isToday ? "bg-gradient-to-b from-green-100 to-green-200 text-gray-800" : "";
+                                        }
+                                        @if (day.IsInThisMonth && day.Date.DayOfWeek != DayOfWeek.Saturday && day.Date.DayOfWeek != DayOfWeek.Sunday)
+                                        {
+                                            if (day.Date >= DateTime.UtcNow && day.Date.Month >= DateTime.UtcNow.Month && day.Date.Year >= DateTime.UtcNow.Year)
                                             {
-                                                if (day.Date > DateTime.UtcNow && day.Date.Month >= DateTime.UtcNow.Month && day.Date.Year >= DateTime.UtcNow.Year)
-                                                {
-                                                    <button class="day p-2 md:p-4 cursor-pointer text-center
-                                                        @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-white" : "")
-                                                        @(isToday ? "bg-gradient-to-b from-green-100 to-green-200 text-gray-800" : "")"
-                                                            @onclick="(() => SelectDate(day, currentDay))">
-                                                        @day.Day
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
-                                                        @day.Day
-                                                    </button>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <button class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
+                                                <button disabled class="day p-2 md:p-4 cursor-pointer text-center @SelectedClass @TodayClass"
+                                                        @onclick="(() => SelectDate(day, currentDay))">
                                                     @day.Day
                                                 </button>
                                             }
-                                        </DayTemplate>
-                                    </Calendar>
+                                            else
+                                            {
+                                                <button disabled class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
+                                                    @day.Day
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <button disabled class="day p-2 md:p-4" style="background-color: transparent; color:darkgrey;">
+                                                @day.Day
+                                            </button>
+                                        }
+                                    </DayTemplate>
+                                </Calendar>
 
-                                }
-                            </div>
-                            <div class="md:w-1/2 flex flex-col mx-auto">
-                                <p class="font-bold text-lg text-gray-800 mb-3">
-                                    @SelectedDay.Date.DayOfWeek, @getMonth(SelectedDay.Date.Month) @SelectedDay.Date.Day
-                                </p>
-                                <div class="grid grid-cols-3 gap-6">
-                                    @foreach (var time in TimeSlots)
-                                    {
-                                        bool isSelected = SelectedTime == time;
-                                        @* <button type="button" class="time-slot-btn p-2 @(SelectedTime == time ? "selected" : "")"
+                            }
+                        </div>
+                        <div class="md:w-1/2 flex flex-col mx-auto">
+                            <p class="font-bold text-lg text-gray-800 mb-3">
+                                @SelectedDay.Date.DayOfWeek, @getMonth(SelectedDay.Date.Month) @SelectedDay.Date.Day
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                @foreach (var time in TimeSlots)
+                                {
+                                    bool isSelected = SelectedTime == time;
+                                    <div class="">
+                                        <button disabled class="px-4 py-1 border border-gray-300 rounded-md bg-gray-100 text-nowrap cursor-pointer hover:bg-gray-200
+                                                            disabled:bg-gray-300 disabled:cursor-default
+                                                        @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-nowrap text-white border-blue-600" : "")"
                                                 @onclick="(() => SelectTime(time))">
                                             @time.ToString("hh:mm tt")
-                                        </button> *@
-                                        <div class="">
-                                            <button class="px-4 py-1 border border-gray-300 rounded-md bg-[#14532d] text-nowrap cursor-pointer hover:bg-[#58cca5]
-                                                        disabled:bg-gray-300 disabled:cursor-default
-                                                    @(isSelected ? "bg-gradient-to-b from-green-800 to-green-700 text-nowrap text-white border-blue-600" : "")"
-                                                    @onclick="(() => SelectTime(time))">
-                                                @time.ToString("hh:mm tt")
-                                            </button>
-                                        </div>
-                                    }
-                                </div>
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -180,6 +210,12 @@
     public string currentDay { get; set; }
 
     [Parameter]
+    public bool dateProblem { get; set; }
+
+    [Parameter]
+    public bool PaymentImplemented { get; set; }
+
+    [Parameter]
     public CalendarDay SelectedDay { get; set; }
 
     [Parameter]
@@ -188,11 +224,12 @@
 
     protected override void OnInitialized()
     {
+        PaymentImplemented = false;
         currentDay = "today";
         SelectedDay = new CalendarDay();
-        SelectedDay.Date = DateTime.UtcNow.AddDays(1);
-        var start = DateTime.Today.AddDays(1).AddHours(9);   // 9 AM
-        var end = DateTime.Today.AddDays(1).AddHours(17);    // 5 PM
+        SelectedDay.Date = DateTime.UtcNow;
+        var start = DateTime.Today.AddHours(9);   // 9 AM
+        var end = DateTime.Today.AddHours(17);    // 5 PM
         for (var t = start; t <= end; t = t.AddMinutes(20))
         {
             if (t.Hour == 17)
@@ -245,25 +282,36 @@
     }
     private async void SelectTime(DateTime time)
     {
-        SelectedTime = time;
-        Appointment appointment= new Appointment();
-        appointment.Date = time;
-        using var context = await DbFactory.CreateDbContextAsync();
-        appointment.Amount = 2900;
-        appointment.FirstName = "";
-        appointment.Date = SelectedDay.Date.ToUniversalTime();
-        appointment.Time = TimeOnly.FromDateTime(SelectedTime);
-        appointment.LastName = "";
-        appointment.Phone = "";
-        appointment.Email = "";
-        appointment.Message = "";
-        appointment.Calendar = "";
-        context.Appointment.Add(appointment);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo($"/services/book-appointment/details?Id={appointment.Id}");
+        if (SelectedDay.Date >= DateTime.UtcNow && SelectedDay.Date.Month >= DateTime.UtcNow.Month && SelectedDay.Date.Year >= DateTime.UtcNow.Year)
+        {
+            SelectedTime = time;
+            Appointment appointment = new Appointment();
+            appointment.Date = time;
+            using var context = await DbFactory.CreateDbContextAsync();
+            appointment.Amount = 2900;
+            appointment.FirstName = "";
+            appointment.Date = SelectedDay.Date.ToUniversalTime();
+            appointment.Time = TimeOnly.FromDateTime(SelectedTime);
+            appointment.LastName = "";
+            appointment.Phone = "";
+            appointment.Email = "";
+            appointment.Message = "";
+            appointment.Calendar = "";
+            context.Appointment.Add(appointment);
+            await context.SaveChangesAsync();
+            NavigationManager.NavigateTo($"/services/book-appointment/details?Id={appointment.Id}");
+        }
+        else
+        {
+            dateProblem = true;
+        }
     }
     private async Task SelectDate(CalendarDay selectedDate, String CurrentDay)
     {
+        if (selectedDate.Date >= DateTime.UtcNow && selectedDate.Date.Month >= DateTime.UtcNow.Month && selectedDate.Date.Year >= DateTime.UtcNow.Year)
+        {
+            dateProblem = false;
+        }
         SelectedDay = selectedDate;
         CurrentDay = "";
         StateHasChanged();

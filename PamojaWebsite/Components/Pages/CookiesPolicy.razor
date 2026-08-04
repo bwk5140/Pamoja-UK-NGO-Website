@@ -1,0 +1,377 @@
+﻿@using Radzen.Blazor
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject CookiesService CookiesService
+
+@implements IDisposable
+
+@rendermode InteractiveServer
+
+@if (CookiesService.PolicyIsVisible)
+{
+    <div class="w-full items-center flex justify-center mx-auto">
+        <div class="policy-cookie-banner top-1/2 flex flex-col overflow-hidden -translate-y-1/2">
+            <!-- Header (Fixed at top) -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-white shrink-0">
+                <h3 class="policy-cookie-title text-xl font-bold m-0">About your privacy</h3>
+                <button type="button"
+                        class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-800 transition-colors"
+                        @onclick="Close"
+                        aria-label="Close">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Scrollable Body (Takes remaining vertical space) -->
+            <div class="policy-cookie-scrollable flex-1 p-4">
+                <p class="policy-cookie-text pb-5">
+                    We use cookies to help you navigate efficiently and perform certain functions. You will find detailed information about all cookies under each consent category below.
+
+                    The cookies that are categorised as "Necessary" are stored on your browser as they are essential for enabling the basic functionalities of the site.
+
+                    We also use third-party cookies that help us analyse how you use this website, store your preferences, and provide the content and advertisements that are relevant to you. These cookies will only be stored in your browser with your prior consent.
+
+                    You can choose to enable or disable some or all of these cookies but disabling some of them may affect your browsing experience.
+                </p>
+                <h3 class="policy-cookie-title pb-5">Manage consent preferences</h3>
+                <div style="padding-right: 6px;">
+                    <!-- Table 1: Strictly Necessary -->
+                    <table class="mb-4" style="border-top: 0.5px solid #eee; border-collapse: collapse; width:100%;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="padding: 12px 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <button @onclick="ToggleStrictlyNecessary" style="padding: 0; background: none; border: none; cursor: pointer;">
+                                            <div style="display: inline-block; font-size: 1.5em; transform: @(StrictlyNecessaryToggleOpen ? "rotate(90deg)" : "none"); line-height: 1;">
+                                                ›
+                                            </div>
+                                        </button>
+                                        <span class="px-2">Strictly Necessary</span>
+                                    </div>
+                                </th>
+                                <th class="w-1/4" style="padding: 12px 8px; text-align: right;">
+                                    Always Active
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (StrictlyNecessaryToggleOpen)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="w-3/4 px-2" style="padding-bottom: 12px;">
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                            Necessary cookies are required to enable the basic features of this site,
+                                            such as providing secure log-in or adjusting your consent preferences.
+                                            These cookies do not store any personally identifiable data.
+                                        </p>
+                                    </td>
+                                    <td class="w-1/4"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Table 2: Functional -->
+                    <table class="mb-4" style="border-top: 0.5px solid #eee; border-bottom: 0.5px solid #eee; border-collapse: collapse; width:100%;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="padding: 12px 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <button @onclick="ToggleFunctional" style="padding: 0; background: none; border: none; cursor: pointer;">
+                                            <div style="display: inline-block; font-size: 1.5em; transform: @(FunctionalToggleOpen ? "rotate(90deg)" : "none"); line-height: 1;">
+                                                ›
+                                            </div>
+                                        </button>
+                                        <span class="px-2">Functional</span>
+                                    </div>
+                                </th>
+                                <th class="w-1/4" style="padding: 12px 8px; text-align: right;">
+                                    <label class="switch">
+                                        <input type="checkbox" @bind="FunctionalAccepted" />
+                                        <span class="slider round"></span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (FunctionalToggleOpen)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="w-3/4 px-2" style="padding-bottom: 12px;">
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                            Functional cookies help perform certain functionalities like sharing the content of the website
+                                            on social media platforms, collecting feedback, and other third-party features.
+                                        </p>
+                                    </td>
+                                    <td class="w-1/4"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Table 3: Analytics -->
+                    <table class="mb-4" style="border-bottom: 0.5px solid #eee; border-collapse: collapse; width:100%;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="padding: 12px 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <button @onclick="ToggleAnalytics" style="padding: 0; background: none; border: none; cursor: pointer;">
+                                            <div style="display: inline-block; font-size: 1.5em; transform: @(AnalyticsToggleOpen ? "rotate(90deg)" : "none"); line-height: 1;">
+                                                ›
+                                            </div>
+                                        </button>
+                                        <span class="px-2">Analytics</span>
+                                    </div>
+                                </th>
+                                <th class="w-1/4" style="padding: 12px 8px; text-align: right;">
+                                    <label class="switch">
+                                        <input type="checkbox" @bind="AnalyticsAccepted" />
+                                        <span class="slider round"></span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (AnalyticsToggleOpen)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="w-3/4 px-2" style="padding-bottom: 12px;">
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                            Analytical cookies are used to understand how visitors interact with the website.
+                                            These cookies help provide information on metrics such as the number of visitors, bounce rate, traffic source, etc.
+                                        </p>
+                                    </td>
+                                    <td class="w-1/4"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Table 4: Performance -->
+                    <table class="mb-4" style="border-bottom: 0.5px solid #eee; border-collapse: collapse; width:100%;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="padding: 12px 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <button @onclick="TogglePerformance" style="padding: 0; background: none; border: none; cursor: pointer;">
+                                            <div style="display: inline-block; font-size: 1.5em; transform: @(PerformanceToggleOpen ? "rotate(90deg)" : "none"); line-height: 1;">
+                                                ›
+                                            </div>
+                                        </button>
+                                        <span class="px-2">Performance</span>
+                                    </div>
+                                </th>
+                                <th class="w-1/4" style="padding: 12px 8px; text-align: right;">
+                                    <label class="switch">
+                                        <input type="checkbox" @bind="PerformanceAccepted" />
+                                        <span class="slider round"></span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (PerformanceToggleOpen)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="w-3/4 px-2" style="padding-bottom: 12px;">
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                            Performance cookies are used to understand and analyse the key performance indexes of the website
+                                            which helps in delivering a better user experience for the visitors.
+                                        </p>
+                                    </td>
+                                    <td class="w-1/4"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Table 5: Advertisement -->
+                    <table style="border-bottom: 0.5px solid #eee; border-collapse: collapse; width:100%;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="padding: 12px 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <button @onclick="ToggleAdvertisement" style="padding: 0; background: none; border: none; cursor: pointer;">
+                                            <div style="display: inline-block; font-size: 1.5em; transform: @(AdvertisementToggleOpen ? "rotate(90deg)" : "none"); line-height: 1;">
+                                                ›
+                                            </div>
+                                        </button>
+                                        <span class="px-2">Advertisement</span>
+                                    </div>
+                                </th>
+                                <th class="w-1/4" style="padding: 12px 8px; text-align: right;">
+                                    <label class="switch">
+                                        <input type="checkbox" @bind="AdvertisementAccepted" />
+                                        <span class="slider round"></span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (AdvertisementToggleOpen)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="w-3/4 px-2" style="padding-bottom: 12px;">
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                            Advertisement cookies are used to provide visitors with customised advertisements based on the pages you
+                                            visited previously and to analyse the effectiveness of the ad campaigns.
+                                        </p>
+                                    </td>
+                                    <td class="w-1/4"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Actions Container (Pinned to Bottom) -->
+            <div class="policy-cookie-actions">
+                <button class="btn btn-reject w-full sm:w-auto" @onclick="Decline">Reject All</button>
+                <button class="btn btn-necessary w-full sm:w-auto" @onclick="SavePreferences">Save My Preferences</button>
+                <button class="btn btn-accept w-full sm:w-auto" @onclick="Accept">Accept All</button>
+            </div>
+        </div>
+        <div class="darker-background">
+        </div>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter]
+    private Cookies? Cookies { get; set; }
+
+    [Parameter]
+    public bool StrictlyNecessaryToggleOpen { get; set; } = false;
+
+    [Parameter]
+    public bool FunctionalToggleOpen { get; set; } = false;
+
+
+    [Parameter]
+    public bool AnalyticsToggleOpen { get; set; } = false;
+
+
+    [Parameter]
+    public bool PerformanceToggleOpen { get; set; } = false;
+
+    [Parameter]
+    public bool AdvertisementToggleOpen { get; set; } = false;
+
+    [Parameter]
+    public bool FunctionalAccepted { get; set; } = false;
+
+    [Parameter]
+    public bool AnalyticsAccepted { get; set; } = false;
+
+
+    [Parameter]
+    public bool PerformanceAccepted { get; set; } = false;
+
+
+    [Parameter]
+    public bool AdvertisementAccepted { get; set; } = false;
+
+
+    protected override void OnInitialized()
+    {
+        CookiesService.OnStateChanged += HandleStateChanged;
+    }
+    private async void HandleStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    public void Dispose()
+    {
+        CookiesService.OnStateChanged -= StateHasChanged;
+    }
+
+    async Task Accept()
+    {
+        CookiesService.SetCookiePolicyBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+        await CookiesService.SetFunctionalConsent(true);
+        await CookiesService.SetAnalyticsConsent(true);
+        await CookiesService.SetPerformanceConsent(true);
+        await CookiesService.SetAdvertisementConsent(true);
+        FunctionalAccepted = CookiesService.FunctionalAccepted;
+        AnalyticsAccepted = CookiesService.AnalyticsAccepted;
+        PerformanceAccepted = CookiesService.PerformanceAccepted;
+        AdvertisementAccepted = CookiesService.AdvertisementAccepted;
+    }
+    async Task Decline()
+    {
+        CookiesService.SetCookiePolicyBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+        await CookiesService.SetFunctionalConsent(false);
+        await CookiesService.SetAnalyticsConsent(false);
+        await CookiesService.SetPerformanceConsent(false);
+        await CookiesService.SetAdvertisementConsent(false);
+        FunctionalAccepted = CookiesService.FunctionalAccepted;
+        AnalyticsAccepted = CookiesService.AnalyticsAccepted;
+        PerformanceAccepted = CookiesService.PerformanceAccepted;
+        AdvertisementAccepted = CookiesService.AdvertisementAccepted;
+    }
+    async Task SavePreferences()
+    {
+        CookiesService.SetCookiePolicyBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+        await CookiesService.SetFunctionalConsent(FunctionalAccepted);
+        await CookiesService.SetAnalyticsConsent(AnalyticsAccepted);
+        await CookiesService.SetPerformanceConsent(PerformanceAccepted);
+        await CookiesService.SetAdvertisementConsent(AdvertisementAccepted);
+        FunctionalAccepted = CookiesService.FunctionalAccepted;
+        AnalyticsAccepted = CookiesService.AnalyticsAccepted;
+        PerformanceAccepted = CookiesService.PerformanceAccepted;
+        AdvertisementAccepted = CookiesService.AdvertisementAccepted;
+    }
+
+    private async void Close()
+    {
+        CookiesService.SetCookiePolicyBannerVisibility(false);
+        if (CookiesService.functional_consent == null && CookiesService.analytics_consent == null && 
+            CookiesService.performance_consent == null && CookiesService.advertisement_consent == null)
+        {
+            CookiesService.SetCookieBannerVisibility(true);
+        }
+        else
+        {
+            CookiesService.SetCookieButtonVisibility(true);
+        }
+    }
+    public async void Show()
+    {
+        CookiesService.SetCookiePolicyBannerVisibility(true);
+        FunctionalAccepted = CookiesService.FunctionalAccepted;
+        AnalyticsAccepted = CookiesService.AnalyticsAccepted;
+        PerformanceAccepted = CookiesService.PerformanceAccepted;
+        AdvertisementAccepted = CookiesService.AdvertisementAccepted;
+    }
+    async Task ToggleStrictlyNecessary()
+    {
+        StrictlyNecessaryToggleOpen = !StrictlyNecessaryToggleOpen;
+    }
+    async Task ToggleFunctional()
+    {
+        FunctionalToggleOpen = !FunctionalToggleOpen;
+    }
+    async Task ToggleAnalytics()
+    {
+        AnalyticsToggleOpen = !AnalyticsToggleOpen;
+    }
+    async Task TogglePerformance()
+    {
+        PerformanceToggleOpen = !PerformanceToggleOpen;
+    }
+    async Task ToggleAdvertisement()
+    {
+        AdvertisementToggleOpen = !AdvertisementToggleOpen;
+    }
+}

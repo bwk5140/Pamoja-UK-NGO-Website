@@ -1,0 +1,111 @@
+﻿@inject IJSRuntime JSRuntime
+@inject CookiesService CookiesService
+@inject NavigationManager NavigationManager
+
+@implements IDisposable
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<CascadingValue Value="this" IsFixed="true">
+    <CookiesPolicy @ref="Policy" />
+</CascadingValue>
+
+@if (CookiesService.IsCookiesVisible)
+{
+    <body>
+        <div class="fixed bottom-4 left-4 z-50 w-full sm:w-1/4">
+            <div class="cookie-banner" true" data-bs-delay="5000">
+                <h3 class="cookie-title">🍪 Cookie Settings</h3>
+                <p class="cookie-text">
+                    We use cookies to optimize your experience, analyze site traffic, and serve personalized ads.
+                    You can select 'Accept All' to consent to these uses or, click on 'Manage preferences' to review your options and exercise your right to object to
+                    Legitimate Interest where used. You can change your selection or withdraw your consent under “Manage Preferences” at the bottom of this page.
+                </p>
+                <button @onclick="ShowCookiesPolicy" class="cookie-link">Manage preferences</button>
+                <div class="cookie-actions">
+                    <button class="btn btn-reject" @onclick="Decline">Reject All</button>
+                    <button class="btn btn-accept" @onclick="Accept">Accept All</button>
+                </div>
+            </div>
+        </div>
+    </body>
+}
+
+<body>
+    @{
+        var showCookieButtonClass = CookiesService.IsCookieButtonVisible ? "block" : "hidden";
+    }
+    <div class="fixed bottom-4 left-4 z-50 max-w-md shadow-2xl @showCookieButtonClass">
+        <button @onclick="ShowCookiesPolicy">
+            <img width="50" height="50" src="Images/Art/Cookies.svg" />
+            <!-- Image sourced from: https://www.vecteezy.com/vector-art/16516005-cookies-vector-icon-design, created by: Muhammad Usman (https://www.vecteezy.com/members/usmanabce) -->
+        </button>
+    </div>
+</body>
+
+@code {
+    private CookiesPolicy? Policy;
+
+    protected override void OnInitialized()
+    {
+        CookiesService.OnStateChanged += HandleStateChanged;
+    }
+    private async void HandleStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    public void Dispose()
+    {
+        CookiesService.OnStateChanged -= StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            var strictly_necessary = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "strickly_necessary");
+            if (strictly_necessary == null)
+            {
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "strickly_necessary", "true");
+            }
+        }
+        catch { }
+        await CookiesService.InitializeAsync();
+    }
+    async Task Accept()
+    {
+        CookiesService.SetCookieBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+        await CookiesService.SetFunctionalConsent(true);
+        await CookiesService.SetAnalyticsConsent(true);
+        await CookiesService.SetPerformanceConsent(true);
+        await CookiesService.SetAdvertisementConsent(true);
+    }
+    async Task Decline()
+    {
+        CookiesService.SetCookieBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+        await CookiesService.SetFunctionalConsent(false);
+        await CookiesService.SetAnalyticsConsent(false);
+        await CookiesService.SetPerformanceConsent(false);
+        await CookiesService.SetAdvertisementConsent(false);
+    }
+
+    public void Show()
+    {
+        CookiesService.SetCookieBannerVisibility(true);
+        CookiesService.SetCookieButtonVisibility(false);
+    }
+    public void Close()
+    {
+        CookiesService.SetCookieBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(true);
+    }
+    private async void ShowCookiesPolicy()
+    {
+        Policy?.Show();
+        CookiesService.SetCookieBannerVisibility(false);
+        CookiesService.SetCookieButtonVisibility(false);
+    }
+}

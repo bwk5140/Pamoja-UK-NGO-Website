@@ -12,74 +12,82 @@
 <PageTitle>Two-factor authentication (2FA)</PageTitle>
 
 
-<div class="pt-[5%] mb-5 py-20">
-    <StatusMessage />
-    <h3 class="font-bold text-gray-500 mb-2 mt-5">Two-factor authentication (2FA)</h3>
-    <hr/>
-    @if (canTrack)
-    {
-        if (is2faEnabled)
-        {
-            if (recoveryCodesLeft == 0)
+<div class="pt-[20%] mb-5 py-20 mt-5">
+    <div class="flex justify-center max-w-xl mx-auto">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-96 border border-gray-200">
+            <StatusMessage />
+            <h3 class="font-bold text-gray-500 mb-2 mt-5">Two-factor authentication (2FA)</h3>
+            <hr />
+            @if (canTrack)
             {
-                <div class="alert alert-danger">
-                    <strong>You have no recovery codes left.</strong>
-                    <p>You must <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                if (is2faEnabled)
+                {
+                    if (recoveryCodesLeft == 0)
+                    {
+                        <div class="alert alert-danger">
+                            <strong>You have no recovery codes left.</strong>
+                            <p>You must <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                        </div>
+                    }
+                    else if (recoveryCodesLeft == 1)
+                    {
+                        <div class="alert alert-danger">
+                            <strong>You have 1 recovery code left.</strong>
+                            <p>You can <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                        </div>
+                    }
+                    else if (recoveryCodesLeft <= 3)
+                    {
+                        <div class="alert alert-warning">
+                            <strong>You have @recoveryCodesLeft recovery codes left.</strong>
+                            <p>You should <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                        </div>
+                    }
+
+                    if (isMachineRemembered)
+                    {
+                        <form style="display: inline-block" @formname="forget-browser" @onsubmit="OnSubmitForgetBrowserAsync" method="post">
+                            <AntiforgeryToken />
+                            <button type="submit" class="w-full p-2 btn btn-primary me- text-white rounded3" style="background-color: #2f4f4f;
+                                                                                            border-color:transparent; border-radius: 5px;">
+                                Forget this browser
+                            </button>
+                        </form>
+                    }
+
+                    <a href="Account/Manage/Disable2fa" class="w-full p-2 btn btn-primary me-3 text-white rounded" style="background-color: #2f4f4f;
+                                                                    border-color:transparent; border-radius: 5px;">Disable 2FA</a>
+                    <a href="Account/Manage/GenerateRecoveryCodes" class="w-full p-2 btn btn-primary me-3 text-white rounded" style="background-color: #2f4f4f;
+                                                                    border-color:transparent; border-radius: 5px;">Reset recovery codes</a>
+                }
+
+                <h4 class="font-bold text-gray-500 mt-4 mb-2 mt-5">Authenticator app</h4>
+                @if (!hasAuthenticator)
+                {
+                    <a href="Account/Manage/EnableAuthenticator" class="w-full p-2 btn btn-primary text-white rounded" style="background-color: #2f4f4f;
+                                                                    border-color:transparent; border-radius: 5px;">Add authenticator app</a>
+                }
+                else
+                {
+                    <div class="mb-5">
+                        <a href="Account/Manage/EnableAuthenticator" class="w-full p-2 btn btn-primary me-2 text-white rounded" style="background-color: #2f4f4f;
+                                                                            border-color:transparent; border-radius: 5px;">Set up authenticator app</a>
+                    </div>
+                    <div class="mt-5">
+                        <a href="Account/Manage/ResetAuthenticator" class="w-full p-2 btn btn-primary" style="background-color: #2f4f4f;
+                                                                            border-color:transparent; border-radius: 5px;">Reset authenticator app</a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-danger mt-5">
+                    <strong>Privacy and cookie policy have not been accepted.</strong>
+                    <p>You must accept the policy before you can enable two factor authentication.</p>
                 </div>
             }
-            else if (recoveryCodesLeft == 1)
-            {
-                <div class="alert alert-danger">
-                    <strong>You have 1 recovery code left.</strong>
-                    <p>You can <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
-                </div>
-            }
-            else if (recoveryCodesLeft <= 3)
-            {
-                <div class="alert alert-warning">
-                    <strong>You have @recoveryCodesLeft recovery codes left.</strong>
-                    <p>You should <a href="Account/Manage/GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
-                </div>
-            }
-
-            if (isMachineRemembered)
-            {
-                <form style="display: inline-block" @formname="forget-browser" @onsubmit="OnSubmitForgetBrowserAsync" method="post">
-                    <AntiforgeryToken />
-                    <button type="submit" class="w-full p-2 btn btn-primary me- text-white rounded3" style="background-color: #2f4f4f;
-                                                                                border-color:transparent; border-radius: 5px;">
-                        Forget this browser
-                    </button>
-                </form>
-            }
-
-            <a href="Account/Manage/Disable2fa" class="w-full p-2 btn btn-primary me-3 text-white rounded" style="background-color: #2f4f4f;
-                                                            border-color:transparent; border-radius: 5px;">Disable 2FA</a>
-            <a href="Account/Manage/GenerateRecoveryCodes" class="w-full p-2 btn btn-primary me-3 text-white rounded" style="background-color: #2f4f4f;
-                                                            border-color:transparent; border-radius: 5px;">Reset recovery codes</a>
-        }
-
-        <h4 class="font-bold text-gray-500 mt-4 mb-2 mt-5">Authenticator app</h4>
-        @if (!hasAuthenticator)
-        {
-            <a href="Account/Manage/EnableAuthenticator" class="w-full p-2 btn btn-primary text-white rounded" style="background-color: #2f4f4f;
-                                                            border-color:transparent; border-radius: 5px;">Add authenticator app</a>
-        }
-        else
-        {
-            <a href="Account/Manage/EnableAuthenticator" class="w-full p-2 btn btn-primary me-2 text-white rounded" style="background-color: #2f4f4f;
-                                                            border-color:transparent; border-radius: 5px;">Set up authenticator app</a>
-            <a href="Account/Manage/ResetAuthenticator" class="w-full p-2 btn btn-primary" style="background-color: #2f4f4f;
-                                                            border-color:transparent; border-radius: 5px;">Reset authenticator app</a>
-        }
-    }
-    else
-    {
-        <div class="alert alert-danger mt-5">
-            <strong>Privacy and cookie policy have not been accepted.</strong>
-            <p>You must accept the policy before you can enable two factor authentication.</p>
         </div>
-    }
+    </div>
 </div>
 
 @code {

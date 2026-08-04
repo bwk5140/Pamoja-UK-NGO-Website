@@ -9,16 +9,33 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        function loadGA() {
+          if (window.gaLoaded) return;
+          window.gaLoaded = true;
 
-        gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+          var script = document.createElement('script');
+          script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+          script.async = true;
+          document.head.appendChild(script);
+
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+        }
+
+        // Fire when browser is idle or after first interaction
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => setTimeout(loadGA, 2000));
+        } else {
+          setTimeout(loadGA, 3000);
+        }
     </script>
 </head>
 
 @inject IJSRuntime JS
 @inject MyApiService ApiService
+@inject HttpClient HttpClient
 @inject IMemoryCache Cache
 @inject PayPalOptions PayPalOpts
 @inject EmailService EmailSender
@@ -27,7 +44,7 @@
 
 @rendermode InteractiveServer
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="pt-[4%] mb-5 py-20">
     <div class="sm:max-w-none md:max-w-5xl mx-auto py-10 px-6">
         <main class="container mx-auto px-4 py-12">
             <div class="sm:max-w-none md:max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -157,21 +174,6 @@
                 @(isProcessing ? "Processing" + "..." : "Pay")
             </button>
         </div>
-        @* @if (donation is not null)
-        {
-            <div class="mt-6 mx-auto" style="display:@(selected == PaymentMethod.PayPal ? "block" : "none")">
-                <script src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&currency=@donation.Currency"></script>
-                <div id="paypal-buttons" class="p-2"></div>
-            </div>
-        }
-        else
-        {
-            <div class="mt-6 mx-auto" style="display:@(selected == PaymentMethod.PayPal ? "block" : "none")">
-                <script src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&currency=@currency"></script>
-                <div id="paypal-buttons" class="p-2"></div>
-            </div>
-        } *@
-
         <div class="mt-6 space-y-4" style="display:@(selected == PaymentMethod.Mpesa ? "block" : "none")">
             <EditForm Model="payByMpesaDTO" OnValidSubmit="SendStkPush" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
                 <DataAnnotationsValidator />
@@ -267,10 +269,7 @@
         if (firstRender)
         {
             using var context = await DbFactory.CreateDbContextAsync();
-            var donations = await context.Donation.ToListAsync();
-            if (donations is not null){
-                donation = donations.FirstOrDefault(d => d.Id == Id);
-            }
+            var donation = await context.Donation.FirstOrDefaultAsync(d => d.Id == Id);
             if (donation is not null)
                 amountCents = (long)(donation.Amount * 100);
 
@@ -320,39 +319,34 @@
             Cache.TryGetValue("ClientAppointmentEmailSent", out var clientAppointmentEmailSent);
             if (clientAppointmentEmailSent is null)
             {
-                var EmailSent = await Cache.GetOrCreateAsync("ClientAppointmentEmailSent", async entry =>
+                var ClientEmailSent = await Cache.GetOrCreateAsync("ClientAppointmentEmailSent", async entry =>
                 {
                     entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
+                    var client_email_sent = true;
+                    return client_email_sent;
+                });
+                var ManagementEmailSent = await Cache.GetOrCreateAsync("ManagementAppointmentEmailSent", async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                    var management_email_sent = true;
+                    return management_email_sent;
                 });
                 await EmailSender.SendClientAppointmentEmailAsync(appointment);
-            }
-            Cache.TryGetValue("ManagementAppointmentEmailSent", out var managementAppointmentEmailSent);
-            if (clientAppointmentEmailSent is null)
-            {
-                var EmailSent = await Cache.GetOrCreateAsync("ManagementAppointmentEmailSent", async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
-                });
                 await EmailSender.SendManagementEmailAsync(appointment);
             }
             Cache.TryGetValue("ClientPaymentEmailSent", out var clientPaymentEmailSent);
             if (clientPaymentEmailSent is null)
             {
-                var EmailSent = await Cache.GetOrCreateAsync("ClientPaymentEmailSent", async entry =>
+                var ClientPaymentEmailSent = await Cache.GetOrCreateAsync("ClientPaymentEmailSent", async entry =>
                 {
                     entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
+                    var client_payment_email_sent = true;
+                    return client_payment_email_sent;
                 });
                 await EmailSender.SendClientPaymentEmailAsync(Payment);
             }
             NavigationManager.NavigateTo($"/payment-confirmation?Id={Payment.Id}&AptId={AptId}");
         }
-
         isProcessing = false;
 
     }
@@ -360,7 +354,7 @@
     async Task SendStkPush()
     {
         isProcessing = true;
-        var response = await (await ApiService.GetClient()).PostAsJsonAsync("/api/mpesa/stkpush", new { phone = mpesaPhone, amount = donation.Total });
+        var response = await HttpClient.PostAsJsonAsync("/api/mpesa/stkpush", new { phone = mpesaPhone, amount = donation.Total });
 
         if (response.IsSuccessStatusCode)
         {

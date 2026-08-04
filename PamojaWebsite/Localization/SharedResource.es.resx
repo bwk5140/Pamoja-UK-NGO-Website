@@ -169,7 +169,7 @@
     <value>Correo electrónico</value>
   </data>
   <data name="EmailOrUsername" xml:space="preserve">
-    <value>Ingrese su correo electrónico o nombre de usuario para continuar</value>
+    <value>Introduce tu correo electrónico o nombre de usuario para continuar.</value>
   </data>
   <data name="EnterEmail" xml:space="preserve">
     <value>Su dirección de correo electrónico, por favor</value>
@@ -445,5 +445,14 @@
   </data>
   <data name="SocialMedia" xml:space="preserve">
     <value>Redes Sociales</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Política de Privacidad</value>
+  </data>
+  <data name="AccessibilityStatement" xml:space="preserve">
+    <value>Declaración de Accesibilidad</value>
+  </data>
+  <data name="TermsofUse" xml:space="preserve">
+    <value>Condiciones de Uso</value>
   </data>
 </root>

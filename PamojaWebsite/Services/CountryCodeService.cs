@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PamojaWebsite.Data;
 using PamojaWebsite.Data.Contexts;
-using System;
-using System.Diagnostics.Metrics;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
+using System.Reflection.Metadata;
 
 namespace PamojaWebsite.Services
 {
@@ -23,23 +21,39 @@ namespace PamojaWebsite.Services
 
             var codes = await File.ReadAllLinesAsync(filePath);
             int i = 0;
+            int NorthAmericanCountries = 0;
             foreach (var code in codes.Where(c => !string.IsNullOrWhiteSpace(c)))
             {
                 CountryCode Code = new CountryCode();
-                if (!_context.CountryCode.Any(c => c.Code == code.Trim()))
+                if (string.Equals(code.Trim(), "1"))
                 {
-                    Code.Code = code.Trim();
-                    Code.Country = "";
-                    Code.ISOCode = "";
-                    _context.CountryCode.Add(Code);
-                    await _context.SaveChangesAsync();
-                    await ImportCountriesWithCodesAsync("wwwroot/Data/CountriesISOCodes.txt",
-                        Code, i);          
+                    if (NorthAmericanCountries <= 1)
+                    {
+                        Code.Code = code.Trim();
+                        Code.Country = "";
+                        Code.ISOCode = "";
+                        _context.CountryCode.Add(Code);
+                        await _context.SaveChangesAsync();
+                        await ImportCountriesWithCodesAsync("wwwroot/Data/CountriesISOCodes.txt",
+                            Code, i);
+                    }
+                    NorthAmericanCountries+=1;
+                }
+                else
+                {
+                    if (!_context.CountryCode.Any(c => c.Code == code.Trim()))
+                    {
+                        Code.Code = code.Trim();
+                        Code.Country = "";
+                        Code.ISOCode = "";
+                        _context.CountryCode.Add(Code);
+                        await _context.SaveChangesAsync();
+                        await ImportCountriesWithCodesAsync("wwwroot/Data/CountriesISOCodes.txt",
+                            Code, i);
+                    }
                 }
                 i++;
             }
-
-            
         }
         public async Task ImportCountriesWithCodesAsync(string filePath, CountryCode Code, int index)
         {
@@ -51,14 +65,11 @@ namespace PamojaWebsite.Services
             var ISOCode = split[0].Trim();
             if (!_context.CountryCode.Any(c => c.ISOCode == ISOCode))
             {
-                
                 Code.ISOCode = ISOCode;
                 await ImportCountries("wwwroot/Data/Countries.txt", Code, index);
-                    _context.Attach(Code!).State = EntityState.Modified;
+                _context.Attach(Code!).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            
-
         }
         public async Task ImportCountries(string filePath, CountryCode Code, int Index)
         {
@@ -74,8 +85,6 @@ namespace PamojaWebsite.Services
                 _context.Attach(Code!).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            
-
         }
 
     }

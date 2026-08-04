@@ -1,17 +1,33 @@
 ﻿@page "/about-us/brian-karimi"
-
+@rendermode InteractiveServer
 <PageTitle>Brian Karimi | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
-
+@inject NavigationManager NavigationManager
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <!-- Hero Section -->
     <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <!-- Decorative background shapes -->
@@ -60,7 +76,7 @@
                         <!-- Separator -->
                         <li>
                             <div class="flex items-center">
-                                <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                           d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                           clip-rule="evenodd" />
@@ -76,7 +92,8 @@
                 <!-- Right-aligned image with abstract shapes -->
                 <div class="relative flex justify-end py-20">
                     <!-- Image itself -->
-                    <img src="Images/Team/BK.jpg"
+                    <img fetchpriority="high"
+                         loading="eager" src="Images/Team/BK.webp"
                          alt="BK"
                          class="relative z-10 w-96 h-96 md:w-72 rounded-lg object-cover object-top shadow-lg rounded-15" />
                 </div>
@@ -97,10 +114,10 @@
                     </p>
                 </div>
                 <div class="flex justify-end mt-2">
-                    <a href="/careers" aria-label="Navigate to careers"
-                       class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition">
+                    <button @onclick="OnCareersClicked" aria-label="Navigate to careers"
+                            class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition">
                         Careers
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -108,5 +125,8 @@
 </div>
 
 @code {
-
+    private void OnCareersClicked()
+    {
+        NavigationManager.NavigateTo("/careers", true);
+    }
 }

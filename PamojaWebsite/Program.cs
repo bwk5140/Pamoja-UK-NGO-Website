@@ -17,7 +17,7 @@ using Stripe;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 var builder = WebApplication.CreateBuilder(args);
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -66,20 +66,9 @@ if (isWindows)
         new Uri("https://pamojakeyvault.vault.azure.net/"),
         credential);
 
-        KeyVaultSecret connectionstring_secret = client.GetSecret("Local-DefaultConnection");
-
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-        //var connectionString = connectionstring_secret.Value ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        //builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-        //options.UseSqlServer(connectionString));
         builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-        {
-            options.UseNpgsql(
-                connectionString,
-                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()
-            );
-        });
+        options.UseSqlServer(connectionString));
     }
 }
 
@@ -162,10 +151,11 @@ builder.Services.AddScoped<Radzen.DialogService>();
 builder.Services.AddScoped<Radzen.NotificationService>();
 builder.Services.AddScoped<Radzen.TooltipService>();
 builder.Services.AddScoped<Radzen.ContextMenuService>();
-
-
-builder.Services.AddScoped<DocumentConverters>();
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddScoped<CookiesService>();
+builder.Services.AddScoped<BookAppointmentService>();
 
 // Add Google Analytics with your Measurement ID
 builder.Services.AddGoogleAnalytics("G-XXXXXXXXXX"); // replace with your GA ID
@@ -173,10 +163,12 @@ builder.Services.AddGoogleAnalytics("G-XXXXXXXXXX"); // replace with your GA ID
 builder.Services.AddControllers();
 
 //Services
-builder.Services.AddHttpClient<MyApiService>();
 builder.Services.AddScoped<StripePaymentService>();
-builder.Services.AddScoped<PayPalService>();
-builder.Services.AddScoped<MpesaService>();
+builder.Services.AddScoped<CareersService>();
+builder.Services.AddScoped<ResourcesService>();
+builder.Services.AddHttpClient<PayPalService>();
+builder.Services.AddHttpClient<MpesaService>();
+builder.Services.AddHttpClient<MyApiService>();
 
 builder.Services.AddAntiforgery(options =>
 {
@@ -202,10 +194,11 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
-
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = _ => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -216,12 +209,16 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 builder.Services.AddLocalization();
 
 builder.Services.Configure<CircuitOptions>(
     builder.Configuration.GetSection("CircuitOptions"));
+
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = Status307TemporaryRedirect;
+    options.HttpsPort = 5001;
+});
 
 var app = builder.Build();
 
@@ -237,6 +234,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseHsts();
 }
 else
 {
@@ -266,7 +264,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
 });
 
 app.UseRouting();
-
+app.UseRequestLocalization();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();

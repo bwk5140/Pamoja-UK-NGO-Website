@@ -10,7 +10,7 @@
 @rendermode InteractiveServer
 <PageTitle>Index</PageTitle>
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="pt-[4%] mb-5 py-20">
     <h1>Index</h1>
 
     <p>
@@ -35,8 +35,11 @@
     protected override async Task OnInitializedAsync()
     {
         context = DbFactory.CreateDbContext();
-        CountryCodes = context.CountryCode.ToList<CountryCode>();
-        await CountryCodeService.ImportCountryCodesAsync("wwwroot/Data/CountryCodes.txt");
+        CountryCodes = context.CountryCode.OrderByDescending(c => c.Code).ToList<CountryCode>();
+        if (CountryCodes != null && !CountryCodes.Any())
+        {
+            await CountryCodeService.ImportCountryCodesAsync("wwwroot/Data/CountryCodes.txt");
+        }
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

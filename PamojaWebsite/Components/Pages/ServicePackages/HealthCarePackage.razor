@@ -9,11 +9,27 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
@@ -24,12 +40,12 @@
 
 @rendermode InteractiveServer
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <div class="container-xxxl">
         <!-- Banner Section -->
         <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div class="absolute inset-0">
-                <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
+                <img loading="lazy" alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
             </div>
 
             <!-- Content -->
@@ -57,7 +73,7 @@
                             <!-- Separator -->
                             <li>
                                 <div class="flex items-center">
-                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
@@ -109,16 +125,20 @@
                 <div class="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-center">
                     <!-- Image overlay -->
                     <div class="relative">
-                        <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/08729196-ff49-4901-a747-1457caab553a/unsplash-image-hgD5IfjyIt8.jpg"
+                        <img loading="lazy"
+                             decoding="async"
+                             src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/08729196-ff49-4901-a747-1457caab553a/unsplash-image-hgD5IfjyIt8.jpg?format=webp&width=600"
                              alt="Happy black female doctor holding a stethoscope"
+                             width="600"
+                             height="224"
                              class="relative z-10 rounded-lg shadow-lg">
                     </div>
                     <div class="relative">
-                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624613/close-up-team-hand-shake_ryzbbb.jpg" alt="Close up of a team handshake"
+                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1764624613/close-up-team-hand-shake_ryzbbb.jpg" alt="Close up of a team handshake"
                              class="relative z-10 rounded-lg shadow-lg" />
                     </div>
                     <div class="relative">
-                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1764624643/happy-black-female-doctor_e9nnkt.jpg"
+                        <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1764624643/happy-black-female-doctor_e9nnkt.jpg"
                              alt="Happy black female doctor"
                              class="relative z-10 rounded-lg shadow-lg">
                     </div>

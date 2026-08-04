@@ -7,11 +7,27 @@
 <script src="SideScrollHelper.min.js" defer></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IStringLocalizer<SharedResource> Loc
@@ -19,26 +35,26 @@
 @inject NavigationManager NavManager
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 @inject IJSRuntime JS
-@inject MyApiService ApiService
+@inject CareersService CareersService
 
 @rendermode InteractiveServer
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <!-- Hero Section -->
     <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
-    <div class="absolute inset-0">
-            <img alt="Banner image" class="relative object-cover object-top md:w-full md:h-64 sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
-    </div>
-
-    <!-- Content -->
-    <div class="relative max-w-7xl mx-auto">
-        <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-            <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Careers</h1>
+        <div class="absolute inset-0">
+            <img loading="lazy" alt="Banner image" class="relative object-cover object-top md:w-full md:h-64 sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
         </div>
-    </div>
-</section>
 
-<!-- Art Section-->
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Careers</h1>
+            </div>
+        </div>
+    </section>
+
+    <!-- Art Section-->
     <section class="relative bg-primary-100 text-gray-900 py-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-5xl font-bold text-gray-600 mt-20 mb-6">
@@ -61,108 +77,113 @@
         <div class="relative max-w-7xl mx-auto grid md:grid-cols-1 gap-12 items-center">
             <!-- Image overlay -->
             <div class="relative">
-                <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1763107789876-5AR6U5I8KRW97FZDAPLT/unsplash-image-FQe4hjBlcPE.jpg"
+                <img fetchpriority="high"
+                     loading="eager"
+                     decoding="async"
+                     src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1763107789876-5AR6U5I8KRW97FZDAPLT/unsplash-image-FQe4hjBlcPE.jpg?format=webp&width=600"
                      alt="Psychology professionals"
+                     width="800" height="450"
                      class="w-full h-64 object-cover relative z-10 rounded-lg shadow-lg">
+
             </div>
         </div>
     </section>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-15">
-    <section class="bg-secondary-50 rounded-xl mt-5 mb-1">
-        <div class="flex flex-col md:flex-row items-center mb-16 gap-16">
-            <div class="md:w-1/2">
-                <h2 class="text-5xl font-bold text-gray-600 mb-6">Find your next job</h2>
-            </div>
-            <div class="md:w-1/2">
-                <p class="text-xl text-gray-700 max-w-4xl mx-auto mb-8">We value empathy and care in everything that we do. We reward and encourage positive outcomes. Join us in shaping the future of mental health.</p>
-                <a href="/careers/search" aria-label="View all jobs"
-                       class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-gray-500 hover:bg-gray-700 transition-colors">
-                    View all jobs
-                    <i data-feather="briefcase" class="ml-2"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-    <section class="bg-secondary-50 rounded-xl mt-1 mb-20">
-        <!-- Role Navigation -->
-        <div class="relative w-full">
-            <!-- Scrollable track -->
-            <div id="roleScrollTrack" class="flex overflow-x-auto scroll-smooth gap-4 w-full px-4">
-                @if (CareerFields is not null && CareerFields.Count() > 0)
-                {
-                    @foreach (var field in CareerFields)
-                    {
-                        <button class="px-4 py-2 rounded-md text-sm font-medium transition
-                                                       @(SelectedField == field.Name
-                                                          ? "bg-green-600 text-white"
-                                                          : "bg-gray-100 text-gray-700 hover:bg-gray-200")"
-                                @onclick="() => SelectField(field.Name)">
-                            @field.Name
-                        </button>
-                    }
-                }
-            </div>
-
-            <!-- Minimal navigation buttons -->
-            <button type="button"
-                    class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
-               p-1 transition"
-                    @onclick="() => ScrollRoles(-1)">
-                <img loading="lazy" width="24" height="24" src="Icons/back.png" alt="back icon"/>
-            </button>
-
-            <button type="button"
-                    class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
-               p-1 transition"
-                    @onclick="() => ScrollRoles(1)">
-                <img loading="lazy" width="24" height="24" src="Icons/forward.png" alt="forward icon" />
-            </button>
-
-        </div>
-
-        <hr />
-        @if (SelectedCareerField is not null)
-        {
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-15">
+        <section class="bg-secondary-50 rounded-xl mt-5 mb-1">
             <div class="flex flex-col md:flex-row items-center mb-16 gap-16">
-                <div class="md:w-1/2 mt-4">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">@SelectedField</h2>
-                    <p class="text-gray-600 mb-6">
-                        @SelectedCareerField.Description
-                    </p>
+                <div class="md:w-1/2">
+                    <h2 class="text-5xl font-bold text-gray-600 mb-6">Find your next job</h2>
                 </div>
-                <div class="md:w-1/2 mt-4">
-                    <img loading="lazy" alt=@($"{SelectedCareerField.Name} field image") src="data:@SelectedCareerField.ImagePreviewUrl;base64,@Convert.ToBase64String(SelectedCareerField.Image)" />
+                <div class="md:w-1/2">
+                    <p class="text-xl text-gray-700 max-w-4xl mx-auto mb-8">We value empathy and care in everything that we do. We reward and encourage positive outcomes. Join us in shaping the future of mental health.</p>
+                    <a href="/careers/search" aria-label="View all jobs"
+                       class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-gray-500 hover:bg-gray-700 transition-colors">
+                        View all jobs
+                        <i data-feather="briefcase" class="ml-2"></i>
+                    </a>
                 </div>
             </div>
-        }
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Roles in @SelectedField</h2>
-        <div class="relative w-full">
-            <!-- Scrollable track -->
-            <div id="tailwindScrollTrack"
-                 class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory w-full gap-4 px-4">
-
-                @if (CareerRoles is not null && CareerRoles.Count > 0)
-                {
-                    foreach (var role in CareerRoles)
+        </section>
+        <section class="bg-secondary-50 rounded-xl mt-1 mb-20">
+            <!-- Role Navigation -->
+            <div class="relative w-full">
+                <!-- Scrollable track -->
+                <div id="roleScrollTrack" class="flex overflow-x-auto scroll-smooth gap-4 w-full px-4 ml-3 mr-3">
+                    @if (CareerFields is not null && CareerFields.Any())
                     {
-                        <div class="p-6 flex flex-col
-                                    h-120 w-80 flex-shrink-0
-                                    bg-gray-200 shadow rounded
-                                    snap-center">
-                            <p class="mb-2 text-sm italic">@role.CareerField</p>
-                            <p class="mb-2 font-bold text-lg">@role.Name</p>
-                            <p class="mb-4 text-sm">@role.Description</p>
+                        @foreach (var field in CareerFields)
+                        {
+                            <button class="px-4 py-2 rounded-md text-sm font-medium transition
+                                                                           @(SelectedField == field.Name
+                                                                                                                                      ? "bg-green-600 text-white"
+                                                                                                                                      : "bg-gray-100 text-gray-700 hover:bg-gray-200")"
+                                    @onclick="() => SelectField(field.Name)">
+                                @field.Name
+                            </button>
+                        }
+                    }
+                </div>
 
-                            @if(role.Expiration > DateTime.UtcNow){
-                                <!-- Anchor pushed to bottom -->
-                                <a href="/careers/search/?role=@role.Name" aria-label="View available jobs" class="p-2 mt-auto">
-                                    <div class="text-blue-500 inline-flex gap-2">
-                                        <span>Available Jobs</span>
-                                        <img loading="lazy" src="Icons/arrow-right.svg" alt="right arrow icon" />
-                                    </div>
-                                </a>
-                            }
+                <!-- Minimal navigation buttons -->
+                <button type="button"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                   p-1 transition"
+                        @onclick="() => ScrollRoles(-1)">
+                    <img loading="lazy" width="24" height="24" src="Icons/back.png" alt="back icon" />
+                </button>
+
+                <button type="button"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                   p-1 transition"
+                        @onclick="() => ScrollRoles(1)">
+                    <img loading="lazy" width="24" height="24" src="Icons/forward.png" alt="forward icon" />
+                </button>
+            </div>
+
+            <hr class="text-gray-300" />
+            @if (SelectedCareerField is not null)
+            {
+                <div class="flex flex-col md:flex-row items-center mb-16 gap-16">
+                    <div class="md:w-1/2 mt-4">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">@SelectedField</h2>
+                        <p class="text-gray-600 mb-6">
+                            @SelectedCareerField.Description
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 mt-4">
+                        <img loading="lazy" alt=@($"{SelectedCareerField.Name} field image") src="data:@SelectedCareerField.ImagePreviewUrl;base64,@Convert.ToBase64String(SelectedCareerField.Image)" />
+                    </div>
+                </div>
+            }
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Roles in @SelectedField</h2>
+            <div class="relative w-full">
+                <!-- Scrollable track -->
+                <div id="tailwindScrollTrack"
+                     class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory w-full gap-4 px-4">
+
+                    @if (CareerRoles is not null && CareerRoles.Any())
+                    {
+                        foreach (var role in CareerRoles)
+                        {
+                            <div class="p-6 flex flex-col
+                                                        h-120 w-80 flex-shrink-0
+                                                        bg-gray-200 shadow rounded
+                                                        snap-center">
+                                <p class="mb-2 text-sm italic">@role.CareerField</p>
+                                <p class="mb-2 font-bold text-lg">@role.Name</p>
+                                <p class="mb-4 text-sm">@role.Description</p>
+
+                                @if (role.Expiration > DateTime.UtcNow)
+                                {
+                                    <!-- Anchor pushed to bottom -->
+                                    <a href="/careers/search/?role=@role.Name" aria-label="View available jobs" class="p-2 mt-auto">
+                                        <div class="text-blue-500 inline-flex gap-2">
+                                            <span>Available Jobs</span>
+                                            <img loading="lazy" src="Icons/arrow-right.svg" alt="right arrow icon" />
+                                        </div>
+                                    </a>
+                                }
                                 else
                                 {
                                     <!-- Anchor pushed to bottom -->
@@ -173,33 +194,32 @@
                                         </div>
                                     </a>
                                 }
+                            </div>
+                        }
+                        <!-- Minimal navigation buttons -->
+                        <button type="button"
+                                class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                               p-1 transition"
+                                @onclick="() => MoveSlide(-1)">
+                            <img loading="lazy" width="24" height="24" src="Icons/back.png" alt="back icon" />
+                        </button>
 
-                        </div>
+                        <button type="button"
+                                class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
+                               p-1 transition"
+                                @onclick="() => MoveSlide(1)">
+                            <img loading="lazy" width="24" height="24" src="Icons/forward.png" alt="forward icon" />
+                        </button>
                     }
-                    <!-- Minimal navigation buttons -->
-                    <button type="button"
-                            class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
-                   p-1 transition"
-                            @onclick="() => MoveSlide(-1)">
-                        <img loading="lazy" width="24" height="24" src="Icons/back.png" alt="back icon" />
-                    </button>
-
-                    <button type="button"
-                            class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800
-                   p-1 transition"
-                            @onclick="() => MoveSlide(1)">
-                        <img loading="lazy" width="24" height="24" src="Icons/forward.png" alt="forward icon" />
-                    </button>
-                }
-                else
-                {
-                    <p class="mb-2 font-semi-bold text-sm">There are no role openings at this time. Please check back again later.</p>
-                }
+                    else
+                    {
+                        <p class="mb-2 font-semi-bold text-sm">There are no role openings at this time. Please check back again later.</p>
+                    }
+                </div>
             </div>
-        </div>
-        <hr />
-    </section>
-</div>
+            <hr />
+        </section>
+    </div>
 </div>
 
 @code {
@@ -210,11 +230,8 @@
     private List<CareerField>? CareerFields { get; set; }
     private int currentRoleSlide = 0;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        CareerFields = await (await ApiService.GetClient()).GetFromJsonAsync<List<CareerField>>("api/db/career_fields");
-        CareerFields = CareerFields?.OrderByDescending(x => x.Name.Equals(SelectedField, StringComparison.OrdinalIgnoreCase)).ToList<CareerField>();
-
         await LoadCareerData(SelectedField);
     }
 
@@ -238,28 +255,26 @@
     }
     private async Task LoadCareerData(string field)
     {
-        // Build cache keys
-        var fieldKey = $"CareerField_{field}";
-        var rolesKey = $"CareerRoles_{field}";
+        CareerFields = CareerFields ?? await CareersService.GetCareerFieldsAsync();
+        CareerRoles = CareerRoles ?? await CareersService.GetCareerRolesAsync();
 
-        // Try to get CareerField from cache
-        var fields = await (await ApiService.GetClient()).GetFromJsonAsync<List<CareerField>>("api/db/career_fields");
-        var cachedField = fields?.FirstOrDefault(c => c.Name == field);
-        SelectedCareerField = cachedField;
+        SelectedCareerField = CareerFields.FirstOrDefault(c => c.Name.Equals(field, StringComparison.OrdinalIgnoreCase));
 
-        var roles = await (await ApiService.GetClient()).GetFromJsonAsync<List<CareerRole>>("api/db/career_roles");
-        var cachedRoles = roles?.Where(c => c.CareerField == field)
-            .ToList();
-        CareerRoles = cachedRoles;
+        CareerRoles = CareerRoles?
+        .Where(c => c.CareerField == SelectedCareerField?.Name)
+        .ToList();
 
-        // Set image source
-        ImageSource = SelectedCareerField?.ImagePreviewUrl;
+        if (ImageSource != SelectedCareerField?.ImagePreviewUrl)
+            ImageSource = SelectedCareerField?.ImagePreviewUrl;
     }
 
     private async Task SelectField(string field)
     {
+        if (SelectedField == field)
+            return; // Skip redundant reloads
+
         SelectedField = field;
-        await LoadCareerData(SelectedField);
+        await LoadCareerData(field);
     }
     private string GetNavClass(string href)
     {

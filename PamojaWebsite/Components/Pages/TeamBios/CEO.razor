@@ -1,17 +1,33 @@
 ﻿@page "/about-us/faith-mbula"
-
+@rendermode InteractiveServer
 <PageTitle>Faith Mbula | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
-
+@inject NavigationManager NavigationManager
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <!-- Hero Section -->
     <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <!-- Decorative background shapes -->
@@ -61,7 +77,7 @@
                         <!-- Separator -->
                         <li>
                             <div class="flex items-center">
-                                <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                           d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                           clip-rule="evenodd" />
@@ -77,29 +93,23 @@
                 <!-- Right-aligned image with abstract shapes -->
                 @* <div class="relative flex justify-end py-20">
                 <!-- Image itself -->
-                <img src="Images/Team/Faith.jpg"
+                <img src="Images/Team/Faith.webp"
                      alt="Faith Mbula"
                      class="relative z-10 w-96 h-96 md:w-72 rounded-lg object-cover object-bottom shadow-lg rounded-15" />
             </div> *@
-
                 <p class="text-s text-gray-900 mb-3">
-                    Faith was born in Kenya and began her academic journey at Muthaiga Primary School, then progressed through Moi Forces Academy and Lugulu High School.
-                    Her Kenyan roots have deeply shaped her perspective on resilience, cultural identity, and the importance of community led healing.
+                    Faith is a UK-registered mental health nurse with extensive experience supporting people experiencing complex mental health difficulties across secure inpatient, 
+                    acute, community, crisis, safeguarding and therapeutic services.
                 </p>
                 <p class="text-s text-gray-900 mb-3">
-                    With over 7 years of experience across the UK's NHS mental health services, Faith has worked in diverse settings including inpatient units, community outreach,
-                    safeguarding roles, and therapeutic environments. Her work consistently reflects her deep commitment to compassionate, culturally sensitive,
-                    and person centred care particularly for individuals navigating complex and multi-layered mental health needs.
+                    She is also a safeguarding specialist and qualified counsellor. Faith is a registered member of the National Counselling and Psychotherapy Society 
+                    (NCPS) in the United Kingdom and is registered with the Counsellors and Psychologists Board of Kenya. These professional registrations reflect her commitment to accountable, 
+                    ethical and high-quality practice across both the UK and Kenya.
                 </p>
                 <p class="text-s text-gray-900 mb-3">
-                    Faith holds a Master of Arts in Safeguarding Adults: Law, Policy & Practice, A Bachelor of Science in Nursing (BSc), An Advanced Diploma in Counselling.
-                    She is also an alumna of: The Developing Aspirant Ethnic Minority Nursing & Midwifery Leaders Programme, The Mary Seacole NHS Leadership Programme.
-                    These qualifications and leadership experiences enhance her capacity to drive systemic change and lead with both empathy and strategy in mental health and social care sectors.
-                    Faith’s passion is deeply personal shaped by her own lived experiences of bereavement, migration, and domestic abuse. These formative events have inspired her tireless work to: Raise mental health awareness, Champion inclusive, trauma informed safeguarding practices, Empower others to heal and lead with resilience.
-                </p>
-                <p class="text-s text-gray-900">
-                    Through Pamoja, Faith fuses clinical expertise with lived experience, aiming to restore voices and rebuild strength in individuals and communities.
-                    Her work is underpinned by a powerful ethos she lives and teaches: "Never give up."
+                    Faith has extensive experience supporting adults at risk, children, young people and families affected by complex mental health, safeguarding and 
+                    social challenges. Her professional practice is grounded in compassion, evidence-based care, cultural responsiveness and a strong commitment to safeguarding, 
+                    psychological wellbeing and human dignity.
                 </p>
                 <div class="flex justify-end mt-12">
                     <p class="text-s text-secondary mt-5">
@@ -107,10 +117,10 @@
                     </p>
                 </div>
                 <div class="flex justify-end mt-2">
-                    <a href="/careers" aria-label="Navigate to careers"
-                       class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition">
+                    <button @onclick="OnCareersClicked" aria-label="Navigate to careers"
+                            class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition">
                         Careers
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -118,5 +128,8 @@
 </div>
 
 @code {
-
+    private void OnCareersClicked()
+    {
+        NavigationManager.NavigateTo("/careers", true);
+    }
 }

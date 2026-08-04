@@ -9,34 +9,50 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IJSRuntime JS
 @inject IMemoryCache Cache
+@inject ResourcesService ResourcesService
 @inject MyApiService ApiService
 @inject NavigationManager NavigationManager
 @inject ApplicationUserService ApplicationUserService
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
-    <body class="min-h-screen bg-gray-50 font-sans">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<div class="sm:pt-[10%] md:pt-[5%] mb-5 py-20 mt-5">
+    <div class="min-h-screen bg-gray-50 font-sans">
     <!-- Navigation -->
     <header class="bg-white shadow-sm sticky z-50 text-green-900 py-10">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="flex md:items-center space-x-2 mb-4 md:mb-0 mt-4">
                     <div class="w-8 h-8 bg-green-900 rounded-lg"></div>
-                    <a href="/blog-space" aria-label="View all blogs" @onclick="BackToBlogSpace" class="text-2xl font-bold text-dark hover:text-green-900 transition-colors">Blog Space</a>
+                    <button aria-label="View all blogs" @onclick="BackToBlogSpace" class="text-2xl font-bold text-dark hover:text-green-900 transition-colors">Blog Space</button>
                 </div>
             </div>
         </nav>
@@ -93,10 +109,11 @@
 
                                 <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                                     <div class="relative">
-                                        <img src="@GetImageSrc(Post.PreviewImage, Post.PreviewImageContentType)"
+                                            <img fetchpriority="high"
+                                                 loading="eager" src="@GetImageSrc(Post.PreviewImage, Post.PreviewImageContentType)"
                                              alt="@Post.Title"
                                              class="w-full h-48 object-cover"
-                                             loading="lazy">
+                                             >
                                         <span class="absolute top-4 left-4 bg-gray-100 backdrop-blur-sm text-dark px-3 py-1 rounded-full text-sm font-medium">
                                             @Post.Category
                                         </span>
@@ -126,10 +143,11 @@
 
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center">
-                                                <img src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
+                                                    <img fetchpriority="high"
+                                                         loading="eager" src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
                                                      alt="@Post.Author"
                                                      class="w-8 h-8 rounded-full mr-2"
-                                                     loading="lazy">
+                                                     >
                                                 <span class="text-sm font-medium">@Post.Author</span>
                                             </div>
 
@@ -147,7 +165,7 @@
                             if (loadingBlogs)
                             {
                                 <div class="center-container">
-                                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                    <svg aria-label="spinner" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                                         <g class="spinner" transform="translate(60,60)">
                                             <circle cx="0" cy="-40" r="6" />
                                             <circle cx="28" cy="-28" r="6" />
@@ -188,7 +206,7 @@
                 if (loadingCurrentBlog)
                 {
                     <div class="center-container">
-                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <svg aria-label="Spinner" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                             <g class="spinner" transform="translate(60,60)">
                                 <circle cx="0" cy="-40" r="6" />
                                 <circle cx="28" cy="-28" r="6" />
@@ -226,10 +244,11 @@
                                 <h1 id="blog-title" class="text-3xl md:text-4xl lg:text-5xl font-bold text-dark mb-6 font-serif">@CurrentBlogPost.Title</h1>
 
                                 <div class="flex items-center gap-4 mb-8">
-                                    <img src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
+                                    <img fetchpriority="high"
+                                         loading="eager" src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
                                          alt="Author avatar"
                                          class="w-12 h-12 rounded-full"
-                                         loading="lazy">
+                                         >
                                     <div>
                                         <p id="blog-author" class="font-semibold text-dark">@CurrentBlogPost.Author</p>
                                         <p id="blog-author-role" class="text-gray-600 text-sm">@CurrentBlogPost.AuthorRole</p>
@@ -238,16 +257,17 @@
 
                                 <!-- Featured Image -->
                                 <div class="mb-8">
-                                    <img id="blog-featured-image"
+                                    <img fetchpriority="high"
+                                         loading="eager" id="blog-featured-image"
                                          src="@GetImageSrc(CurrentBlogPost.PreviewImage, CurrentBlogPost.PreviewImageContentType)"
                                          alt="Featured blog image"
                                          class="w-full h-64 md:h-96 object-cover rounded-xl"
-                                         loading="lazy">
+                                         >
                                     <p class="text-gray-500 text-sm mt-2 text-center">Featured image for the blog post</p>
                                 </div>
                             </div>
 
-                            <!-- Blog Body -->
+                            <!-- Blog div -->
                             <div class="px-8 md:px-12 pb-12">
                                 <div class="max-w-3xl mx-auto">
                                     <div id="blog-content" class="blog-content text-gray-700">
@@ -256,17 +276,18 @@
                                     @if (Tags is not null && Tags.Any())
                                     {
                                         <!-- Tags -->
-                                        <div class="mt-12 pt-8 border-t">
+                                        <div class="mt-12 pt-8 border-t border-gray-300">
                                             <h3 class="text-lg font-semibold mb-4">Tags</h3>
                                             <div id="blog-tags" class="flex flex-wrap gap-2">
                                                 @foreach (var Tag in Tags)
                                                 {
-                                                    foreach (KeyValuePair<string, Tag> keyValuePair in Tag)
+                                                    @foreach (KeyValuePair<string, Tag> keyValuePair in Tag)
                                                     {
-                                                        if (CurrentBlogPost.Id == keyValuePair.Key)
+                                                        if (CurrentBlogPost.Id == keyValuePair.Key && keyValuePair.Value != null)
                                                         {
-                                                            <button @onclick="(()=>SearchBlogsByTag(Tag[CurrentBlogPost.Id].Name))" type = "button" class= "px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
-                                                                @Tag[CurrentBlogPost.Id].Name
+                                                            var tagName = keyValuePair.Value.Name;
+                                                            <button @onclick="(() => SearchBlogsByTag(tagName))" type="button" class="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition">
+                                                                @tagName
                                                             </button>
                                                         }
                                                     }
@@ -278,10 +299,11 @@
                                     <!-- Author Bio -->
                                     <div class="mt-12 bg-gray-50 rounded-xl p-6">
                                         <div class="flex items-start gap-4">
-                                            <img src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
+                                            <img fetchpriority="high"
+                                                 loading="eager" src="@GetImageSrc(CurrentBlogPost.AuthorImage, CurrentBlogPost.AuthorImageContentType)"
                                                  alt="Author bio image"
                                                  class="w-16 h-16 rounded-full"
-                                                 loading="lazy">
+                                                 >
                                             <div>
                                                 <h3 class="text-xl font-semibold mb-2">About the Author</h3>
                                                 <p id="blog-author-bio" class="text-gray-600">@CurrentBlogPost.AuthorBio</p>
@@ -295,7 +317,8 @@
                                                                 if (CurrentBlogPost.Id == keyValuePair.Key)
                                                                 {
                                                                     <a href="@social_link[CurrentBlogPost.Id].Url" aria-label="@($"Visit {CurrentBlogPost.Author}'s {social_link[CurrentBlogPost.Id].Platform}")">
-                                                                        <img alt="@CurrentBlogPost.Author @social_link[CurrentBlogPost.Id].Platform link" height="25px" width="25px" src="Icons/@($"{social_link[CurrentBlogPost.Id].Platform}.svg")" />
+                                                                        <img fetchpriority="high"
+                                                                             loading="eager" alt="@CurrentBlogPost.Author @social_link[CurrentBlogPost.Id].Platform link" height="25px" width="25px" src="Icons/@($"{social_link[CurrentBlogPost.Id].Platform}.svg")" />
                                                                     </a>
                                                                 }
                                                             }
@@ -342,11 +365,13 @@
                 }
         }
     </main>
-    </body>
+    </div>
 </div>
 
 @code {
-    private string RenderedHtml => Markdown.ToHtml(CurrentBlogPost.Content);
+    private string RenderedHtml => CurrentBlogPost != null
+    ? Markdown.ToHtml(CurrentBlogPost.Content ?? string.Empty)
+    : string.Empty;
     private List<Tag>? BlogTags { get; set; } = new();
     private List<BlogPost>? BlogPosts { get; set; }
     private List<BlogPost>? RelatedBlogPosts { get; set; }
@@ -378,9 +403,8 @@
     {
         loadingBlogs = true;
         loadingCurrentBlog = true;
-        using var context = await DbFactory.CreateDbContextAsync();
-        BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
-        BlogCategories = await context.BlogCategory.OrderByDescending(bc => bc.Name).ToListAsync();
+        BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
+        BlogCategories = (await ResourcesService.GetBlogCategories()).OrderByDescending(bc => bc.Name).ToList();
         if (BlogPosts is not null)
         {
             CurrentBlogPost = BlogPosts.FirstOrDefault(b => b.Id == Id);
@@ -396,7 +420,7 @@
             Tags.Clear();
             foreach (var tag_id in CurrentBlogPost.TagIds)
             {
-                var tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tag_id);
+                var tag = (await ResourcesService.GetBlogTags()).FirstOrDefault(t => t.Id.ToString() == tag_id);
                 var tagItem = new Dictionary<string, Tag>();
                 tagItem[CurrentBlogPost.Id] = tag;
                 Tags.Add(tagItem);
@@ -404,7 +428,7 @@
             AuthorSocialMedia.Clear();
             foreach (var linkId in CurrentBlogPost.AuthorSocialMediaIds)
             {
-                var socialMedia = await context.SocialMediaLink.FirstOrDefaultAsync(l => l.Id == linkId);
+                var socialMedia = (await ResourcesService.GetSocialMediaLinks()).FirstOrDefault(l => l.Id == linkId);
                 var linkItem = new Dictionary<string, SocialMediaLink>();
                 linkItem[CurrentBlogPost.Id] = socialMedia;
                 AuthorSocialMedia.Add(linkItem);
@@ -427,10 +451,10 @@
     }
     private async Task SearchBlogsByTag(string tag)
     {
-        CurrentBlogPost = null;
+        BlogPosts = null;
         loadingBlogs = true;
-        using var context = await DbFactory.CreateDbContextAsync();
-        BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+        CurrentBlogPost = null;
+        BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
         var regexPattern = ".*" + Regex.Escape(tag) + ".*";
 
         if (!string.IsNullOrEmpty(regexPattern))
@@ -450,9 +474,10 @@
     {
         if (!string.IsNullOrWhiteSpace(SearchInput))
         {
-            using var context = await DbFactory.CreateDbContextAsync();
+            BlogPosts = null;
+            loadingBlogs = true;
             currentSearch = SearchInput?.Trim() ?? "";
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetRefreshedBlogPosts()).OrderByDescending(b => b.Date).ToList();
             var regexPattern = ".*" + Regex.Escape(currentSearch.ToLower()) + ".*";
 
             if (!string.IsNullOrEmpty(SearchInput))
@@ -466,19 +491,19 @@
                     )
                     .ToList();
             }
-
-
             SearchInput = "";
+            loadingBlogs = false;
             StateHasChanged();
         }
     }
     private async Task FilterByCategory(string category)
     {
-        using var context = await DbFactory.CreateDbContextAsync();
+        BlogPosts = null;
+        loadingBlogs = true;
         currentFilter = category;
         currentSearch = "";
         SearchInput = "";
-        var query  = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+        var query = (await ResourcesService.GetRefreshedBlogPosts()).OrderByDescending(b => b.Date).ToList();
 
         // Category filter
         if (!string.IsNullOrWhiteSpace(currentFilter) && currentFilter.ToLower() != "all")
@@ -503,45 +528,16 @@
                 b.Tags.Any(tag => tag.ToLower().Contains(searchLower))
             ).ToList<BlogPost>();
         }
+        loadingBlogs = false;
         StateHasChanged();
     }
     public async Task ViewBlogDetail(BlogPost Post)
     {
-        loadingCurrentBlog = true;
-        CurrentBlogPost = Post;
-        if (CurrentBlogPost is not null){
-            using var context = await DbFactory.CreateDbContextAsync();
-            Tags.Clear();
-            foreach (var tag_id in CurrentBlogPost.TagIds)
-            {
-                var tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tag_id);
-                var tagItem = new Dictionary<string, Tag>();
-                tagItem[CurrentBlogPost.Id] = tag;
-                Tags.Add(tagItem);
-            }
-            AuthorSocialMedia.Clear();
-            foreach (var linkId in CurrentBlogPost.AuthorSocialMediaIds)
-            {
-                var socialMedia = await context.SocialMediaLink.FirstOrDefaultAsync(l => l.Id == linkId);
-                var linkItem = new Dictionary<string, SocialMediaLink>();
-                linkItem[CurrentBlogPost.Id] = socialMedia;
-                AuthorSocialMedia.Add(linkItem);
-            }
-            RelatedBlogPosts = BlogPosts.Where(b => b.Category == CurrentBlogPost.Category && b.Id != CurrentBlogPost.Id).Take(2).ToList();
-        }
-        loadingCurrentBlog = false;
-        currentSearch = "";
-        SearchInput = "";
-        
-        StateHasChanged();
+        NavigationManager.NavigateTo($"/blog-space?Id={Post.Id}", true);
     }
     private void BackToBlogSpace()
     {
-        CurrentBlogPost = null;
-        currentFilter = null;
-        currentSearch = "";
-        SearchInput = "";
-        StateHasChanged();
+        NavigationManager.NavigateTo("/blog-space", true);
     }
     public string Truncate(string value, int maxChars)
     {

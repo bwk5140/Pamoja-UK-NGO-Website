@@ -1,212 +1,206 @@
 ﻿@page "/document-viewer"
 
-<PageTitle>Document Viewer | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
-
-<head>
-    <script src="DownloadFile.min.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
-</script>
+<PageTitle>Document Viewer | Pamoja Counselling</PageTitle>
 
 @inject IJSRuntime JS
-@inject IMemoryCache Cache
-@inject MyApiService ApiService
+@inject ResourcesService ResourcesService
 @inject NavigationManager NavigationManager
-@inject ApplicationUserService ApplicationUserService
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-<div class="bg-gray-50 font-sans mx-auto pt-[5%]">
+<div class="h-screen w-screen flex flex-col bg-gray-100 font-sans overflow-hidden">
     <!-- Top Navigation Bar -->
-    <header class="bg-white shadow-sm border-b border-gray-200 no-print p-6">
-        <div class="container mx-auto">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo and Back Button -->
-                <div class="flex items-center space-x-4">
-                    <button @onclick="GoBack" class="flex items-center text-gray-600 hover:text-primary transition-colors">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Back</span>
-                    </button>
-                    <div class="h-6 w-px bg-gray-300"></div>
-                    <div class="text-xl font-semibold text-gray-800">Document Viewer</div>
-                </div>
+    <header class="bg-white shadow-sm border-b border-gray-200 px-4 py-2 flex-none z-10">
+        <div class="flex items-center justify-between h-12">
 
-                <!-- Document Actions -->
-                <div class="flex items-center space-x-4 mt-5">
-                    <button @onclick="ToggleSidebar" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Toggle sidebar">
-                        <i class="fas fa-columns"></i>
-                    </button>
-                    <button @onclick="ToggleFullscreen" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Fullscreen">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                    <button @onclick="PrintDocument" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Print">
-                        <i class="fas fa-print"></i>
-                    </button>
-                    <button @onclick="DownloadDocument" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors" title="Download">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
+            <!-- Back Button & Title -->
+            <div class="flex items-center space-x-3">
+                <button @onclick="GoBack" type="button" class="flex items-center text-gray-600 hover:text-green-800 font-medium transition-colors text-sm">
+                    <svg aria-label="Back icon" class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>Back</span>
+                </button>
+                <div class="h-5 w-px bg-gray-300"></div>
+                <h1 class="text-sm sm:text-base font-semibold text-gray-800 truncate max-w-xs sm:max-w-md">
+                    @(CurrentDoc?.Title ?? "Document Viewer")
+                </h1>
+            </div>
+
+            <!-- Action Toolbar (SVG Icons, no FontAwesome required) -->
+            <div class="flex items-center space-x-1 sm:space-x-2">
+                <button @onclick="ToggleSidebar" type="button" class="p-2 text-gray-600 hover:text-green-800 hover:bg-gray-100 rounded-lg transition-colors" title="Toggle Sidebar">
+                    <svg aria-label="Toggle Sidebar icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+                </button>
+                <button @onclick="ToggleFullscreen" type="button" class="p-2 text-gray-600 hover:text-green-800 hover:bg-gray-100 rounded-lg transition-colors" title="Fullscreen">
+                    <svg aria-label="Fullscreen icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                </button>
+                <button @onclick="PrintDocument" type="button" class="p-2 text-gray-600 hover:text-green-800 hover:bg-gray-100 rounded-lg transition-colors" title="Print">
+                    <svg aria-label="Print icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                </button>
+                <button @onclick="DownloadDocument" type="button" class="p-2 text-gray-600 hover:text-green-800 hover:bg-gray-100 rounded-lg transition-colors" title="Download">
+                    <svg aria-label="Download icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                </button>
             </div>
         </div>
     </header>
-    <div class="flex">
-        @if (CurrentDoc is not null)
-            {
-                <!-- Sidebar -->
-                <DocumentSidebar Metadata="@CurrentDoc?.Metadata" />
 
-                <!-- Main Viewer -->
-                <div class="flex-1 document-content">
-                    @if (CurrentDoc.ContentType.Contains("openxmlformats-officedocument"))
-                        {
-                            <iframe id="docFrame" src="@GetViewerUrl(CurrentDoc)"
-                                    width="100%" height="100%" style="border:none"></iframe>
-                        }
-                        else if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType == "text/plain")
-                        {
-                            <iframe id="docFrame" src="@($"api/documents/{CurrentDoc.Id}")"
-                                    width="100%" height="100%" style="border:none"></iframe>
-                        }
-                        else
-                        {
-                            <a href="@($"api/documents/{CurrentDoc.Id}")" aria-label="Download file" target="_blank">
-                                Download File
-                            </a>
-                        }
-                </div>
-            }
-            else
+    <!-- Main Content Grid -->
+    <div class="flex-1 flex relative overflow-hidden">
+        @if (CurrentDoc is not null)
+        {
+            <!-- Mobile Sidebar Backdrop -->
+            @if (isSidebarOpen)
             {
-                if (loadingDoc)
-                {
-                    <div class="center-container">
-                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                            <g class="spinner" transform="translate(60,60)">
-                                <circle cx="0" cy="-40" r="6" />
-                                <circle cx="28" cy="-28" r="6" />
-                                <circle cx="40" cy="0" r="6" />
-                                <circle cx="28" cy="28" r="6" />
-                                <circle cx="0" cy="40" r="6" />
-                                <circle cx="-28" cy="28" r="6" />
-                                <circle cx="-40" cy="0" r="6" />
-                                <circle cx="-28" cy="-28" r="6" />
-                            </g>
-                        </svg>
+                <div class="fixed inset-0 bg-gray-900/50 z-40 md:hidden" @onclick="ToggleSidebar"></div>
+            }
+
+            <!-- Collapsible Sidebar -->
+            <aside class="fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out md:relative md:z-0 @(isSidebarOpen ? "translate-x-0" : "-translate-x-full md:hidden")">
+                <div class="h-full overflow-y-auto p-4">
+                    <div class="flex items-center justify-between pb-3 border-b md:hidden">
+                        <span class="font-bold text-gray-700">Document Info</span>
+                        <button type="button" @onclick="ToggleSidebar" class="p-1 text-gray-500 hover:text-gray-700">
+                            <svg aria-label="Toggle Sidebar icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
                     </div>
+                    <DocumentSidebar CurrentDoc="@CurrentDoc" Metadata="@CurrentDoc?.Metadata" />
+                </div>
+            </aside>
+
+            <!-- Main Viewer Container -->
+            <main class="flex-1 h-full w-full relative bg-gray-200 document-content">
+                @if (CurrentDoc.ContentType.Contains("openxmlformats-officedocument") || CurrentDoc.ContentType.Contains("word") || CurrentDoc.ContentType.Contains("excel"))
+                {
+                    <iframe id="docFrame"
+                            src="@GetViewerUrl(CurrentDoc)"
+                            class="w-full h-full border-none block"
+                            allowfullscreen
+                            title="Document Content"></iframe>
+                }
+                else if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType == "text/plain" || CurrentDoc.ContentType.StartsWith("image/"))
+                {
+                    <iframe id="docFrame"
+                            src="@($"/api/documents/{CurrentDoc.Id}")"
+                            class="w-full h-full border-none block"
+                            allowfullscreen
+                            title="Document Content"></iframe>
                 }
                 else
                 {
-                    <div class="center-container">
-                        <p class="text-gray-600">No document selected.</p>
+                    <div class="flex flex-col items-center justify-center h-full p-6 text-center">
+                        <svg aria-label="Download icon" class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <p class="text-gray-700 font-medium mb-4">Preview not available for this file type.</p>
+                        <button @onclick="DownloadDocument" class="px-5 py-2.5 bg-green-800 text-white font-medium rounded-lg shadow hover:bg-green-700 transition-colors">
+                            Download File
+                        </button>
                     </div>
                 }
-            }
+            </main>
+        }
+        else if (loadingDoc)
+        {
+            <div class="flex-1 flex items-center justify-center bg-gray-50">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-10 h-10 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium text-gray-600">Loading document...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="flex-1 flex items-center justify-center bg-gray-50">
+                <p class="text-gray-500">No document selected or found.</p>
+            </div>
+        }
     </div>
 </div>
 
 @code {
-    private string pdfBase64 = "";
-    private List<string> highlights = new();
-    private List<string> comments = new();
-    private List<string> bookmarks = new();
-    private string comment { get; set; } = "";
-    private bool loadingDoc { get; set; } = false;
-
-    [SupplyParameterFromQuery] 
-    public string Id { get; set; }
+    [SupplyParameterFromQuery]
+    public string Id { get; set; } = string.Empty;
 
     private PamojaWebsite.Data.Document? CurrentDoc;
-    private string selectedText = string.Empty;
-    private string? DocumentDataUri =>
-    CurrentDoc != null
-        ? $"data:{CurrentDoc.ContentType};base64,{Convert.ToBase64String(CurrentDoc.Data)}"
-        : null;
+    private List<DocumentMetadata> MetadataList;
+    private bool loadingDoc = true;
+    private bool isSidebarOpen = false;
+    private string? DocumentDataUri =>CurrentDoc != null
+    ? $"data:{CurrentDoc.ContentType};base64,{Convert.ToBase64String(CurrentDoc.Data)}": null;
 
-    private void GoBack() => JS.InvokeVoidAsync("history.back");
+    protected override async Task OnInitializedAsync()
+    {
+        loadingDoc = true;
 
-    private async Task ToggleSidebar()
-    => await JS.InvokeVoidAsync("eval",
-        "document.body.classList.toggle('sidebar-open')");
+        if (!string.IsNullOrEmpty(Id))
+        {
+            CurrentDoc = (await ResourcesService.GetDocuments()).FirstOrDefault(d => d.Id == Id);
+            MetadataList = await ResourcesService.GetDocumentsMetaData();
+
+            if (CurrentDoc is not null && MetadataList is not null)
+            {
+                CurrentDoc.Metadata = MetadataList.FirstOrDefault(dm => dm.DocumentId == CurrentDoc.Id);
+            }
+        }
+
+        loadingDoc = false;
+    }
+
+    private async Task GoBack()
+    {
+        await JS.InvokeVoidAsync("history.back");
+    }
+
+    private void ToggleSidebar()
+    {
+        isSidebarOpen = !isSidebarOpen;
+    }
 
     private async Task ToggleFullscreen()
     {
-        await JS.InvokeVoidAsync("eval", @"
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }");
+        try
+        {
+            await JS.InvokeVoidAsync("toggleFullscreen", "docFrame");
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Fullscreen failed: {ex.Message}");
+        }
     }
 
-    private void PrintDocument() => JS.InvokeVoidAsync("print");
+    private async Task PrintDocument()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("printIframeDoc", "docFrame");
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Printing failed: {ex.Message}");
+        }
+    }
 
     private async Task DownloadDocument()
     {
-        if (CurrentDoc is not null)
-        {
-            // Convert byte array to Base64 string
-            var base64 = Convert.ToBase64String(CurrentDoc.Data);
-            await JS.InvokeVoidAsync("downloadFile",
-                CurrentDoc.Title,
-                CurrentDoc.ContentType,
-                base64);
+        if (CurrentDoc is null) return;
 
-            // Format as a Data URL
-            pdfBase64 = $"data:application/pdf;base64,{base64}";
-            CurrentDoc.Downloads += 1;
+        try
+        {
             using var context = await DbFactory.CreateDbContextAsync();
+            CurrentDoc.Downloads += 1;
             context.Attach(CurrentDoc).State = EntityState.Modified;
             await context.SaveChangesAsync();
-        }
-    }
-    private string? ViewerUrl
-    {
-        get
-        {
-            if (CurrentDoc == null) return null;
 
-            if (CurrentDoc.ContentType == "application/pdf" || CurrentDoc.ContentType.StartsWith("image/"))
-            {
-                return $"data:{CurrentDoc.ContentType};base64,{Convert.ToBase64String(CurrentDoc.Data)}";
-            }
-            else if (CurrentDoc.ContentType.Contains("word") || CurrentDoc.ContentType.Contains("excel"))
-            {
-                // Use Office Web Viewer
-                var fileUrl = NavigationManager.BaseUri + $"api/documents/{CurrentDoc.Id}";
-                return $"https://view.officeapps.live.com/op/embed.aspx?src={Uri.EscapeDataString(fileUrl)}";
-            }
-            else
-            {
-                return null; // fallback: force download
-            }
+            var base64 = Convert.ToBase64String(CurrentDoc.Data);
+            await JS.InvokeVoidAsync("downloadFile", CurrentDoc.Title, CurrentDoc.ContentType, base64);
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Download error: {ex.Message}");
         }
     }
+    
     private string GetViewerUrl(PamojaWebsite.Data.Document doc)
     {
         var fileUrl = NavigationManager.BaseUri + $"api/documents/{doc.Id}";
         return $"https://view.officeapps.live.com/op/embed.aspx?src={Uri.EscapeDataString(fileUrl)}";
     }
-    protected override async Task OnInitializedAsync()
-    {
-        loadingDoc = true;
-        using var context = await DbFactory.CreateDbContextAsync();
-        CurrentDoc = await context.Document.FirstOrDefaultAsync(d => d.Id == Id);
-        if (CurrentDoc is not null)
-        {    
-            CurrentDoc.Metadata = await context.DocumentMetadata?.FirstOrDefaultAsync(dm => dm.DocumentId == CurrentDoc.Id);
-            StateHasChanged();
-        }
-        loadingDoc = false;
-    }
-
 }

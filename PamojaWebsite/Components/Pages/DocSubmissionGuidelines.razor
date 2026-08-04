@@ -1,39 +1,103 @@
-﻿@inject IJSRuntime JS
+﻿@page "/modal"
+@inject IJSRuntime JS
 
 @if (showModal)
 {
-    <!-- Fullscreen backdrop -->
-    <div class="backdrop"
+    <!-- Vertically centered backdrop container -->
+    <div class="fixed inset-0 z-50 flex justify-center sm:p-6 bg-gray-900/60 backdrop-blur-sm transition-opacity overflow-y-auto sm:mt-5"
          @onclick="HideModal">
-        <!-- Modal box -->
-        <div class="modal-box text-green-900"
+
+        <!-- Modal box: Vertically centered, responsive width & bounded height -->
+        <div class="relative w-full sm:w-[90%] max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all text-gray-800 max-h-[85vh] flex flex-col my-auto"
              @onclick:stopPropagation="true">
-            <div class="modal-header">
-                <h5 class="modal-title font-bold">Submission Guidelines</h5>
-                <button type="button" class="btn-close p-2" aria-label="Close"
-                        @onclick="HideModal"></button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-gray-100 bg-gray-50/50 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
+                        <svg aria-label="Document Icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h5 class="text-base sm:text-lg font-bold text-gray-900 m-0 leading-snug">Submission Guidelines</h5>
+                </div>
+
+                <!-- Close Button -->
+                <button type="button"
+                        class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors shrink-0"
+                        aria-label="Close"
+                        @onclick="HideModal">
+                    <svg aria-label="Close Icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            <div class="modal-body">
-                <h3 class="font-bold p-4">All Documents Must Follow The Following Guidelines:</h3>
-                <ul>
-                    <li class="flex items-start">
-                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                        Document size should be no more than 50MB.
+
+            <!-- Modal Body (Internal scroll if viewport height is small) -->
+            <div class="p-4 sm:p-6 space-y-3 overflow-y-auto flex-1">
+                <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400 m-0">
+                    Please review before uploading
+                </p>
+
+                <ul class="space-y-2.5 p-0 list-none m-0">
+                    <!-- Guideline 1 -->
+                    <li class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 hover:bg-gray-50 transition-colors">
+                        <div class="mt-0.5 text-emerald-500 shrink-0">
+                            <i data-feather="check-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium text-gray-700 leading-snug">
+                            Document size should be no more than <strong class="text-gray-900 font-semibold">50MB</strong>.
+                        </span>
                     </li>
-                    <li class="flex items-start">
-                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                        Supported document types are PDF, DOC, DOCX, PPT, TXT, CSV or XLS.
+
+                    <!-- Guideline 2 -->
+                    <li class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 hover:bg-gray-50 transition-colors">
+                        <div class="mt-0.5 text-emerald-500 shrink-0">
+                            <i data-feather="check-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        </div>
+                        <div class="text-xs sm:text-sm font-medium text-gray-700 leading-snug">
+                            <span>Supported document types:</span>
+                            <div class="flex flex-wrap gap-1 mt-1.5">
+                                <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded">PDF</span>
+                                <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded">DOC / DOCX</span>
+                                <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded">PPT</span>
+                                <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded">TXT</span>
+                                <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded">CSV / XLS</span>
+                            </div>
+                        </div>
                     </li>
-                    <li class="flex items-start">
-                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                        Click browse and upload a document.
+
+                    <!-- Guideline 3 -->
+                    <li class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 hover:bg-gray-50 transition-colors">
+                        <div class="mt-0.5 text-emerald-500 shrink-0">
+                            <i data-feather="check-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium text-gray-700 leading-snug">
+                            Click <strong class="text-gray-900 font-semibold">Browse</strong> and select your file to upload.
+                        </span>
                     </li>
-                    <li class="flex items-start">
-                        <i data-feather="check-circle" class="text-secondary-500 mr-2 mt-1"></i>
-                        Successful uploads will appear in the recent documents section.
-                    </li>                  
+
+                    <!-- Guideline 4 -->
+                    <li class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-gray-50/80 hover:bg-gray-50 transition-colors">
+                        <div class="mt-0.5 text-emerald-500 shrink-0">
+                            <i data-feather="check-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium text-gray-700 leading-snug">
+                            Successful uploads will appear in your <strong class="text-gray-900 font-semibold">Recent Documents</strong> section.
+                        </span>
+                    </li>
                 </ul>
             </div>
+
+            <!-- Pinned Modal Footer -->
+            <div class="px-4 sm:px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end shrink-0">
+                <button type="button"
+                        class="w-full sm:w-auto px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-medium text-xs sm:text-sm rounded-xl shadow-sm hover:shadow transition-all text-center"
+                        @onclick="HideModal">
+                    Got it
+                </button>
+            </div>
+
         </div>
     </div>
 }
@@ -58,7 +122,7 @@
         StateHasChanged();
 
         // Wait for 30 seconds
-        await Task.Delay(TimeSpan.FromSeconds(30));
+        await Task.Delay(TimeSpan.FromSeconds(20));
 
         // Close modal
         showModal = false;

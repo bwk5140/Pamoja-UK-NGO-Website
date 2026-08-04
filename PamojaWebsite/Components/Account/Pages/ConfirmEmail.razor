@@ -9,17 +9,36 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="pt-[10%] mb-5 py-10">
     <div class="container-sm" style="text-align: center; color: #2f4f4f;">
         <div class="flex justify-center w-full">
-            <a aria-label="Navigate to home page" href="/" style="text-decoration: none;"><img alt="Pamoja logo" loading="lazy" class="mb-2" src="Images/PamojaLogo.png" width="180" height="140" /></a>
+            <a aria-label="Navigate to home page" href="/" style="text-decoration: none;">
+                <img fetchpriority="high"
+                     loading="eager" src="Images/PamojaLogo.webp" class="h-36 w-36" alt="Pamoja logo" width="128" height="128" />
+            </a>
         </div>
         <div class="flex justify-center max-w-xl mx-auto">
             <div class="bg-white p-8 rounded-xl shadow-lg w-96 border border-gray-200">

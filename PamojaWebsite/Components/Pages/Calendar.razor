@@ -1,8 +1,8 @@
 ﻿
-<div class="flex items-center mx-auto justify-between py-2">
+<div class="flex items-center mx-auto justify-between py-10 md:py-2">
     <!-- Back -->
     <button class="px-3 py-2 border rounded hover:bg-gray-100" @onclick="LoadPreviousCalendarMonth">
-        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg aria-label="Back button" class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 19l-7-7 7-7" />
         </svg>
@@ -15,15 +15,15 @@
 
     <!-- Next -->
     <button class="px-3 py-2 border rounded hover:bg-gray-100" @onclick="LoadNextCalendarMonth">
-        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg aria-label="Next Button" class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 5l7 7-7 7" />
         </svg>
     </button>
 </div>
 <div class="flex items-center mx-auto justify-between">
-    <table class="calendar mx-auto">
-        <thead class="mx-auto">
+    <table class="calendar items-center mx-auto">
+        <thead class="mx-auto text-center">
             <tr class="font-bold">
                 <td>S</td>
                 <td>M</td>
@@ -34,7 +34,7 @@
                 <td>S</td>
             </tr>
         </thead>
-        <tbody class="mx-auto">
+        <tbody class="mx-auto px:0 md:px-10">
             @for (int r = 0; r < CalendarMonthRows; r++)
             {
                 <tr>

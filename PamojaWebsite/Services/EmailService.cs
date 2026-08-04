@@ -1,7 +1,6 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using MimeKit;
@@ -12,8 +11,13 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace PamojaWebsite.Services
 {
-    public class EmailService(ILogger<EmailSender> logger, IConfiguration configuration, IStringLocalizer<SharedResource> Loc, ApplicationUserService applicationUserService, IMemoryCache Cache)
+    public class EmailService
     {
+        private readonly ILogger<EmailSender> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly IStringLocalizer<SharedResource> _loc;
+        private readonly ApplicationUserService _applicationUserService;
+        private readonly IMemoryCache _cache;
         private readonly string smtpServer = "smtp.gmail.com";
         private readonly int smtpPort = 587;
         bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -28,6 +32,14 @@ namespace PamojaWebsite.Services
                 { "AUD", "A$" },
                 { "KES", "KSh" }
             };
+        public EmailService(ILogger<EmailSender> logger, IConfiguration configuration, IStringLocalizer<SharedResource> Loc, ApplicationUserService applicationUserService, IMemoryCache Cache) {
+            _logger = logger;
+            _configuration = configuration;
+            _loc = Loc;
+            _applicationUserService = applicationUserService;
+            _cache = Cache;
+        }
+        
         public async Task SendLinkEmailAsync(string toEmail, string subject, string message)
         {
             var Message = new MimeMessage();
@@ -157,7 +169,7 @@ namespace PamojaWebsite.Services
         }
         public async Task SendClientPaymentEmailAsync(Payment payment)
         {
-            var user = await applicationUserService.GetApplicationUser();
+            var user = await _applicationUserService.GetApplicationUser();
             var builder = new BodyBuilder();
             builder.HtmlBody = string.Format(@"
             <html lang=""en"">
@@ -171,7 +183,7 @@ namespace PamojaWebsite.Services
                             <table width=""50%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
                                 <tr>
                                     <td style=""padding:40px; text-align:center;"">
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                         <h1 style=""margin:20px 0 10px; font-size:24px; font-weight:bold; color:#333;"">Payment Invoice</h1>
                                         <p style=""margin:0; font-size:16px; color:#555;"">Thank you!</p>
                                     </td>
@@ -233,9 +245,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {6}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
                             </table>
@@ -250,22 +262,12 @@ namespace PamojaWebsite.Services
             payment.Amount,
             payment.ProcessingFee,
             payment.Total,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
-            Cache.TryGetValue("ClientPaymentEmailSent", out var emailSent);
-            if (emailSent is null)
-            {
-                await SendEmailAsync(payment.Email, "Payment Invoice", builder.HtmlBody);
-                var EmailSent = await Cache.GetOrCreateAsync("ClientPaymentEmailSent", async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
-                });
-            }
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
+            await SendEmailAsync(payment.Email, "Payment Invoice", builder.HtmlBody);
         }
         public async Task SendClientAppointmentEmailAsync(Appointment appointment)
         {
-            var user = await applicationUserService.GetApplicationUser();
+            var user = await _applicationUserService.GetApplicationUser();
             var builder = new BodyBuilder();
             builder.HtmlBody = string.Format(@"
             <html lang=""en"">
@@ -289,14 +291,11 @@ namespace PamojaWebsite.Services
                                                     <div style=""margin:16px 0; max-width:100%; border:2px solid #16a34a; border-left:8px solid #16a34a; background-color:#ffffff; border-radius:8px;"">
                                                         <div style=""padding:8px; display:flex; flex-direction:column; align-items:center; gap:24px;"">
                                                             <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); width:90%;"">
-                                                                <h1 style=""font-size:18px; font-weight:bold; text-align:center; color:#1f2937; margin:16px 0;"">Appointment Details</h1>
-                                                                <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1);"">
-                                                                    <div style=""display:flex; flex-direction:row; justify-content:space-between; gap:16px;"">
-                                                                        <div style=""flex:1; display:flex; flex-direction:row; gap:16px;"">
-                                                                            <div style=""margin:12px 0; padding-right: 12px;"">
-                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                                                <div style=""margin:12px 0; padding-right: 12px;"">
+                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                                                             </div>
-                                                                            <div style=""margin:12px 0;"">
+                                                                            <h1 style=""font-size:18px; font-weight:bold; color:#1f2937; margin:16px 0; padding-bottom: 5px"">Appointment Details</h1>
+                                                                            <div style=""margin:16px 0;"">
                                                                                 <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:16px;"">
                                                                                     Consultation with Pamoja Mental Health and Safeguarding Team
                                                                                 </p>
@@ -316,10 +315,6 @@ namespace PamojaWebsite.Services
                                                                                         {2}
                                                                                     </p>
                                                                                 </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -331,9 +326,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {3}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
                             </table>
@@ -345,22 +340,12 @@ namespace PamojaWebsite.Services
             DateOnly.FromDateTime(appointment.Date.ToLocalTime()).ToLongDateString(),
             appointment.Time.ToString("hh:mm tt"),
             appointment.Message,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
-            Cache.TryGetValue("ClientAppointmentEmailSent", out var emailSent);
-            if (emailSent is null)
-            {
-                await SendEmailAsync(appointment.Email, "Appointment Confirmation", builder.HtmlBody);
-                var EmailSent = await Cache.GetOrCreateAsync("ClientAppointmentEmailSent", async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
-                });
-            }
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
+            await SendEmailAsync(appointment.Email, "Appointment Confirmation", builder.HtmlBody);
         }
         public async Task SendManagementEmailAsync(Appointment appointment)
         {
-            var user = await applicationUserService.GetApplicationUser();
+            var user = await _applicationUserService.GetApplicationUser();
             var builder = new BodyBuilder();
             builder.HtmlBody = string.Format(@"
             <html lang=""en"">
@@ -384,14 +369,11 @@ namespace PamojaWebsite.Services
                                                     <div style=""margin:16px 0; max-width:100%; border:2px solid #16a34a; border-left:8px solid #16a34a; background-color:#ffffff; border-radius:8px;"">
                                                         <div style=""padding:8px; display:flex; flex-direction:column; align-items:center; gap:24px;"">
                                                             <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); width:90%;"">
-                                                                <h1 style=""font-size:18px; font-weight:bold; text-align:center; color:#1f2937; margin:16px 0;"">Appointment Details</h1>
-                                                                <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1);"">
-                                                                    <div style=""display:flex; flex-direction:row; justify-content:space-between; gap:16px;"">
-                                                                        <div style=""flex:1; display:flex; flex-direction:row; gap:16px;"">
-                                                                            <div style=""margin:12px 0; padding-right: 12px;"">
-                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                                                <div style=""margin:12px 0; padding-right: 12px;"">
+                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
                                                                             </div>
-                                                                            <div style=""margin:12px 0;"">
+                                                                            <h1 style=""font-size:18px; font-weight:bold; color:#1f2937; margin:16px 0; padding-bottom: 5px"">Appointment Details</h1>
+                                                                            <div style=""margin:16px 0;"">
                                                                                 <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:16px;"">
                                                                                     Consultation with Pamoja Mental Health and Safeguarding Team
                                                                                 </p>
@@ -441,9 +423,6 @@ namespace PamojaWebsite.Services
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -455,9 +434,9 @@ namespace PamojaWebsite.Services
                                 </tr>
                                 <tr>
                                     <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
-                                        &copy;2025 pamojasafeguardingnetwork.co.uk<br/>
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
                                         {7}<br/>
-                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
                                     </td>
                                 </tr>
                             </table>
@@ -473,18 +452,102 @@ namespace PamojaWebsite.Services
             appointment.LastName,
             appointment.Email,
             appointment.Phone,
-            Loc["PamojaNetworkAndAllRelatedMarks"]);
-            Cache.TryGetValue("ManagementEmailSent", out var emailSent);
-            if (emailSent is null)
-            {
-                await SendEmailAsync("pamojamentalhealth@pamojasafeguarding.com", "Appointment Confirmation", builder.HtmlBody);
-                var EmailSent = await Cache.GetOrCreateAsync("ManagementEmailSent", async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                    var emailSent = true;
-                    return emailSent;
-                });
-            }
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
+            await SendEmailAsync("pamojamentalhealth@pamojasafeguarding.com", "Appointment Confirmation", builder.HtmlBody);
+        }
+        public async Task SendContactRequestEmailAsync(ContactUsForm Request)
+        {
+            var user = await _applicationUserService.GetApplicationUser();
+            var builder = new BodyBuilder();
+            builder.HtmlBody = string.Format(@"
+            <html lang=""en"">
+            <head>
+                <meta charset=""UTF-8"">
+            </head>
+            <body style=""margin:0; padding:0; background-color:#f4f4f4;"">
+                <table width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""background-color:#f4f4f4;"">
+                    <tr>
+                        <td align=""center"" valign=""top"">
+                            <table width=""50%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""background-color:#ffffff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); font-family:Arial, sans-serif;"">
+                                <tr>
+                                    <td style=""padding:20px; background-color:#ffffff; border-radius:6px;"">
+                                        <!-- Contact Request Block -->
+                                        <div style=""max-width:100%; margin:0 auto; padding:16px;"">
+                                            <div style=""max-width:100%; margin:0 auto; background-color:#ffffff; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.1);"">
+                                                <div style=""padding:8px 16px; border-bottom:1px solid #ddd;"">
+                                                    <strong>Contact Request</strong>
+                                                </div>
+                                                <div style=""padding:16px;"">
+                                                    <div style=""margin:16px 0; max-width:100%; border:2px solid #16a34a; border-left:8px solid #16a34a; background-color:#ffffff; border-radius:8px;"">
+                                                        <div style=""padding:8px; display:flex; flex-direction:column; align-items:center; gap:24px;"">
+                                                            <div style=""background-color:#ffffff; padding:24px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); width:90%;"">
+                                                                <div style=""margin:12px 0; padding-right: 12px;"">
+                                                                                <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" alt=""Pamoja Logo"" width=""100"" height=""120"" style=""display:block; margin:0 auto;""/>
+                                                                            </div>
+                                                                            <h1 style=""font-size:18px; font-weight:bold; color:#1f2937; margin:16px 0; padding-bottom: 5px"">Details:</h1>
+                                                                            <div style=""margin:16px 0;"">
+                                                                                <div style=""display:flex; flex-direction:column;"">
+                                                                                    <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        Name: 
+                                                                                    </p>
+                                                                                    <p style=""margin-left: 5px; font-weight:normal; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        {0}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div style=""display:flex; flex-direction:column;"">
+                                                                                    <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        Email: 
+                                                                                    </p>
+                                                                                    <p style=""margin-left: 5px; font-weight:normal; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        {1}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div style=""display:flex; flex-direction:column;"">
+                                                                                    <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        Subject: 
+                                                                                    </p>
+                                                                                    <p style=""margin-left: 5px; font-weight:normal; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        {2}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div style=""display:flex; flex-direction:column;"">
+                                                                                    <p style=""font-weight:bold; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        Message: 
+                                                                                    </p>
+                                                                                    <p style=""margin-left: 5px; font-weight:normal; font-size:16px; color:#1f2937; margin-bottom:12px;"">
+                                                                                        {3}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Contact Request Block -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding:20px; text-align:center; font-size:12px; color:#555; background-color:#f0f0f0;"">
+                                        &copy;2026 pamojasafeguardingnetwork.co.uk<br/>
+                                        {4}<br/>
+                                        <img src=""https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1763748093/PamojaLogo_iu9ryg.png"" width=""90"" height=""120"" alt=""Pamoja Logo"" style=""margin-top:10px;""/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>",
+            Request.Name,
+            Request.Email,
+            Request.Subject,
+            Request.Message,
+            _loc["PamojaNetworkAndAllRelatedMarks"]);
+            await SendEmailAsync("pamojamentalhealth@pamojasafeguarding.com", "Contact Request", builder.HtmlBody);
+            await SendEmailAsync(Request.Email, "Contact Request", builder.HtmlBody);
         }
     }
 }

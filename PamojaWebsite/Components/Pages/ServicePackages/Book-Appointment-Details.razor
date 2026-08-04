@@ -3,31 +3,47 @@
 <PageTitle>Book Appointment Details | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="DropDownHelper.min.js" defer></script>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject BookAppointmentService BookAppointmentService
 @inject MyApiService ApiService
 
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <div class="container-xxxl">
         <!-- Banner Section -->
         <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div class="absolute inset-0">
-                <img alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
+                <img loading="lazy" alt="Banner image" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" />
             </div>
 
             <!-- Content -->
@@ -56,7 +72,7 @@
                             <!-- Separator -->
                             <li>
                                 <div class="flex items-center">
-                                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                               clip-rule="evenodd" />
@@ -82,11 +98,11 @@
                 </p>
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h1 class="text-l font-bold text-center text-gray-800 mt-4 mb-4">Book an Appointment</h1>
-                    <div class="bg-white p-6 rounded-lg shadow-md w-88">
+                    <div class="bg-white p-6 rounded-lg shadow-md w-full">
                         <div class="flex flex-row md:flex-col gap-8 justify-between">
-                            <div class="md:w-3/4 flex flex-col md:flex-row gap-8">
+                            <div class="md:w-full flex flex-col md:flex-row gap-8">
                                 <div class="mb-3 mt-3">
-                                    <img src="Images/PamojaLogo.png"
+                                    <img loading="lazy" src="Images/PamojaLogo.webp"
                                          width="200"
                                          height="200"
                                          alt="Pamoja logo" />
@@ -109,7 +125,7 @@
                                 </div>
                                 <div class="mb-3 mt-3 ms-5">
                                     <button class="rounded hover:bg-gray-200" @onclick="BackToAppointmentBooking">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                        <svg aria-label="Back button" xmlns="http://www.w3.org/2000/svg"
                                              fill="none"
                                              viewBox="0 0 24 24"
                                              stroke-width="2"
@@ -125,7 +141,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-88 border border-gray-200">
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-3 w-full border border-gray-200">
                         <EditForm Model="appointmentDetailsDTO" OnValidSubmit="BookAnAppointment" OnInvalidSubmit="HandleInvalidSubmit" FormName="create" Enhance class="space-y-6">
                             <DataAnnotationsValidator />
                             <ValidationSummary class="text-sm text-red-600" />
@@ -144,46 +160,59 @@
                                 <ValidationMessage For="@(() => appointmentDetailsDTO.LastName)" class="text-sm text-red-600 mt-1" />
                             </div>
                             <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <button @onclick="ToggleDropdown"
-                                        type="button"
-                                        class="inline-flex justify-center w-40 rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                    @if (SelectedCountryCode is not null)
-                                    {
-                                        @if (!IsOpen)
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div class="relative inline-block">
+                                    @{
+                                        var showButtonClass = IsOpen ? "hidden" : "block";
+                                    }
+                                    <button type="button"
+                                            class="@showButtonClass inline-flex justify-center w-40 rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                            @onclick="ToggleDropdown">
+                                        @if (SelectedCountryCode is not null)
                                         {
                                             <SVGFlag class="vertical-align: center;" CountryCode="@SelectedCountryCode.ISOCode" Width="30" Height="20" />
                                             <span class="ml-2">+@SelectedCountryCode.Code</span>
                                         }
-                                    }
-                                </button>
-                                @if (IsOpen)
-                                {
-                                    <div id="countryDropdown" class="origin-top-right absolute mt-2 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-96 overflow-y-auto">
-                                        
-                                        <div class="relative">
-                                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                            <InputText id="country" class="w-full h-8 left-4 px-12" @bind-Value="@Country" @bind-Value:after="(() => SearchCountry(Country))" @oninput="(() => SearchCountry(Country))" />
-                                        </div>
-                                        
-                                        <ul class="py-1">
-                                            @if (CountryCodes is not null)
-                                            {
-                                                foreach (var country in CountryCodes)
-                                                {
-                                                    <li>
-                                                        <button type="button" class="flex items-center w-full h-16 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                                @onclick="() => OnCountrySelected(country)">
-                                                            <SVGFlag class="vertical-align: center;" CountryCode="@country.ISOCode" Width="30" Height="20" />
-                                                            <span class="ml-2">+@country.Code @country.Country</span>
-                                                        </button>
-                                                    </li>
-                                                }
-                                            }
+                                    </button>
+                                    @if (IsOpen)
+                                    {
+                                        <div class="fixed inset-0 z-30" @onclick="(() => IsOpen = false)"></div>
 
-                                        </ul>
-                                    </div>
-                                }
+                                        <div id="countryDropdown"
+                                             class="z-40 absolute justify-center w-60 rounded-md shadow-sm px-4 py-2 
+                                                      bg-white text-sm font-medium text-gray-700 ring-1 ring-black ring-opacity-5 max-h-96">
+
+                                            
+                                            <div class="sticky top-0 z-10 bg-white border-b border-gray-100 shadow-sm">
+                                                <div class="relative">
+                                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                                    <InputText id="country"
+                                                               class="w-full h-8 pl-9 pr-3 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-green-800"
+                                                               placeholder="Search country..."
+                                                               @bind-Value="@Country"
+                                                               @oninput="SearchCountry" />
+                                                </div>
+                                            </div>
+
+                                            <ul class="py-1 max-h-80 overflow-y-auto w-full">
+                                                @if (CountryCodes is not null)
+                                                {
+                                                    foreach (var country in CountryCodes)
+                                                    {
+                                                        <li>
+                                                            <button type="button"
+                                                                    class="flex items-center w-full h-16 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                                    @onclick="() => OnCountrySelected(country)">
+                                                                <SVGFlag class="vertical-align: center;" CountryCode="@country.ISOCode" Width="30" Height="20" />
+                                                                <span class="ml-2">+@country.Code @country.Country</span>
+                                                            </button>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
                                 <div>
                                     <InputText id="subject" type="tel" @bind-Value="appointmentDetailsDTO.Phone"
                                                class="@InputClass(() => appointmentDetailsDTO.Phone)" placeholder="732123876" />
@@ -235,6 +264,8 @@
 
     private EditContext editContext;
 
+    private List<Appointment> appointments { get; set; }
+
     [SupplyParameterFromQuery]
     private string Id { get; set; }
 
@@ -258,8 +289,8 @@
     {
         selectedCulture = CultureInfo.CurrentCulture;
         if (Id is not null){
-            using var context = await DbFactory.CreateDbContextAsync();
-            var appointments = await context.Appointment.ToListAsync();
+            var context = await DbFactory.CreateDbContextAsync();
+            appointments = await context.Appointment.ToListAsync();
             if (appointments is not null){
                 latestAppointment = appointments.FirstOrDefault(a => a.Id == Id);
                 if (latestAppointment is not null)
@@ -268,7 +299,7 @@
                 }
             }
 
-            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+            CountryCodes = await BookAppointmentService.GetCountryCodesAsync();
             if (CountryCodes is not null){
                 CountryCodes = CountryCodes.OrderByDescending(c => c.Country).ToList();
             }
@@ -279,47 +310,27 @@
             StateHasChanged();
         }
     }
-    [JSInvokable]
-    public void CloseDropdown(){
-        IsOpen = false;
-        StateHasChanged();
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task SearchCountry(ChangeEventArgs e)
     {
-        if (firstRender)
+        var searchterm = e.Value?.ToString().ToLowerInvariant();
+        CountryCodes = await BookAppointmentService.GetCountryCodesAsync();
+        if (searchterm.Contains("+"))
         {
-            await JS.InvokeVoidAsync("registerOutsideClick", "countryDropdown", DotNetObjectReference.Create(this));
-        }
-    }
-
-    private async Task SearchCountry(string searchterm)
-    {
-        if (string.IsNullOrEmpty(searchterm))
-        {
-            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
+            if (CountryCodes is not null)
+            {
+                searchterm = searchterm.Substring(1);
+                CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.ToLower().Contains(searchterm)).ToList();
+            }
         }
         else
         {
-            searchterm = searchterm.ToLowerInvariant();
-            CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
-            if (searchterm.Contains("+"))
+            if (CountryCodes is not null)
             {
-                CountryCodes = await (await ApiService.GetClient()).GetFromJsonAsync<List<CountryCode>>("api/db/refresh-country_codes");
-                if (CountryCodes is not null)
-                {
-                    searchterm = searchterm.Substring(1);
-                    CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.ToLower().Contains(searchterm)).ToList();
-                }
-            }
-            else{
-                if (CountryCodes is not null)
-                {
-                    CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Country.ToLower().Contains(searchterm)).ToList();
+                CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Country.ToLower().Contains(searchterm)).ToList();
 
-                    if (CountryCodes.Count == 0)
-                    {
-                        CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.Contains(searchterm)).ToList();
-                    }
+                if (CountryCodes.Count == 0)
+                {
+                    CountryCodes = CountryCodes.OrderByDescending(c => c.Country).Where(c => c.Code.Contains(searchterm)).ToList();
                 }
             }
         }

@@ -5,22 +5,38 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
 
-    gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
 </script>
 
 @inject IStringLocalizer<SharedResource> Loc
 @inject NavigationManager NavigationManager
 
 @rendermode InteractiveServer
-<div class="pt-[5%] mb-5 py-20 mt-5">
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
     <!-- Hero Section -->
     <section class="relative py-20 mt-5 bg-green-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="absolute inset-0">
-            <img class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" alt="Banner image"/>
+            <img loading="lazy" class="relative object-cover object-top md:h-64 md:w-full sm:h-full" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771133161/tree_mullks.jpg" alt="Banner image" />
         </div>
 
         <!-- Content -->
@@ -37,56 +53,67 @@
             <div class="grid md:grid-cols-3 lg:grid-cols-3 gap-8">
                 <!-- Education Service -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow" @onclick=GoToEducationService style="cursor: pointer;">
-                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132846/group-cheerful-friends-with-facemasks-taking-selfie-park_fcv0ud.jpg"
+                    <img fetchpriority="high"
+                         loading="eager" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771132846/group-cheerful-friends-with-facemasks-taking-selfie-park_fcv0ud.jpg"
                          alt="Education" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-green-900 mb-3">EDUCATION</h3>
                         <p class="text-gray-600 mb-4">Specialized mental health programs and safeguarding solutions for educational institutions.</p>
-                        <a href="/services/school-package" class="text-secondary font-medium hover:text-green-900 transition-colors">Learn More</a>
+                        <a href="/services/school-package" aria-label="View school package" class="text-secondary font-medium hover:text-green-900 transition-colors">Visit Education</a>
                     </div>
                 </div>
 
                 <!-- Corporate Service -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow" @onclick=GoToCorporateService style="cursor: pointer;">
-                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132397/corporate_tzingh.jpg"
+                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771132397/corporate_tzingh.jpg"
                          alt="Corporate" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-green-900 mb-3">CORPORATE</h3>
                         <p class="text-gray-600 mb-4">Workplace mental health programs and employee safeguarding initiatives.</p>
-                        <a href="/services/company-package" class="text-secondary font-medium hover:text-green-900 transition-colors">Learn More</a>
+                        <a href="/services/company-package" aria-label="View company package" class="text-secondary font-medium hover:text-green-900 transition-colors">Visit Corporate</a>
                     </div>
                 </div>
 
                 <!-- Healthcare Service -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow" @onclick=GoToHealthcareService style="cursor: pointer;">
-                    <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/08729196-ff49-4901-a747-1457caab553a/unsplash-image-hgD5IfjyIt8.jpg"
-                         alt="Healthcare" class="w-full h-56 object-cover">
+                    <img loading="lazy"
+                         decoding="async"
+                         src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/08729196-ff49-4901-a747-1457caab553a/unsplash-image-hgD5IfjyIt8.jpg?format=webp&width=600"
+                         alt="Healthcare"
+                         width="600"
+                         height="224"
+                         class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-green-900 mb-3">HEALTHCARE</h3>
                         <p class="text-gray-600 mb-4">Mental health support and safeguarding training for healthcare professionals.</p>
-                        <a href="/services/health-care-package" class="text-secondary font-medium hover:text-green-900 transition-colors">Learn More</a>
+                        <a href="/services/health-care-package" aria-label="View health care package" class="text-secondary font-medium hover:text-green-900 transition-colors">Visit Healthcare</a>
                     </div>
                 </div>
 
                 <!-- Community Service -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow" @onclick=GoToCommunityService style="cursor: pointer;">
-                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/v1771132977/photorealistic-portrait-african-woman_wlmi52.jpg"
+                    <img loading="lazy" src="https://res.cloudinary.com/dzmfpxcwu/image/upload/f_auto,q_auto,w_800/v1771132977/photorealistic-portrait-african-woman_wlmi52.jpg"
                          alt="Community" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-green-900 mb-3">COMMUNITY</h3>
                         <p class="text-gray-600 mb-4">Community-based mental health programs and public safeguarding awareness.</p>
-                        <a href="/services/community-package" class="text-secondary font-medium hover:text-green-900 transition-colors">Learn More</a>
+                        <a href="/services/community-package" aria-label="View community package" class="text-secondary font-medium hover:text-green-900 transition-colors">Visit Community</a>
                     </div>
                 </div>
 
                 <!-- Public Services -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow" @onclick=GoToPubliServices style="cursor: pointer;">
-                    <img loading="lazy" src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1755863017190-U4ON4758HAMDZIQOTUJY/unsplash-image-8wOToN7KeQ4.jpg"
-                         alt="Public Services" class="w-full h-56 object-cover">
+                    <img loading="lazy"
+                         decoding="async"
+                         src="https://images.squarespace-cdn.com/content/v1/68446487371399108ce11f7f/1755863017190-U4ON4758HAMDZIQOTUJY/unsplash-image-8wOToN7KeQ4.jpg?format=webp&width=600"
+                         alt="Public Services and Safeguarding Support"
+                         width="600"
+                         height="224"
+                         class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-green-900 mb-3">PUBLIC SERVICES</h3>
                         <p class="text-gray-600 mb-4">Mental health support for public service workers and safeguarding frameworks.</p>
-                        <a href="services/public-services-package" class="text-secondary font-medium hover:text-green-900 transition-colors">Learn More</a>
+                        <a href="services/public-services-package" aria-label="View public services package" class="text-secondary font-medium hover:text-green-900 transition-colors">Visit Public Services</a>
                     </div>
                 </div>
 
@@ -95,7 +122,7 @@
                     <div class="p-8 h-full flex flex-col justify-center">
                         <h3 class="text-2xl font-bold mb-4 text-green-900">Need Custom Solutions?</h3>
                         <p class="mb-6 text-secondary">We provide tailored mental health and safeguarding programs for your specific needs.</p>
-                        <a href="/services/book-appointment"
+                        <a href="/services/book-appointment" aria-label="Book an appointment"
                            class="bg-white text-green-900 px-6 py-3 rounded-lg font-semibold text-center transform hover:bg-gray-100 hover:text-primary transition-colors">
                             Book an Appointment
                         </a>

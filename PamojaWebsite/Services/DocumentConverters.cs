@@ -1,6 +1,5 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
 using System.Text;
 using System.Xml.Linq;
 using UglyToad.PdfPig;
@@ -9,21 +8,6 @@ namespace PamojaWebsite.Services
 {
     public class DocumentConverters
     {
-        public string ConvertDocxToHtml(byte[] content)
-        {
-            using var ms = new MemoryStream(content);
-            using var wordDoc = WordprocessingDocument.Open(ms, false);
-
-            var settings = new HtmlConverterSettings()
-            {
-                PageTitle = "Converted Document"
-            };
-
-            XElement html = HtmlConverter.ConvertToHtml(wordDoc, settings);
-
-            // Convert XElement to string
-            return html.ToString();
-        }
         public string ConvertXlsxToHtml(byte[] content)
         {
             using var ms = new MemoryStream(content); // MemoryStream is IDisposable

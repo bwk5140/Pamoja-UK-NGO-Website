@@ -444,4 +444,13 @@
   <data name="SocialMedia" xml:space="preserve">
     <value>Social Media</value>
   </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="AccessibilityStatement" xml:space="preserve">
+    <value>Accessibility Statement</value>
+  </data>
+  <data name="TermsofUse" xml:space="preserve">
+    <value>Terms of Use</value>
+  </data>
 </root>

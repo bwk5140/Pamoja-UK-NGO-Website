@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using PamojaWebsite.Data.Contexts;
-using PamojaWebsite.Services;
 using System.Text.RegularExpressions;
 
 namespace PamojaWebsite.Controllers
@@ -36,16 +35,8 @@ namespace PamojaWebsite.Controllers
             return Ok(donations);
         }
         [HttpGet("doc-metadata")]
-        public async Task<IActionResult> GetDocMetaData([FromQuery] string? currentDocId)
+        public async Task<IActionResult> GetDocMetaData()
         {
-            var documents = await Cache.GetOrCreateAsync("Document", async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                var docs = await _db.Document.ToListAsync();
-                return docs;
-            });
-
-            var currentDoc = documents?.FirstOrDefault(d => d.Id == currentDocId);
             var documentsMetadata = await Cache.GetOrCreateAsync("DocumentMetadata", async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
@@ -53,13 +44,9 @@ namespace PamojaWebsite.Controllers
                 return docsmetadata;
             });
 
-            var documentMetadata = documentsMetadata?
-                .FirstOrDefault(dm =>
-                    dm.DocumentId != null && dm.DocumentId == currentDoc?.Id);
-
             Response.Headers["Cache-Control"] = "public, max-age=3600";
 
-            return Ok(documentMetadata);
+            return Ok(documentsMetadata);
         }
         [HttpGet("refreshed-donations")]
         public async Task<IActionResult> GetRefreshedDonations()
@@ -90,7 +77,22 @@ namespace PamojaWebsite.Controllers
 
             return Ok(payments);
         }
-        [HttpGet("country_codes")]
+        [HttpGet("refreshed-payments")]
+        public async Task<IActionResult> GetRefreshedPayments()
+        {
+            Cache.Remove("Payments");
+            var payments = await Cache.GetOrCreateAsync("Payments", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var _payments = await _db.Payment.ToListAsync();
+                return _payments;
+            });
+
+            Response.Headers["Cache-Control"] = "public, max-age=3600";
+
+            return Ok(payments);
+        }
+        [HttpGet("country-codes")]
         public async Task<IActionResult> GetCountryCodes()
         {
             var country_codes = await Cache.GetOrCreateAsync("CountryCodes", async entry =>
@@ -104,7 +106,7 @@ namespace PamojaWebsite.Controllers
 
             return Ok(country_codes);
         }
-        [HttpGet("refresh-country_codes")]
+        [HttpGet("refreshed-country-codes")]
         public async Task<IActionResult> GetRefreshedCountryCodes()
         {
             Cache.Remove("CountryCodes");
@@ -133,7 +135,7 @@ namespace PamojaWebsite.Controllers
 
             return Ok(documents);
         }
-        [HttpGet("refresh-documents")]
+        [HttpGet("refreshed-documents")]
         public async Task<IActionResult> GetRefreshedDocuments()
         {
             Cache.Remove("Documents");
@@ -148,7 +150,7 @@ namespace PamojaWebsite.Controllers
 
             return Ok(documents);
         }
-        [HttpGet("refresh-blogs")]
+        [HttpGet("refreshed-blogs")]
         public async Task<IActionResult> GetRefreshedBlogs()
         {
             Cache.Remove("Blogs");
@@ -187,11 +189,26 @@ namespace PamojaWebsite.Controllers
                 return _tags;
             });
 
-            Response.Headers["Cache-Control"] = "public, max-age=3600";
+            Response.Headers["Cache-Control"] = "no-store, no-cache";
 
             return Ok(tags);
         }
-        [HttpGet("blog_categories")]
+        [HttpGet("update-tags")]
+        public async Task<IActionResult> UpdateBlogTags()
+        {
+            var tags = await _db.Tag.ToListAsync();
+            var cacheOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+            };
+
+            Cache.Set("Tags", tags, cacheOptions);
+
+            Response.Headers["Cache-Control"] = "no-store, no-cache";
+
+            return Ok(tags);
+        }
+        [HttpGet("blog-categories")]
         public async Task<IActionResult> GetBlogCategories()
         {
             var blog_categories = await Cache.GetOrCreateAsync("BlogCategories", async entry =>
@@ -201,11 +218,26 @@ namespace PamojaWebsite.Controllers
                 return _blog_categories;
             });
 
-            Response.Headers["Cache-Control"] = "public, max-age=3600";
+            Response.Headers["Cache-Control"] = "no-store, no-cache";
 
             return Ok(blog_categories);
         }
-        [HttpGet("career_roles")]
+        [HttpGet("update-categories")]
+        public async Task<IActionResult> UpdateBlogCategories()
+        {
+            var categories = await _db.BlogCategory.ToListAsync();
+            var cacheOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+            };
+
+            Cache.Set("BlogCategories", categories, cacheOptions);
+
+            Response.Headers["Cache-Control"] = "no-store, no-cache";
+
+            return Ok(categories);
+        }
+        [HttpGet("career-roles")]
         public async Task<IActionResult> GetCareerRoles()
         {
             var career_roles = await Cache.GetOrCreateAsync("AvailableRoles", async entry =>
@@ -219,7 +251,7 @@ namespace PamojaWebsite.Controllers
 
             return Ok(career_roles);
         }
-        [HttpGet("career_fields")]
+        [HttpGet("career-fields")]
         public async Task<IActionResult> GetCareerFields()
         {
             var career_fields = await Cache.GetOrCreateAsync("AvailableFields", async entry =>
@@ -233,7 +265,7 @@ namespace PamojaWebsite.Controllers
 
             return Ok(career_fields);
         }
-        [HttpGet("social_media_links")]
+        [HttpGet("social-media-links")]
         public async Task<IActionResult> GetSocialMedia()
         {
             var social_media_links = await Cache.GetOrCreateAsync("SocialMediaLinks", async entry =>
@@ -262,6 +294,58 @@ namespace PamojaWebsite.Controllers
 
             return Ok(appointments);
         }
+        [HttpGet("refreshed-appointments")]
+        public async Task<IActionResult> GetRefreshedAppointments()
+        {
+            Cache.Remove("Appointments");
+            var appointments = 
+            await Cache.GetOrCreateAsync("Appointments", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var links = await _db.Appointment.ToListAsync();
+                return links;
+            });
+
+            Response.Headers["Cache-Control"] = "public, max-age=3600";
+
+            return Ok(appointments);
+        }
+        [HttpGet("refreshed-tags")]
+        public async Task<IActionResult> GetRefreshedTags()
+        {
+            Cache.TryGetValue("Tags", out var cachedTags);
+            if (cachedTags is not null)
+            {
+                Cache.Remove("Tags");
+            }
+            var tags = 
+            await Cache.GetOrCreateAsync("Tags", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var links = await _db.Tag.ToListAsync();
+                return links;
+            });
+
+            Response.Headers["Cache-Control"] = "public, max-age=3600";
+
+            return Ok(tags);
+        }
+        [HttpGet("refreshed-categories")]
+        public async Task<IActionResult> GetRefreshedCategories()
+        {
+            Cache.Remove("BlogCategories");
+            var categories = 
+            await Cache.GetOrCreateAsync("BlogCategories", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var links = await _db.BlogCategory.ToListAsync();
+                return links;
+            });
+
+            Response.Headers["Cache-Control"] = "public, max-age=3600";
+
+            return Ok(categories);
+        }
         [HttpGet("filter-documents")]
         public async Task<IActionResult> GetFilteredDocuments([FromQuery] string? filter)
         {
@@ -284,6 +368,7 @@ namespace PamojaWebsite.Controllers
                     )
                     .ToList();
             }
+            Response.Headers["Cache-Control"] = "public, max-age=3600";
             return Ok(docs);
         }
         private string GetShortExtension(string contentType)

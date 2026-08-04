@@ -1,4 +1,7 @@
 ﻿@page "/resources"
+
+<PageTitle>Resources | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+
 @using System.Text
 @using System.Threading.Tasks
 @using PamojaWebsite.Data.Contexts
@@ -6,38 +9,51 @@
 @using Radzen.Blazor
 @using System
 @using System.Text.RegularExpressions;
-@using Word = Microsoft.Office.Interop.Word;
 
 <head>
-    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script defer src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+    <script>
+        function loadGA() {
+          if (window.gaLoaded) return;
+          window.gaLoaded = true;
+
+          var script = document.createElement('script');
+          script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+          script.async = true;
+          document.head.appendChild(script);
+
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+        }
+
+        // Fire when browser is idle or after first interaction
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => setTimeout(loadGA, 2000));
+        } else {
+          setTimeout(loadGA, 3000);
+        }
+    </script>
 </head>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'auto'});
-</script>
 
 @inject IJSRuntime JS
 @inject MyApiService ApiService
 @inject NavigationManager NavigationManager
 @inject ApplicationUserService ApplicationUserService
 @inject UserManager<ApplicationUser> UserManager
+@inject ResourcesService ResourcesService
 @inject IDbContextFactory<PamojaWebsite.Data.Contexts.ApplicationDbContext> DbFactory
 
-@implements IDisposable
-
-<PageTitle>Resources | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
-
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
-<div class="pt-[5%] mb-5 py-20 mt-5">
+
+<div class="sm:pt-[20%] md:pt-[5%] mb-5 py-20 mt-5">
     <div class="min-h-screen bg-gray-50 font-sans">
         <!-- Header & Navigation -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
@@ -125,7 +141,7 @@
                                         @if (File is null)
                                         {
                                             <h3 class="text-lg font-semibold text-dark mb-2">Drag & drop your files here</h3>
-                                            <p class="text-gray-600 mb-6">Supported formats: PDF, DOC, DOCX, PPT, TXT (Max 50MB)</p>
+                                            <p class="text-gray-600 mb-6">Supported formats: PDF, DOC, DOCX, PPT, TXT, XLS, CSV (Max 50MB)</p>
                                             <label for="fileUpload" class="cursor-pointer">
                                                 <div class="bg-green-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
                                                     <i class="fas fa-folder-open"></i>
@@ -168,7 +184,7 @@
                                                     <label class="cursor-pointer">
                                                         <div class="bg-red-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition inline-flex items-center space-x-2">
                                                             <i class="fas fa-folder-open"></i>
-                                                            <span>Unsupported File Type. Please view our upload guidelines</span>
+                                                            <span>Unsupported File Format. Please view our upload guidelines</span>
                                                             <div class="md:w-1/4 px-2">
                                                                 <button type="button" class="p-2 rounded hover:bg-red-500" @onclick="DeleteProblemFile">
                                                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +276,7 @@
                     <div class="mb-8">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
                             <h2 class="text-xl font-bold text-dark">Recent Document Uploads</h2>
-                            <div class="flex space-x-2">
+                            <div class="flex space-x-2 sm:w-1/2 overflow-x:auto">
                                 @if (DocFilters is not null && DocFilters.Any())
                                 {
                                     foreach (var filter in DocFilters)
@@ -282,7 +298,8 @@
                                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 card-hover">
                                         <div class="flex items-start justify-between mb-4">
                                             <div class="document-icon">
-                                                <img alt="@type icon" src="@($"/Icons/{type}.png")" height="35%" width="25%" />
+                                                <img fetchpriority="high"
+                                                     loading="eager" alt="@type icon" src="@($"/Icons/{type}.png")" height="35%" width="25%" />
                                             </div>
                                             <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">@Doc.Category</span>
                                         </div>
@@ -304,7 +321,7 @@
                                             <div>@Doc.Date.DayOfWeek @Doc.Date.Day, @Doc.Date.Year</div>
                                         </div>
 
-                                        <div class="flex items-center justify-between pt-4 border-t">
+                                        <div class="flex items-center justify-between pt-4 border-t border-gray-300">
                                             <div class="flex items-center space-x-4">
                                                 <div class="flex items-center space-x-1">
                                                     <i class="fas fa-download text-gray-400"></i>
@@ -329,7 +346,7 @@
                                 if (loadingDocs)
                                 {
                                     <div class="center-container">
-                                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                        <svg aria-label="Spinner" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                                             <g class="spinner" transform="translate(60,60)">
                                                 <circle cx="0" cy="-40" r="6" />
                                                 <circle cx="28" cy="-28" r="6" />
@@ -380,7 +397,7 @@
                                                     {
                                                         @if (!string.IsNullOrWhiteSpace(cat.Name) && !string.IsNullOrWhiteSpace(blogPostDTO.Category) && blogPostDTO.Category.Equals(cat.Name))
                                                         {
-                                                            <button @onclick="(() => SelectCategory(cat.Name))" type="button" class="px-3 py-1.5 rounded-full bg-blue-200 text-green-900 text-sm hover:bg-blue-300 transition">
+                                                                <button @onclick="(() => UnSelectCategory(cat.Name))" type="button" class="px-3 py-1.5 rounded-full bg-blue-200 text-green-900 text-sm hover:bg-blue-300 transition">
                                                                 @cat.Name
                                                             </button>
                                                         }
@@ -464,7 +481,7 @@
 
                                                     <!-- Action Buttons -->
                                                     <div class="flex justify-end space-x-2">
-                                                        <button type="button" @onclick="(() => HideAddTagModal(CurrentTag))"
+                                                            <button type="button" @onclick="HideAddTagModal"
                                                                 class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                                                             Cancel
                                                         </button>
@@ -563,7 +580,7 @@
                                             <ValidationMessage For="@(() => blogPostDTO.Content)" class="text-sm text-red-600 mt-1" />
                                         </div>
 
-                                        <div class="pt-4 border-t">
+                                        <div class="pt-4 border-t border-gray-300">
                                             <button type="submit" class="w-full bg-green-900 text-white py-3 rounded-lg font-medium hover:bg-secondary transition flex items-center justify-center space-x-2">
                                                 <i class="fas fa-paper-plane"></i>
                                                 <span>Publish Blog Post</span>
@@ -590,10 +607,11 @@
                                             @{
                                                 var source = GetImageSrc(Post.PreviewImage, Post.PreviewImageContentType);
                                             }
-                                            <img src="@source"
+                                            <img fetchpriority="high"
+                                                 loading="eager" src="@source"
                                                  alt="@Post.Title"
                                                  class="w-full h-48 object-cover"
-                                                 loading="lazy">
+                                                 >
                                             <span class="absolute top-4 left-4 bg-gray-100 backdrop-blur-sm text-dark px-3 py-1 rounded-full text-sm font-medium">
                                                 @Post.Category
                                             </span>
@@ -614,10 +632,11 @@
 
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center">
-                                                    <img src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
+                                                    <img fetchpriority="high"
+                                                         loading="eager" src="@GetImageSrc(Post.AuthorImage, Post.AuthorImageContentType)"
                                                          alt="@Post.Author"
                                                          class="w-8 h-8 rounded-full mr-2"
-                                                         loading="lazy">
+                                                         >
                                                     <span class="text-sm font-medium">@Post.Author</span>
                                                 </div>
 
@@ -634,7 +653,7 @@
                                 if (loadingBlogs)
                                 {
                                     <div class="center-container">
-                                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                        <svg aria-label="spinner" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                                             <g class="spinner" transform="translate(60,60)">
                                                 <circle cx="0" cy="-40" r="6" />
                                                 <circle cx="28" cy="-28" r="6" />
@@ -657,11 +676,11 @@
                             }
                         </div>
 
-                        <div class="mt-6 pt-6 border-t">
-                            <a href="/blog-space" aria-label="View all blog posts" class="text-green-900 hover:text-secondary font-medium flex items-center justify-center space-x-2">
+                        <div class="mt-6 pt-6 border-t border-gray-300">
+                            <button @onclick="ViewAllBlogPosts" aria-label="View all blog posts" class="text-green-900 hover:text-secondary font-medium flex items-center justify-center space-x-2">
                                 <span>View All Blog Posts</span>
                                 <i class="fas fa-arrow-right"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -700,7 +719,6 @@
     public Dictionary<string, bool> ActivePAges { get; set; } = new();
     private IBrowserFile File { get; set; }
     private IBrowserFile ImageFile { get; set; }
-    string? currentUrl { get; set; }
     private List<string> DocFilters { get; set; } = new();
     private string DocFilter { get; set; } = "View All";
     private DocSubmissionGuidelines DocSubmissionGuidelines { get; set; } = new();
@@ -748,11 +766,28 @@
     private Task BoldClick() => ApplyFormat("**", "**");
     private Task ListClick() => ApplyFormat("\n-", "");
 
+    private Dictionary<string, string> FileExtensionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx" },
+        { "application/msword", "doc" },
+        { "application/pdf", "pdf" },
+        { "text/plain", "txt" },
+        { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xls" },
+        { "application/vnd.ms-excel", "csv" },
+        { "application/vnd.openxmlformats-officedocument.presentationml.presentation", "ppt" }
+    };
+    private Dictionary<string, string> ImageExtensionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "image/jpeg", "jpg" },
+        { "image/webp", "webp" },
+        { "image/svg", "svg" },
+        { "image/png", "png" }
+    };
+
     protected override async Task OnInitializedAsync()
     {
         loadingBlogs = true;
         loadingDocs = true;
-        DocFilters.Add("All");
         DocFilters.Add("PDF");
         DocFilters.Add("DOC");
         // DocFilters.Add("XLS");
@@ -774,11 +809,9 @@
         NavClasses["Templates"] = "font-medium hover:text-green-900";
         NavClasses["My Uploads"] = "font-medium hover:text-green-900";
         using var context = await DbFactory.CreateDbContextAsync();
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-        Tags = await context.Tag.OrderByDescending(t => t.Name).ToListAsync();
+        Tags = (await ResourcesService.GetBlogTags()).OrderByDescending(t => t.Name).ToList();
 
-        BlogCategories = await context.BlogCategory.OrderByDescending(bc => bc.Name).ToListAsync();
+        BlogCategories = (await ResourcesService.GetBlogCategories()).OrderByDescending(bc => bc.Name).ToList();
         User = await ApplicationUserService.GetApplicationUser();
         if (User is not null){
             var AuthUsers = await UserManager.GetUsersInRoleAsync("PamojaMember");
@@ -789,8 +822,14 @@
                 Authorized = false;
             }
         }
-        
         StateHasChanged();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("import", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
+        }
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -805,23 +844,14 @@
         }
         else
         {
-            using var context = await DbFactory.CreateDbContextAsync();
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
 
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
         }
+
         StateHasChanged();
         loadingBlogs = false;
         loadingDocs = false;
-    }
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
     public static string FormatFileSize(long bytes)
@@ -840,29 +870,12 @@
     }
     private string GetShortExtension(string contentType)
     {
-        var mapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx" },
-            { "application/msword", "doc" },
-            { "application/pdf", "pdf" },
-            { "text/plain", "txt" },
-            { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xls" },
-            { "application/vnd.ms-excel", "csv" },
-            { "application/vnd.openxmlformats-officedocument.presentationml.presentation", "ppt" }
-        };
-        var shortExtension = mapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
+        var shortExtension = FileExtensionMapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
         return shortExtension;
     }
     private string GetShortImageExtension(string contentType)
     {
-        var mapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "image/jpeg", "jpg" },
-            { "image/webp", "webp" },
-            { "image/svg", "svg" },
-            { "image/png", "png" }
-        };
-        var shortExtension = mapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
+        var shortExtension = ImageExtensionMapping.TryGetValue(contentType, out var extension) ? extension : "unknown";
         return shortExtension;
     }
     private async Task SetBlogContent()
@@ -937,14 +950,6 @@
             StateHasChanged();
         }
     }
-    private async Task InsertLink()
-    {
-        var url = await JS.InvokeAsync<string>("prompt", "Enter the URL:");
-        if (!string.IsNullOrWhiteSpace(url))
-        {
-            await ApplyFormat("[", $"]({url})");
-        }
-    }
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         File = e.File; // Get the single file
@@ -1017,24 +1022,13 @@
     {
         stream.Position = 0; // reset to beginning
 
-        using var reader = new iTextSharp.text.pdf.PdfReader(stream);
-        return reader.NumberOfPages;
+        using var document = PdfDocument.Open(stream);
+        return document.GetPages().Count();
     }
 
     public int GetWordPageCount(string filePath)
     {
-        var wordApp = new Word.Application();
-        var doc = wordApp.Documents.Open(filePath);
-
-        if (doc is not null){
-            int pageCount = doc.ComputeStatistics(Word.WdStatistic.wdStatisticPages);
-            doc.Close();
-            wordApp.Quit();
-            return pageCount;
-        }
-        else{
-            return 0;
-        }
+        return ResourcesService.GetDocxPageCount(filePath);
     }
     public async Task<int> GetSheetCountAsync(MemoryStream stream)
     {
@@ -1057,6 +1051,7 @@
     {
         if (!ProblemWDocument)
         {
+            loadingDocs = true;
             fileUploadDTO.Metadata.Author = fileUploadDTO.Author;
             fileUploadDTO.Metadata.Title = fileUploadDTO.Title;
             fileUploadDTO.Metadata.Category = fileUploadDTO.Category;
@@ -1080,6 +1075,7 @@
             File = null;
             Documents.Add(document);
             StateHasChanged();
+            loadingDocs = false;
         }
     }
     private string GetImageSrc(byte[] imageBytes, string contentType)
@@ -1144,6 +1140,7 @@
 
             context.BlogCategory.Add(category);
             await context.SaveChangesAsync();
+            await ResourcesService.UpdateCategories();
         }
 
         blogPostDTO.Category = Category;
@@ -1155,16 +1152,8 @@
         showAddTagModal = true;
         StateHasChanged();
     }
-    public void HideAddTagModal(Tag tag)
+    public void HideAddTagModal()
     {
-        if (Tags is not null)
-        {
-            var tag_no_longer_wanted = Tags.FirstOrDefault(t => t.Name == tag.Name);
-            if ( tag_no_longer_wanted != null)
-            {
-                RemoveTag(tag_no_longer_wanted);
-            }
-        }
         CurrentTag.Name = "";
         showAddTagModal = false;
         StateHasChanged();
@@ -1177,10 +1166,11 @@
             var new_tag = new Tag();
             new_tag.Name = tag.Name;
             Tags.Add(new_tag);
-            AddTag(new_tag);
+            await AddTag(new_tag);
             new_tag.BlogPostIds.Add(blogPost.Id);
             context.Tag.Add(new_tag);
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+            await ResourcesService.UpdateTags();
         }
         CurrentTag.Name = "";
         showAddTagModal = false;
@@ -1192,11 +1182,11 @@
     }
     public async Task FilterDocs(string filter)
     {
+        loadingDocs = true;
         DocFilter = filter;
-        using var context = await DbFactory.CreateDbContextAsync();
         if (!filter.Equals("All") && !filter.Equals("View All"))
         {
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
             var regexPattern = ".*" + Regex.Escape(filter.ToLower()) + ".*";
 
             Documents = Documents
@@ -1208,13 +1198,18 @@
         }
         else
         {
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
         }
         StateHasChanged();
+        loadingDocs = false;
     }
     public void ViewBlogDetail(BlogPost Post)
     {
         NavigationManager.NavigateTo($"/blog-space?Id={Post.Id}");
+    }
+    public void ViewAllBlogPosts()
+    {
+        NavigationManager.NavigateTo("/blog-space", true);
     }
     public int ReadTimeMinutes
     {
@@ -1223,7 +1218,7 @@
             if (string.IsNullOrWhiteSpace(blogPostDTO.Content)) return 0;
 
             var wordCount = blogPostDTO.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
-            var minutes = (int)Math.Ceiling(wordCount / 200.0); // 200 words/minute
+            var minutes = (int)Math.Ceiling(wordCount / 300.0); // 300 words/minute
             return minutes;
         }
     }
@@ -1257,14 +1252,15 @@
             return "px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition";
         }
     }
-    private void ShowSubmissionsGuideline()
+    private async Task ShowSubmissionsGuideline()
     {
-        DocSubmissionGuidelines.ShowModal();
+        await DocSubmissionGuidelines.ShowModal();
     }
     public async Task CreateBlogPost()
     {
         if (!ProblemWBlogImage)
         {
+            loadingBlogs = true;
             using var context = await DbFactory.CreateDbContextAsync();
             blogPost.Title = blogPostDTO.Title;
             blogPost.Content = blogPostDTO.Content;
@@ -1296,7 +1292,7 @@
             {
                 blogPost.AuthorImageContentType = User.ImageContentType;
             }
-            var socialMediaLinks = await context.SocialMediaLink.Where(l => l.UserId == User.Id).ToListAsync();
+            var socialMediaLinks = (await ResourcesService.GetSocialMediaLinks()).Where(l => l.UserId == User.Id).ToList();
             var links = new List<string>();
             if (socialMediaLinks is not null && socialMediaLinks.Any())
             {
@@ -1318,7 +1314,7 @@
             {
                 foreach (var tagId in blogPostDTO.TagIds)
                 {
-                    var new_tag = await context.Tag.FirstOrDefaultAsync(t => t.Id.ToString() == tagId);
+                    var new_tag = Tags.FirstOrDefault(t => t.Id.ToString() == tagId);
                     if (new_tag is not null)
                     {
                         new_tag.BlogPostIds.Add(blogPost.Id);
@@ -1348,6 +1344,7 @@
             BlogTags.Clear();
 
             StateHasChanged();
+            loadingBlogs = false;
         }
     }
     public string Truncate(string value, int maxChars)
@@ -1360,25 +1357,32 @@
         blogPostDTO.Category = Category;
         this.Category = Category;
     }
+    public async Task UnSelectCategory(string Category)
+    {
+        blogPostDTO.Category = "";
+        this.Category = "";
+    }
     public async Task HandleInvalidBlogSubmit()
     {
 
     }
     public async Task Redirect()
     {
+        loadingBlogs = true;
+        loadingDocs = true;
         RedirectQuery = RedirectQuery.Trim();
         using var context = await DbFactory.CreateDbContextAsync();
 
         if (RedirectQuery.Equals("All Resources"))
         {
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
 
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
 
         }
         else if (RedirectQuery.Equals("Blog Posts"))
         {
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
 
             if (Documents is not null && Documents.Any())
             {
@@ -1387,7 +1391,7 @@
         }
         else if (RedirectQuery.Equals("My Uploads"))
         {
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
             var regexPattern = ".*" + Regex.Escape(User.Name.ToLower()) + ".*";
             if (!string.IsNullOrEmpty(User.Name))
             {
@@ -1398,7 +1402,7 @@
                     )
                     .ToList();
             }
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
             if (!string.IsNullOrEmpty(User.Name))
             {
                 Documents = Documents
@@ -1411,7 +1415,7 @@
         }
         else
         {
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
             var regexPattern = ".*" + Regex.Escape(RedirectQuery.ToLower()) + ".*";
 
             if (!string.IsNullOrEmpty(regexPattern))
@@ -1425,7 +1429,7 @@
             .ToList();
 
             }
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
             if (!string.IsNullOrEmpty(RedirectQuery))
             {
                 Documents = Documents
@@ -1438,14 +1442,18 @@
         }
         RedirectQuery = "";
         StateHasChanged();
+        loadingBlogs = false;
+        loadingDocs = false;
     }
     public async Task Search()
     {
         if (!string.IsNullOrWhiteSpace(SearchTerm))
         {
+            loadingBlogs = true;
+            loadingDocs = true;
+
             SearchTerm = SearchTerm.Trim();
-            using var context = await DbFactory.CreateDbContextAsync();
-            BlogPosts = await context.BlogPost.OrderByDescending(b => b.Date).ToListAsync();
+            BlogPosts = (await ResourcesService.GetBlogPosts()).OrderByDescending(b => b.Date).ToList();
             var regexPattern = ".*" + Regex.Escape(SearchTerm.ToLower()) + ".*";
 
             if (!string.IsNullOrEmpty(SearchTerm))
@@ -1461,7 +1469,7 @@
                     .ToList();
             }
 
-            Documents = await context.Document.OrderByDescending(b => b.Date).ToListAsync();
+            Documents = (await ResourcesService.GetDocuments()).OrderByDescending(b => b.Date).ToList();
             if (!string.IsNullOrEmpty(SearchTerm))
             {
                 Documents = Documents
@@ -1476,6 +1484,8 @@
 
             SearchTerm = "";
             StateHasChanged();
+            loadingBlogs = false;
+            loadingDocs = false;
         }
 
     }

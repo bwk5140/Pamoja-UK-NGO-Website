@@ -11,41 +11,42 @@
     !NavigationManager.Uri.Contains("AccessDenied") && !NavigationManager.Uri.Contains("Lockout") &&
     !NavigationManager.Uri.Contains("EmailConfirmation") && !NavigationManager.Uri.Contains("Forgot") &&
     !NavigationManager.Uri.Contains("Checkout") && !NavigationManager.Uri.Contains("OrderComplete") &&
-    !NavigationManager.Uri.Contains("OrderAbandoned") && !currentUrl!.Contains("checkout") &&
+    !NavigationManager.Uri.Contains("OrderAbandoned") && !NavigationManager.Uri!.Contains("checkout") &&
     !NavigationManager.Uri.Contains("2FAVerification") &&
-    !NavigationManager.Uri.Contains("openmrs") && !NavigationManager.Uri.Contains("document-viewer") &&
-    !currentUrl!.Contains("invoice")) || NavigationManager.Uri.Contains("ExternalLogins"))
+    !NavigationManager.Uri.Contains("ResetPassword") && !NavigationManager.Uri.Contains("document-viewer") &&
+    !NavigationManager.Uri!.Contains("invoice")) || NavigationManager.Uri.Contains("ExternalLogins"))
 {
 
     <nav>
         <div class="nav-container container">
             <a href="/" class="flex space-x-3 logo">
-                <img loading="lazy" src="Images/PamojaLogo.png" alt="Pamoja Logo" class="h-36 w-36">
-                @* <span>Pamoja Mental Health & Safeguarding Network</span> *@
+                <img fetchpriority="high"
+                     loading="eager" src="Images/PamojaLogo.webp" class="h-36 w-36" alt="Pamoja logo" width="128" height="128" />
             </a>
 
             <button class="mobile-menu-btn" style="padding: 20px;" @onclick="ToggleMobileMenu">☰</button>
 
             <ul class="nav-links @(isMobileMenuOpen ? "active" : "")">
-                <li><a href="/" aria-label="Navigate to home page" class="@GetNavClass("/")">Home</a></li>
-                <li><a href="/about-us" aria-label="Navigate to about-us" class="@GetNavClass("/about-us")">About Us</a></li>
-                <li><a href="/services" aria-label="Navigate to services" class="@GetNavClass("/services")">Services</a></li>
-                <li><a href="/careers" aria-label="Navigate to careers" class="@GetNavClass("/careers")">Careers</a></li>
-                <li><a href="/events" aria-label="Navigate to events" class="@GetNavClass("/events")">Events</a></li>
-                <li><a href="/contact-us" aria-label="Navigate to contact-us" class="@GetNavClass("/contact-us")">Contact</a></li>
-                <li><a href="/resources" aria-label="Navigate to resources" class="@GetNavClass("/resources")">Resources</a></li>
-                @* <li><a href="/donate" class="@GetNavClass("/donate")">Donate</a></li> *@
+                <li><a href="/" aria-label="Navigate to home page" @onclick="CloseMobileMenu" class="@GetNavClass("/")">Home</a></li>
+                <li><a href="/about-us" aria-label="Navigate to about-us" @onclick="CloseMobileMenu" class="@GetNavClass("/about-us")">About Us</a></li>
+                <li><a href="/services" aria-label="Navigate to services" @onclick="CloseMobileMenu" class="@GetNavClass("/services")">Services</a></li>
+                <li><a href="/careers" aria-label="Navigate to careers" @onclick="CloseMobileMenu" class="@GetNavClass("/careers")">Careers</a></li>
+                <li><a href="/events" aria-label="Navigate to events" @onclick="CloseMobileMenu" class="@GetNavClass("/events")">Events</a></li>
+                <li><a href="/contact-us" aria-label="Navigate to contact-us" @onclick="CloseMobileMenu" class="@GetNavClass("/contact-us")">Contact</a></li>
+                <li><a href="/resources" aria-label="Navigate to resources" @onclick="CloseMobileMenu" class="@GetNavClass("/resources")">Resources</a></li>
                 <li>
                     <AuthorizeView>
                         <NotAuthorized>
-                            <a href="/Account/Login"aria-label="Navigate to log in page" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["Login"]>
-                                <i class="text-gray-550 hover:text-primary" data-feather="user"></i>
+                            <a href="/Account/Login" aria-label="Navigate to log in page" @onclick="CloseMobileMenu" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["Login"]>
+                                <img fetchpriority="high"
+                                     loading="eager" src="Icons/account.png" alt="User Account" class="h-8 w-8" />
                                 <span class="text-md text-gray-600 hover:text-primary">@Loc["Login"]</span>
                             </a>
                         </NotAuthorized>
                         <Authorized>
-                            <a href="/Account/Manage" aria-label="Navigate to manage user page" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["YourAccount"]>
-                                <i class="text-gray-550 hover:text-primary" data-feather="user"></i>
+                            <a href="/Account/Manage" @onclick="CloseMobileMenu" aria-label="Navigate to manage user page" class="flex space-x-2 hover:text-primary" data-bs-toggle="tooltip" title=@Loc["YourAccount"]>
+                                <img fetchpriority="high"
+                                     loading="eager" src="Icons/account.png" alt="User Account" class="h-8 w-8" />
                                 <span class="text-md text-gray-500 hover:text-primary">
                                     @if (ApplicationUser is not null)
                                     {
@@ -62,14 +63,19 @@
                             <form action="Account/Logout" method="post" class="flex space-x-2">
                                 <AntiforgeryToken />
                                 <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                                <button type="submit" class="btn btn-sm font-medium hover:text-primary" style="background-color: transparent; padding: 0px; border: none;" data-bs-toggle="tooltip" title=@Loc["Logout"]>
-                                    <i class="text-gray-600 hover:text-primary" data-feather="log-out"></i>
+                                <button type="submit" @onclick="CloseMobileMenu" class="btn btn-sm font-medium hover:text-primary" style="background-color: transparent; padding: 0px; border: none;" data-bs-toggle="tooltip" title=@Loc["Logout"]>
+                                    <img fetchpriority="high"
+                                         loading="eager" src="Icons/logout.png" alt="Logout" class="h-8 w-8" />
                                 </button>
                             </form>
                         </Authorized>
                     </AuthorizeView>
                 </li>
-                <li><a href="/services/book-appointment" aria-label="Navigate to book appointment page" class="border-2 border-green-700 rounded-lg" style="padding: 5px;">Book an Appointment</a></li>
+                <li>
+                    <button type="button" @onclick="GoToBookAppointment" aria-label="Navigate to book appointment page" class="border-2 border-green-700 rounded-lg" style="padding: 5px;">
+                        Book an Appointment
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -97,13 +103,23 @@
     private void ToggleMobileMenu()
     {
         isMobileMenuOpen = !isMobileMenuOpen;
+        StateHasChanged();
+    }
+    private void CloseMobileMenu()
+    {
+        isMobileMenuOpen = false;
+        StateHasChanged();
+    }
+    public void GoToBookAppointment()
+    {
+        CloseMobileMenu();
+        NavigationManager.NavigateTo("/services/book-appointment", true);
     }
     protected override async Task OnInitializedAsync()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
         ApplicationUser = await ApplicationUserService.GetApplicationUser();
-        using var context = await DbFactory.CreateDbContextAsync();
         if (ApplicationUser is not null)
         {
             var index = ApplicationUser.Name.IndexOf(" ");
@@ -112,13 +128,6 @@
                 index = ApplicationUser.Name.Length - 1;
             }
             Username = ApplicationUser.Name.Substring(0, index);
-        }
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("featherInit");
         }
     }
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -130,13 +139,10 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
-    private void OnAboutUsClicked()
+
+    private void OnBookAppointmentClicked()
     {
-        NavigationManager.NavigateTo("/about-us");
-    }
-    private void OnSignInClicked()
-    {
-        NavigationManager.NavigateTo("Account/Login", true);
+        NavigationManager.NavigateTo("/services/book-appointment", true);
     }
     private string GetNavClass(string href)
     {
@@ -145,9 +151,5 @@
         return currentPath == targetPath
             ? "border-b-2 border-green-900 text-green-900 font-semibold"
             : "text-gray-600 hover:text-green-800";
-    }
-    private void GoToContactUs()
-    {
-        NavigationManager.NavigateTo("/contact-us");
     }
 }

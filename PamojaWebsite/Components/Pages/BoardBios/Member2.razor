@@ -1,0 +1,120 @@
+﻿@page "/about-us/wanja-mbuthia"
+@rendermode InteractiveServer
+<PageTitle>Wanja Mbuthia | Pamoja Counselling, Mental Wellbeing and Safeguarding Services</PageTitle>
+@inject NavigationManager NavigationManager
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG"></script>
+<script>
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
+
+      var script = document.createElement('script');
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-KY5W04MBEG";
+      script.async = true;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KY5W04MBEG', {'cookie_domain': 'pamojasafeguardingnetwork.co.uk', 'anonymize_ip': true});
+    }
+
+    // Fire when browser is idle or after first interaction
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(loadGA, 2000));
+    } else {
+      setTimeout(loadGA, 3000);
+    }
+</script>
+<div class="sm:pt-[10%] md:pt-[4%] mb-5 py-20">
+    <!-- Hero Section -->
+    <section class="relative py-20 mt-5 bg-orange-900 text-white py-2 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Decorative background shapes -->
+        <div class="absolute inset-0">
+            <!-- Large blurred gradient blob -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-orange-600 to-yellow-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+
+            <!-- Smaller accent circle -->
+            <div class="absolute top-20 right-20 w-40 h-40 bg-orange-700 rounded-full opacity-30 animate-bounce"></div>
+
+            <!-- Diagonal rectangle -->
+            <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-orange-800 opacity-40 transform rotate-12"></div>
+
+            <!-- Triangle using clip-path -->
+            <div class="absolute top-1/2 right-0 w-64 h-64 bg-blue-900 opacity-30"
+                 style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto">
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h1 class="text-4xl mt-5 md:text-5xl font-bold mb-2">Wanja Mbuthia</h1>
+            </div>
+            <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                <h2 class="text-2xl md:text-3xl mb-2 font-light">Board Member</h2>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Bio Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <nav class="flex items-center text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <!-- About Us -->
+                        <li class="inline-flex items-center">
+                            <a href="/about-us" aria-label="Navigate to about-us"
+                               class="inline-flex items-center text-red-700 hover:text-red-800 font-medium">
+                                About Us
+                            </a>
+                        </li>
+
+                        <!-- Separator -->
+                        <li>
+                            <div class="flex items-center">
+                                <svg aria-label="Separator" class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                                <a href="/about-us/wanja-mbuthia" aria-label="Navigate to current page"
+                                   class="ml-1 text-red-700 hover:text-red-800 font-medium font-bold">
+                                    Wanja Mbuthia
+                                </a>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                <!-- Right-aligned image with abstract shapes -->
+                <div class="relative flex justify-end py-20">
+                    <!-- Image itself -->
+                    <img fetchpriority="high"
+                         loading="eager" src="Images/Team/Wanja_Mbuthia.webp"
+                         alt="Wanja Mbuthia"
+                         class="relative z-10 w-96 h-96 md:w-72 rounded-lg object-cover object-top shadow-lg rounded-15" />
+                </div>
+                <p class="text-s text-gray-900 mb-3">
+                    Wanja Mbuthia is a storyteller, educator, and strategic communications specialist whose work sits at the intersection of media, gender, and health. 
+                    She is an Audience Engagement Officer for the Gender, Health, and Climate desks at Nation Media Group, where she shapes public discourse on some of Kenya’s 
+                    most pressing issues—from maternal health and climate resilience to gender-based violence and safeguarding.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    Beyond the newsroom, Wanja is an Adjunct Lecturer at the Catholic University of Eastern Africa, where she lectures on Gender and Climate issues in International Relations, 
+                    mentoring the next generation of African leaders. Her work is driven by a deep belief that stories, when told with dignity and accuracy, can dismantle stigma, shift narratives, 
+                    and drive systemic change.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    Wanja holds a Postgraduate Diploma in Global Challenges from the University of Edinburgh, Scotland and a Master of Arts in Development Communication from the University of Nairobi.
+                </p>
+                <p class="text-s text-gray-900 mb-3">
+                    A passionate advocate for mental wellbeing, she is committed to strengthening safeguarding practices and promoting holistic care—because she believes that healing and protection are 
+                    collective endeavors that empower individuals and communities.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>

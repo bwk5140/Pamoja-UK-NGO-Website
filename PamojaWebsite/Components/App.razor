@@ -1,6 +1,4 @@
 ﻿@inject IJSRuntime JS
-@* @inject PayPalOptions PayPalOpts *@
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,47 +6,115 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pamoja Counselling, Mental Wellbeing and Safeguarding Services strives to contribute to the gap within mental health services in Kenya. 
+        We facilitate Mental Health & Safeguarding training to build mental resilience at the individual level and strengthen mental health services at the community level. " />
     <base href="/" />
-    @* <link rel="icon" type="image/x-icon" href="/static/favicon.ico"> *@
-    <link rel="apple-touch-icon" sizes="57x57" href="/Static/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/Static/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/Static/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/Static/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/Static/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/Static/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/Static/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/Static/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/Static/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/Static/android-icon-192x192.png">
+
+    <!-- 1. Consolidated High-Priority Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/Static/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/Static/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/Static/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Static/apple-icon-180x180.png">
     <link rel="manifest" href="/Static/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/Static/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" as="style">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- 2. Preconnect to Third-Party Domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- 3. Asynchronous Google Font Loading (Non-blocking) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap">
+    </noscript>
+
+    <!-- 4. Critical Local CSS -->
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["PamojaWebsite.styles.css"]" />
+
+    <!-- Non-critical CSS: loaded asynchronously without blocking render -->
+    <link rel="stylesheet"
+          href="_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css"
+          media="print"
+          onload="this.media='all'">
+
+    <link rel="stylesheet"
+          href="_content/PSC.Blazor.Components.Icons/PSC.Blazor.Components.Icons.bundle.scp.css"
+          media="print"
+          onload="this.media='all'">
+
+    <link rel="stylesheet"
+          href="_content/Radzen.Blazor/css/default-base.css"
+          media="print"
+          onload="this.media='all'" />
+
     <ImportMap />
     <HeadOutlet />
 </head>
 
 <body>
     <Routes />
-    <script defer src="https://unpkg.com/feather-icons"></script>
-    @* <script defer src="https://www.paypal.com/sdk/js?client-id=@paypalClientId&currency=USD"></script> *@
+
+    <!-- 5. Deferred Non-Critical JavaScript Helpers -->
+    <script src="https://unpkg.com/feather-icons" defer></script>
     <script src="FeatherReplace.min.js" defer></script>
     <script src="DocViewerHelper.min.js" defer></script>
-    <script src="_framework/blazor.web.js" defer></script>
+    <script src="DownloadFile.min.js" defer></script>
+    <script src="DropDownHelper.min.js" defer></script>
+
+    <!-- Core Blazor Framework Script -->
+    <!-- Replace standard blazor.web.js autostart with manual configuration -->
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+          circuit: {
+            configureSignalR: function (builder) {
+              builder.withUrl('/_blazor', {
+                // Force WebSockets only — do NOT allow Long Polling fallback
+                transport: 1 // 1 = WebSockets
+              });
+            }
+          }
+        });
+    </script>
+
+    <!-- Inline LocalStorage Helpers -->
+    <script>
+        window.getAnonId = function () {
+            let id = localStorage.getItem('anon_id');
+            if (!id) {
+                id = crypto.randomUUID();
+                localStorage.setItem('anon_id', id);
+            }
+            return id;
+        };
+        window.getDeviceId = function () {
+            let id = localStorage.getItem("device_id");
+            if (!id) {
+                id = crypto.randomUUID();
+                localStorage.setItem("device_id", id);
+            }
+            return id;
+        };
+        window.isFirstVisit = function () {
+            return localStorage.getItem("device_id") === null;
+        };
+    </script>
+
+    <!-- 6. Lazy Loaded Third-Party Chat (Tidio) to protect Mobile TBT & FCP -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var s = document.createElement('script');
+                s.src = "//code.tidio.co/k5wdraxauvqctez2wsajssefpdetqwze.js";
+                s.async = true;
+                document.body.appendChild(s);
+            }, 3000); // Delays execution by 3s until main thread clears
+        });
+    </script>
 </body>
 </html>
 
 @code {
-
-    // string paypalClientId => PayPalOpts.ClientId;
-
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
@@ -62,4 +128,3 @@
                     CultureInfo.CurrentUICulture)));
     }
 }
-

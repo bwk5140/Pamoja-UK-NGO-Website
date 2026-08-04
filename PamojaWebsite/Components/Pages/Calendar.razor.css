@@ -1,7 +1,6 @@
 ﻿.calendar {
     width: contain;
     border-collapse: collapse;
-    text-align: center;
 }
 
     .calendar .prev_day {
